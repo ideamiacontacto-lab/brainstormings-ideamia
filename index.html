@@ -543,6 +543,47 @@ body.en-cem .wrap{padding-bottom:96px}
 .tumba.destacada{border-color:var(--ban);box-shadow:0 0 0 1px var(--ban),0 0 50px rgba(255,242,0,.3)}
 .tumba.oculta{display:none}
 @media (hover:none){ .tumba:hover{transform:none} .tumba:hover::before{clip-path:circle(0 at 50% 100%)} .tumba:hover :is(h3,.meta,.meta b,.puntaje,.rip,.extracto){color:inherit} .tumba:hover .pie{opacity:1} .tumba:hover .abrir{opacity:0} }
+/* etiquetas de temática y sección, grupos y carga de ideas anteriores */
+.etqs{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.etq{font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 8px;border-radius:999px;border:1px solid #333;color:var(--tx2);white-space:nowrap;transition:all .3s var(--ease)}
+.tumba:hover .etq,.tumba:focus-visible .etq{border-color:rgba(10,10,10,.35);color:var(--ban-ink)}
+.idea-det-h .etqs{justify-content:flex-start}
+.cem-grupo{margin:0 0 34px}
+.cem-grupo-h{display:flex;align-items:baseline;gap:10px;font-family:var(--f-display);font-weight:400;font-size:34px;letter-spacing:.01em;text-transform:uppercase;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.cem-grupo-h span{font-family:var(--f-body);font-size:12px;font-weight:700;color:var(--ban);letter-spacing:.08em}
+.im-lista{display:grid;gap:6px;max-height:260px;overflow:auto}
+.im-it{display:grid;gap:2px;padding:8px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg2)}
+.im-it b{font-size:14px} .im-it span{font-size:12.5px;color:var(--tx2)} .im-it em{font-style:normal;font-size:11px;color:var(--ban)}
+@media (max-width:640px){ .tumba .etqs{justify-content:flex-start;margin-top:6px} .cem-grupo-h{font-size:28px} }
+/* dos secciones del cementerio: ideas votadas y brainstormings anteriores (subidos desde Word) */
+.cem-tabs{display:flex;gap:4px;margin:4px 0 14px;border-bottom:1px solid var(--line)}
+.cem-tabs button{background:none;border:0;padding:12px 16px 13px;font-weight:600;font-size:15px;color:var(--tx2);position:relative}
+.cem-tabs button span{font-size:12px;color:var(--tx3);margin-left:4px;font-weight:700}
+.cem-tabs button.on{color:var(--tx)} .cem-tabs button.on span{color:var(--ban)}
+.cem-tabs button.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--ban)}
+.brain-viejo{margin:0 0 46px;padding:24px;border:1px solid var(--line);border-radius:var(--r2);background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 120px)}
+.brain-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:6px}
+.brain-h h3{font-family:var(--f-display);font-weight:400;font-size:clamp(36px,5vw,54px);line-height:.95;text-transform:uppercase;margin:0}
+.brain-n{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);white-space:nowrap}
+.brain-sec{margin-top:22px}
+.brain-sec h4{display:flex;align-items:baseline;gap:8px;margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2)}
+.brain-sec h4 span{color:var(--ban)}
+.brain-sec .tumbas{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.brain-sec .tumba{height:290px;padding-top:40px}
+.brain-sec .tumba h3{font-size:28px;-webkit-line-clamp:3}
+/* subir Word */
+.im-drop{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:30px 20px;border:1.5px dashed var(--line2);border-radius:var(--r2);text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.im-drop:hover,.im-drop.sobre{border-color:var(--ban);background:rgba(255,242,0,.04)}
+.im-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.im-drop b{font-family:var(--f-display);font-weight:400;font-size:28px;letter-spacing:.02em;text-transform:uppercase}
+.im-drop span{font-size:13px;color:var(--tx2)} .im-drop em{font-style:normal;font-size:13px;color:var(--ban)}
+.im-doc{border:1px solid var(--line2);border-radius:var(--r2);padding:16px;display:grid;gap:12px;margin-top:4px}
+.im-doc-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.im-doc-h b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;text-transform:uppercase;line-height:1}
+.im-doc-h span{font-size:12px;color:var(--tx2)}
+.im-campos{grid-template-columns:1.2fr 1.3fr .9fr 1.1fr}
+.im-otro summary{cursor:pointer;color:var(--tx2);font-size:14px}
+@media (max-width:640px){ .im-campos{grid-template-columns:1fr 1fr} .brain-viejo{padding:16px} .cem-tabs button{padding:10px 10px 11px;font-size:14px} }
 /* detalle de una idea (modal) */
 .modal .box.box-idea{max-width:720px;padding:0;overflow:hidden;display:flex;flex-direction:column}
 .idea-det-h{position:relative;padding:26px 26px 20px;background:radial-gradient(100% 120% at 100% 0%,rgba(255,242,0,.10),transparent 55%),linear-gradient(180deg,#1C1C1C,#141414);border-bottom:1px solid var(--line)}
@@ -946,7 +987,7 @@ function viewHome(){
 function cargarMarcasIniciales(){ MARCAS_INICIALES.forEach(n=>{ if(!S.marcas.some(m=>m.nombre.toLowerCase()===n.toLowerCase())) S.marcas.push({id:uid(),nombre:n}); }); save(); render(); }
 function nuevaMarca(){ openModal(`<h2 style="margin-top:0">Nueva marca</h2><label class="f"><span>Nombre</span><input type="text" id="m-nombre"></label><div class="row"><button class="btn pri" onclick="guardarMarca()">Crear marca</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`); setTimeout(()=>document.getElementById('m-nombre')?.focus(),0); }
 function guardarMarca(){ const n=document.getElementById('m-nombre').value.trim(); if(!n) return; const m={id:uid(),nombre:n}; S.marcas.push(m); save(); modal=null; go('#/marca/'+m.id); toast('Marca creada'); }
-async function borrarMarca(id){ if(!confirm('¿Borrar la marca con todas sus campañas, ideas y votos?')) return; const cs=S.campanas.filter(c=>c.marcaId===id).map(c=>c.id); for(const c of cs) await api('DELETE','extras/'+c).catch(()=>{}); S.ideas=S.ideas.filter(i=>!cs.includes(i.campanaId)); S.campanas=S.campanas.filter(c=>!cs.includes(c.id)); S.marcas=S.marcas.filter(m=>m.id!==id); await save(); go('#/'); render(); toast('Marca borrada'); }
+async function borrarMarca(id){ if(!confirm('¿Borrar la marca con todas sus campañas, ideas y votos?')) return; const cs=S.campanas.filter(c=>c.marcaId===id).map(c=>c.id); for(const c of cs) await api('DELETE','extras/'+c).catch(()=>{}); S.ideas=S.ideas.filter(i=>!cs.includes(i.campanaId)&&i.marcaId!==id); S.campanas=S.campanas.filter(c=>!cs.includes(c.id)); S.marcas=S.marcas.filter(m=>m.id!==id); await save(); go('#/'); render(); toast('Marca borrada'); }
 
 function viewMarca(id){
   const m=byId(S.marcas,id); if(!m) return `<div class="empty">Esa marca no existe.</div>`;
@@ -1763,17 +1804,50 @@ function copiarResumen(id){
 function reabrirDecision(id){ if(!confirm('¿Deshacer la decisión? Las ideas vuelven a votación y salen del cementerio.')) return; const c=byId(S.campanas,id); ideasDe(id).forEach(i=>{ i.estado='votacion'; delete i.porqueGuardada; delete i.guardadaEn; }); c.estado='abierta'; c.decision=null; save(); render(); }
 
 /* ---------------- cementerio ---------------- */
-let cemFiltro={marca:'',q:''};
-let cemOrden='recientes';
+let cemFiltro={marca:'',q:'',seccion:'',tematica:''};
+let cemOrden='recientes', cemAgrupar='', cemVista='';   // cemVista: 'votadas' | 'anteriores' (vacío = la que tenga ideas)
+// Una idea del cementerio sale de una campaña votada acá, o se cargó a mano de un brainstorming anterior (importada: sin campaña, con marca propia)
 function cemFilas(){ const items=S.ideas.filter(i=>i.estado==='guardada'||i.estado==='acompana');
-  return items.map(i=>{ const c=byId(S.campanas,i.campanaId); const m=c?byId(S.marcas,c.marcaId):null; return {i,c,m,rs:c?.decision?.resumen?.[i.id]||null}; }).filter(r=>r.c&&r.m); }
-const cemTexto=i=>(i.nombre+' '+(i.queSeVe||'')+' '+(i.queEs||'')+' '+(i.queHace||'')+' '+(i.origen||'')).toLowerCase();
+  return items.map(i=>{ const c=i.campanaId?byId(S.campanas,i.campanaId):null; const m=byId(S.marcas,(c&&c.marcaId)||i.marcaId); if(!m||(i.campanaId&&!c)) return null;
+    return {i,c,m,rs:c?.decision?.resumen?.[i.id]||null,camp:c?.nombre||i.campanaNombre||'Brainstorming anterior',fecha:(i.guardadaEn||c?.decision?.fecha||i.fecha||'').slice(0,10),dobles:c?.dobles||[]}; }).filter(Boolean); }
+const cemTexto=i=>(i.nombre+' '+(i.queSeVe||'')+' '+(i.queEs||'')+' '+(i.queHace||'')+' '+(i.origen||'')+' '+(i.seccion||'')+' '+(i.tematica||'')+' '+(i.campanaNombre||'')).toLowerCase();
+const cemValores=k=>[...new Set(S.ideas.filter(i=>i.estado==='guardada'&&i[k]).map(i=>i[k].trim()))].sort((a,b)=>a.localeCompare(b));
+function cemTumba(r,q){ const {i,m,rs,camp,fecha}=r; const cincos=rs?Q.filter(x=>rs.avg[x.k]>=4.5).map(x=>x.short.replace('¿','').replace('?','')):[];
+  return `<article class="tumba ${q&&!cemTexto(i).includes(q)?'oculta':''}" data-id="${i.id}" data-nombre="${esc(i.nombre)}" tabindex="0" role="button" aria-label="Abrir ${esc(i.nombre)}" onclick="abrirTumba('${i.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirTumba('${i.id}')}">
+      <span class="rip">R.I.P.</span>
+      <div class="cuerpo">
+        <h3>${esc(i.nombre)}</h3>
+        <div class="meta"><b>${esc(m.nombre)}</b> · ${esc(camp)}${fecha?`<br>✝ ${fmtDate(fecha)}`:''}</div>
+        ${i.tematica||i.seccion?`<div class="etqs">${i.tematica?`<span class="etq">${esc(i.tematica)}</span>`:''}${i.seccion?`<span class="etq">${esc(i.seccion)}</span>`:''}</div>`:''}
+        ${i.queSeVe?`<p class="extracto">“${esc(i.queSeVe)}”</p>`:''}
+      </div>
+      <div class="pie">
+        <span class="puntaje">${rs?`${String(rs.total).replace('.',',')}<small>PTS</small>`:`<small>${i.importada?'ANTERIOR':'SIN NOTAS'}</small>`}</span>
+        <span class="marcas">${cincos.length?`<span class="chip" title="Sacó 5 en ${cincos.join(', ')}">5 en ${cincos.length===1?cincos[0]:cincos.length+' preguntas'}</span>`:''}${i.revivida?`<span class="chip vivo">Revivió ×${i.revivida}</span>`:''}</span>
+      </div>
+      <span class="abrir">Ver idea</span>
+    </article>`; }
 function viewCementerio(){
-  const rows=cemFilas();
-  const filt=rows.filter(r=>!cemFiltro.marca||r.m.id===cemFiltro.marca);
-  filt.sort(cemOrden==='puntaje'?(a,b)=>(b.rs?.total||0)-(a.rs?.total||0):(a,b)=>(b.i.guardadaEn||'').localeCompare(a.i.guardadaEn||''));
-  const revividas=rows.reduce((a,r)=>a+(r.i.revivida||0),0), marcas=new Set(rows.map(r=>r.m.id)).size;
-  const q=(cemFiltro.q||'').toLowerCase();
+  const todas=cemFilas(); const votadas=todas.filter(r=>!r.i.importada), anteriores=todas.filter(r=>r.i.importada);
+  const vista=cemVista||(votadas.length||!anteriores.length?'votadas':'anteriores');
+  const rows=vista==='anteriores'?anteriores:votadas;
+  const filt=rows.filter(r=>(!cemFiltro.marca||r.m.id===cemFiltro.marca)&&(!cemFiltro.seccion||(r.i.seccion||'')===cemFiltro.seccion)&&(!cemFiltro.tematica||(r.i.tematica||'')===cemFiltro.tematica));
+  filt.sort(cemOrden==='puntaje'&&vista==='votadas'?(a,b)=>(b.rs?.total||0)-(a.rs?.total||0):(a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  const revividas=todas.reduce((a,r)=>a+(r.i.revivida||0),0), marcas=new Set(todas.map(r=>r.m.id)).size;
+  const q=(cemFiltro.q||'').toLowerCase(); const vals=k=>[...new Set(rows.map(r=>(r.i[k]||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const sel=(k,vs,todo)=>vs.length?`<select onchange="cemFiltro.${k}=this.value;render()" aria-label="${todo}"><option value="">${todo}</option>${vs.map(v=>`<option ${cemFiltro[k]===v?'selected':''}>${esc(v)}</option>`).join('')}</select>`:'';
+  const grupos=(lista,clave,orden)=>{ const g=new Map(); lista.forEach(r=>{ const k=clave(r); if(!g.has(k)) g.set(k,[]); g.get(k).push(r); }); return [...g.entries()].sort(orden); };
+  let cuerpo;
+  if(!filt.length) cuerpo=`<div class="empty">${rows.length?'Nada con ese filtro.':vista==='anteriores'?'Todavía no se cargaron brainstormings anteriores. Subí los Word y las ideas se arman solas.':'Todavía no hay ideas votadas en el cementerio. Aparecen solas cuando se cierra una campaña.'}${puedeBrief()&&vista==='anteriores'&&!rows.length?`<div style="margin-top:14px"><button class="btn pri" onclick="importarCem()">Subir brainstormings anteriores</button></div>`:''}</div>`;
+  else if(vista==='anteriores'){
+    // cada brainstorming (un Word) es un bloque, con sus ideas por sección
+    cuerpo=grupos(filt,r=>r.m.id+'|'+(r.i.campanaNombre||'')+'|'+(r.fecha||''),(a,b)=>(b[1][0].fecha||'').localeCompare(a[1][0].fecha||'')).map(([,rs])=>{ const r0=rs[0];
+      const secs=grupos(rs,r=>(r.i.seccion||'').trim()||'Otras ideas',(a,b)=>(a[0]==='Otras ideas')-(b[0]==='Otras ideas'));
+      return `<section class="brain-viejo"><header class="brain-h"><div><div class="kicker">— ${esc(r0.m.nombre)}${r0.fecha?` · ${fmtDate(r0.fecha)}`:''}</div><h3>${esc(r0.camp)}</h3></div><span class="brain-n">${rs.length} idea${rs.length===1?'':'s'}</span></header>
+        ${secs.map(([s,lista])=>`<div class="brain-sec"><h4>${esc(s)} <span>${lista.length}</span></h4><div class="tumbas">${lista.map(r=>cemTumba(r,q)).join('')}</div></div>`).join('')}</section>`; }).join(''); }
+  else if(cemAgrupar){ cuerpo=grupos(filt,r=>cemAgrupar==='marca'?r.m.nombre:(r.i[cemAgrupar]||'').trim()||(cemAgrupar==='seccion'?'Sin sección':'Sin temática'),(a,b)=>a[0].startsWith('Sin ')-b[0].startsWith('Sin ')||a[0].localeCompare(b[0]))
+    .map(([k,rs])=>`<section class="cem-grupo"><h3 class="cem-grupo-h">${esc(k)} <span>${rs.length}</span></h3><div class="tumbas">${rs.map(r=>cemTumba(r,q)).join('')}</div></section>`).join(''); }
+  else cuerpo=`<div class="tumbas">${filt.map(r=>cemTumba(r,q)).join('')}</div>`;
   return `<section class="cem-hero">
     <div class="luna" aria-hidden="true"></div>
     <div class="murcielago" style="right:22%;top:30px" aria-hidden="true">${MURCI}</div>
@@ -1782,59 +1856,51 @@ function viewCementerio(){
     <div class="kicker">— Donde descansan las que no ganaron</div>
     <h1 class="wordmark cem-word"><span class="l1"><span>Cementerio</span></span><span class="l2"><span>de <b>ideas</b></span></span></h1>
     <p class="lead">No están muertas: <strong>están esperando otra campaña.</strong> Antes de inventar de cero, buscá acá.</p>
+    ${puedeBrief()?`<div class="row" style="margin-top:20px"><button class="btn pri" onclick="importarCem()">+ Subir brainstormings anteriores (Word)</button></div>`:''}
     <div class="stats">
-      <div><b data-count="${rows.length}">${rows.length}</b><span>enterrada${rows.length===1?'':'s'}</span></div>
+      <div><b data-count="${todas.length}">${todas.length}</b><span>enterrada${todas.length===1?'':'s'}</span></div>
       <div><b data-count="${revividas}">${revividas}</b><span>revivida${revividas===1?'':'s'}</span></div>
       <div><b data-count="${marcas}">${marcas}</b><span>marca${marcas===1?'':'s'}</span></div>
     </div>
   </section>
+  <div class="cem-tabs" role="tablist">
+    <button role="tab" class="${vista==='votadas'?'on':''}" aria-selected="${vista==='votadas'}" onclick="cemVista='votadas';cemFiltro.seccion='';cemFiltro.tematica='';render()">Ideas votadas <span>${votadas.length}</span></button>
+    <button role="tab" class="${vista==='anteriores'?'on':''}" aria-selected="${vista==='anteriores'}" onclick="cemVista='anteriores';cemFiltro.seccion='';cemFiltro.tematica='';render()">Brainstormings anteriores <span>${anteriores.length}</span></button>
+  </div>
   ${rows.length?`<div class="cem-bar">
     <label class="buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" placeholder="Buscar una idea…" value="${esc(cemFiltro.q)}" oninput="cemFiltro.q=this.value;cemBuscar()" aria-label="Buscar en el cementerio"></label>
     <select onchange="cemFiltro.marca=this.value;render()" aria-label="Filtrar por marca"><option value="">Todas las marcas</option>${S.marcas.filter(m=>rows.some(r=>r.m.id===m.id)).map(m=>`<option value="${m.id}" ${cemFiltro.marca===m.id?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select>
-    <span class="cem-orden" role="group" aria-label="Ordenar"><button class="${cemOrden==='recientes'?'on':''}" onclick="cemOrden='recientes';render()">Recientes</button><button class="${cemOrden==='puntaje'?'on':''}" onclick="cemOrden='puntaje';render()">Mejor puntaje</button></span>
+    ${sel('tematica',vals('tematica'),'Todas las temáticas')}${sel('seccion',vals('seccion'),'Todas las secciones')}
+    ${vista==='votadas'?`<select onchange="cemAgrupar=this.value;render()" aria-label="Agrupar"><option value="">Sin agrupar</option><option value="marca" ${cemAgrupar==='marca'?'selected':''}>Agrupar por marca</option><option value="tematica" ${cemAgrupar==='tematica'?'selected':''}>Agrupar por temática</option><option value="seccion" ${cemAgrupar==='seccion'?'selected':''}>Agrupar por sección</option></select>
+    <span class="cem-orden" role="group" aria-label="Ordenar"><button class="${cemOrden==='recientes'?'on':''}" onclick="cemOrden='recientes';render()">Recientes</button><button class="${cemOrden==='puntaje'?'on':''}" onclick="cemOrden='puntaje';render()">Mejor puntaje</button></span>`:''}
     <span class="cuantas" id="cem-cuantas">${filt.length} idea${filt.length===1?'':'s'}</span>
   </div>`:''}
-  ${filt.length===0?`<div class="empty">${rows.length?'Nada con ese filtro.':'Todavía no hay ideas enterradas. Aparecen solas cuando se confirma la decisión de una campaña.'}</div>`:
-  `<div class="tumbas">${filt.map(({i,c,m,rs})=>{ const cincos=rs?Q.filter(q=>rs.avg[q.k]>=4.5).map(q=>q.short.replace('¿','').replace('?','')):[];
-    return `<article class="tumba ${q&&!cemTexto(i).includes(q)?'oculta':''}" data-id="${i.id}" data-nombre="${esc(i.nombre)}" tabindex="0" role="button" aria-label="Abrir ${esc(i.nombre)}" onclick="abrirTumba('${i.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirTumba('${i.id}')}">
-      <span class="lapidita" aria-hidden="true">RIP</span>
-      <span class="cruz" aria-hidden="true"></span>
-      <span class="rip">R.I.P.</span>
-      <div class="cuerpo">
-        <h3>${esc(i.nombre)}</h3>
-        <div class="meta"><b>${esc(m.nombre)}</b> · ${esc(c.nombre)}<br>✝ ${fmtDate((i.guardadaEn||c.decision?.fecha||'').slice(0,10))}</div>
-        ${i.queSeVe?`<p class="extracto">“${esc(i.queSeVe)}”</p>`:''}
-      </div>
-      <div class="pie">
-        <span class="puntaje">${rs?`${String(rs.total).replace('.',',')}<small>PTS</small>`:'<small>SIN NOTAS</small>'}</span>
-        <span class="marcas">${cincos.length?`<span class="chip" title="Sacó 5 en ${cincos.join(', ')}">5 en ${cincos.length===1?cincos[0]:cincos.length+' preguntas'}</span>`:''}${i.revivida?`<span class="chip vivo">Revivió ×${i.revivida}</span>`:''}</span>
-      </div>
-      <svg class="mano" viewBox="0 0 30 46" aria-hidden="true"><path d="M8 46 V22 Q8 19 10 19 Q12 19 12 22 V12 Q12 9 14 9 Q16 9 16 12 V8 Q16 5 18 5 Q20 5 20 8 V12 Q20 9.5 22 9.5 Q24 9.5 24 12 V26 Q27 21 29 23 Q30 24 28 28 L22 40 V46 Z" fill="#8FA37E" stroke="#5E6E52" stroke-width="1"/></svg>
-      <span class="abrir">Ver idea</span>
-    </article>`; }).join('')}</div>`}
+  ${cuerpo}
   ${horda()}`;
 }
 // la idea completa
-function abrirTumba(id){ const r=cemFilas().find(x=>x.i.id===id); if(!r) return; const {i,c,m,rs}=r;
-  const abiertas=S.campanas.filter(x=>x.estado!=='cerrada'&&!x.revelado); const dobles=c.dobles||[];
+function abrirTumba(id){ const r=cemFilas().find(x=>x.i.id===id); if(!r) return; const {i,c,m,rs,camp,fecha,dobles}=r;
   const maxQ=rs?Math.max(...Q.map(q=>rs.avg[q.k]||0)):0;
   const bloque=(t,v,cls)=>v?`<div class="bloque ${cls||''}"><h4>${t}</h4><p>${esc(v)}</p></div>`:'';
   modal=`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="box box-idea" role="dialog" aria-modal="true" aria-label="${esc(i.nombre)}">
     <div class="idea-det-h"><button class="cerrar" onclick="closeModal()" aria-label="Cerrar">×</button>
       <div class="kicker">— R.I.P. · ${esc(m.nombre)}</div><h2>${esc(i.nombre)}</h2>
-      <div class="meta">${esc(c.nombre)} · enterrada el ${fmtDate((i.guardadaEn||c.decision?.fecha||'').slice(0,10))}${i.revivida?` · revivió ${i.revivida} ${i.revivida===1?'vez':'veces'}`:''}</div></div>
+      <div class="meta">${esc(camp)}${fecha?` · enterrada el ${fmtDate(fecha)}`:''}${i.revivida?` · revivió ${i.revivida} ${i.revivida===1?'vez':'veces'}`:''}</div>
+      ${i.tematica||i.seccion?`<div class="etqs" style="margin-top:10px">${i.tematica?`<span class="etq">Temática: ${esc(i.tematica)}</span>`:''}${i.seccion?`<span class="etq">Sección: ${esc(i.seccion)}</span>`:''}</div>`:''}</div>
     <div class="idea-det-b">
-      ${bloque('Qué se ve',i.queSeVe,'cita')}
+      ${bloque(i.importada?'La idea':'Qué se ve',i.queSeVe,i.importada?'':'cita')}
       <div class="dos">${bloque('Qué es',i.queEs)}${bloque('Qué hace la gente',i.queHace)}</div>
       ${bloque('De dónde salió',i.origen)}
       ${bloque('Por qué quedó afuera',i.porqueGuardada)}
       ${rs?`<div class="bloque"><h4>Cómo la votaron</h4><div class="notas-det"><div class="total"><b>${String(rs.total).replace('.',',')}</b><span>puntos en total</span></div>
         ${Q.map(q=>{ const v=rs.avg[q.k]||0; return `<div class="fila ${v===maxQ&&v>=4?'mejor':''}"><span>${q.short}${dobles.includes(q.k)?' <span style="color:var(--ban)">×2</span>':''}</span><span class="barra"><i style="width:${v/5*100}%"></i></span><b>${String(v).replace('.',',')}</b></div>`; }).join('')}</div></div>`:''}
+      ${!i.queSeVe&&!i.queEs&&!i.queHace&&!rs?`<p class="muted small">Esta idea se cargó sin detalle. ${puedeBrief()?'Tocá “Editar” para completarla.':''}</p>`:''}
     </div>
     <div class="idea-det-f">
-      ${isDC()?(abiertas.length?`<button class="btn pri" onclick="revivir('${i.id}')">🧟 Usar en otra campaña</button>`:`<button class="btn pri" disabled title="Primero creá una campaña nueva">🧟 Usar en otra campaña</button><span class="small dim">No hay campañas abiertas</span>`):''}
-      <button class="btn" onclick="copiarIdea('${i.id}')">Copiar</button>
-      <a class="btn ghost" href="#/campana/${c.id}" onclick="modal=null">Ver campaña</a>
+      ${puedeBrief()?`<button class="btn pri" onclick="revivir('${i.id}')">🧟 Usar en otra campaña</button>`:''}
+      ${puedeBrief()?`<button class="btn" onclick="editarCem('${i.id}')">Editar</button>`:''}
+      <button class="btn ghost" onclick="copiarIdea('${i.id}')">Copiar</button>
+      ${c?`<a class="btn ghost" href="#/campana/${c.id}" onclick="modal=null">Ver campaña</a>`:''}
       <span class="grow"></span>
       ${isDC()?`<button class="btn ghost sm danger" onclick="borrarIdea('${i.id}')">Borrar</button>`:''}
     </div></div></div>`;
@@ -1843,19 +1909,184 @@ function abrirTumba(id){ const r=cemFilas().find(x=>x.i.id===id); if(!r) return;
 let cemBuscarT=null;
 function cemBuscar(){ clearTimeout(cemBuscarT); cemBuscarT=setTimeout(()=>{ const q=(cemFiltro.q||'').toLowerCase(); let n=0;
   document.querySelectorAll('.tumba[data-id]').forEach(t=>{ const i=byId(S.ideas,t.dataset.id); const ok=!q||(i&&cemTexto(i).includes(q)); t.classList.toggle('oculta',!ok); if(ok) n++; });
+  document.querySelectorAll('.cem-grupo,.brain-sec,.brain-viejo').forEach(g=>{ g.style.display=g.querySelector('.tumba:not(.oculta)')?'':'none'; });
   const c=document.getElementById('cem-cuantas'); if(c) c.textContent=`${n} idea${n===1?'':'s'}`; },120); }
 // el amarillo de la lápida nace (y se va) por donde entra y sale el mouse
 function tumbaDesde(e){ const t=e.target.closest&&e.target.closest('.tumba'); if(!t||t.contains(e.relatedTarget)) return; const r=t.getBoundingClientRect(); t.style.setProperty('--px',(e.clientX-r.left)+'px'); t.style.setProperty('--py',(e.clientY-r.top)+'px'); }
 document.addEventListener('pointerover',tumbaDesde);
 document.addEventListener('pointerout',tumbaDesde);
-function copiarIdea(id){ const i=byId(S.ideas,id); const t=`${i.nombre}\nQué se ve: ${i.queSeVe}\nQué es: ${i.queEs}${i.queHace?`\nQué hace la gente: ${i.queHace}`:''}`; navigator.clipboard?.writeText(t).then(()=>toast('Idea copiada')).catch(()=>prompt('Copiala:',t)); }
+function copiarIdea(id){ const i=byId(S.ideas,id); const t=`${i.nombre}${i.queSeVe?`\nQué se ve: ${i.queSeVe}`:''}${i.queEs?`\nQué es: ${i.queEs}`:''}${i.queHace?`\nQué hace la gente: ${i.queHace}`:''}`; navigator.clipboard?.writeText(t).then(()=>toast('Idea copiada')).catch(()=>prompt('Copiala:',t)); }
+
+/* usar una idea del cementerio en otra campaña (abierta, o una nueva que se crea ahí mismo) */
 function revivir(ideaId){
-  const i=byId(S.ideas,ideaId); const abiertas=S.campanas.filter(c=>c.estado!=='cerrada'&&!c.revelado);
+  const i=byId(S.ideas,ideaId); const r=cemFilas().find(x=>x.i.id===ideaId); const abiertas=S.campanas.filter(c=>c.estado!=='cerrada'&&!c.revelado);
+  const marcas=S.marcas.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
   openModal(`<h2 style="margin-top:0">Usar “${esc(i.nombre)}”</h2><p class="muted">Se copia como idea final en la campaña que elijas, lista para votar. La original queda en el cementerio con su historia.</p>
-  <label class="f"><span>Campaña destino</span><select id="rv-dest">${abiertas.map(c=>`<option value="${c.id}">${esc(byId(S.marcas,c.marcaId)?.nombre)} · ${esc(c.nombre)||'sin nombre'}</option>`).join('')}</select></label>
+  ${abiertas.length?`<label class="f"><span>Campaña destino</span><select id="rv-dest" onchange="document.getElementById('rv-nueva').hidden=this.value!=='nueva'">${abiertas.map(c=>`<option value="${c.id}">${esc(byId(S.marcas,c.marcaId)?.nombre)} · ${esc(c.nombre)||'sin nombre'}</option>`).join('')}<option value="nueva">+ Crear una campaña nueva</option></select></label>`:`<input type="hidden" id="rv-dest" value="nueva"><p class="small" style="color:var(--warn)">No hay campañas abiertas: creá una acá mismo.</p>`}
+  <div id="rv-nueva" ${abiertas.length?'hidden':''}>
+    <div class="grid" style="grid-template-columns:1fr 1.4fr;gap:10px"><label class="f"><span>Marca</span><select id="rv-marca">${marcas.map(m=>`<option value="${m.id}" ${m.id===r?.m.id?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select></label>
+    <label class="f"><span>Nombre de la campaña</span><input type="text" id="rv-nombre" placeholder="Día del Padre 2027"></label></div>
+  </div>
   <div class="row"><button class="btn pri" onclick="confirmarRevivir('${ideaId}')">Usar en esa campaña</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`);
+  if(!abiertas.length) setTimeout(()=>document.getElementById('rv-nombre')?.focus(),0);
 }
-function confirmarRevivir(ideaId){ const i=byId(S.ideas,ideaId); const dest=document.getElementById('rv-dest').value; const c=byId(S.campanas,i.campanaId); S.ideas.push({id:uid(),campanaId:dest,estado:'votacion',nombre:i.nombre,origen:`Revivida del cementerio: ${c?.nombre||''} (${fmtDate((i.guardadaEn||'').slice(0,10))})${i.origen?` · antes: ${i.origen}`:''}`,queSeVe:i.queSeVe,queEs:i.queEs,queHace:i.queHace}); i.revivida=(i.revivida||0)+1; save(); modal=null; tab='ideas'; go('#/campana/'+dest); toast('Idea sumada a la campaña'); }
+function confirmarRevivir(ideaId){ const i=byId(S.ideas,ideaId); const r=cemFilas().find(x=>x.i.id===ideaId); let dest=document.getElementById('rv-dest').value;
+  if(dest==='nueva'){ const nombre=document.getElementById('rv-nombre').value.trim(); if(!nombre){ toast('Ponele nombre a la campaña'); document.getElementById('rv-nombre').focus(); return; }
+    const c={id:uid(),marcaId:document.getElementById('rv-marca').value,nombre,fecha:'',publica:'',reunion:'',votacionAbierta:false,tipo:'fecha_fija',dobles:['sirve','podemos'],problema:'',numero:'',numeroHoy:'',porque:'',contamos:'',noQueremos:'',participantes:ROLES_DEFAULT.slice(),estado:'abierta',revelado:false,decision:null,creada:new Date().toISOString()};
+    S.campanas.push(c); dest=c.id; }
+  S.ideas.push({id:uid(),campanaId:dest,estado:'votacion',nombre:i.nombre,origen:`Revivida del cementerio: ${r?.camp||''}${r?.fecha?` (${fmtDate(r.fecha)})`:''}${i.origen?` · antes: ${i.origen}`:''}`,queSeVe:i.queSeVe||'',queEs:i.queEs||'',queHace:i.queHace||'',seccion:i.seccion||'',tematica:i.tematica||''});
+  i.revivida=(i.revivida||0)+1; save(); modal=null; tab='ideas'; go('#/campana/'+dest); toast('Idea sumada a la campaña'); }
+
+/* editar una idea enterrada (sobre todo para clasificarla) */
+function cemDatalists(){ return `<datalist id="dl-sec">${cemValores('seccion').map(v=>`<option value="${esc(v)}">`).join('')}</datalist><datalist id="dl-tem">${cemValores('tematica').map(v=>`<option value="${esc(v)}">`).join('')}</datalist>`; }
+function editarCem(id){ const i=byId(S.ideas,id); if(!i) return; const marcas=S.marcas.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  openModal(`<h2 style="margin-top:0">Editar idea</h2>${cemDatalists()}
+  <label class="f"><span>Nombre</span><input type="text" id="ce-nombre" maxlength="80" value="${esc(i.nombre)}"></label>
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px"><label class="f"><span>Temática</span><input type="text" id="ce-tem" list="dl-tem" value="${esc(i.tematica||'')}" placeholder="Día del Padre, Verano, Lanzamiento…"></label>
+  <label class="f"><span>Sección</span><input type="text" id="ce-sec" list="dl-sec" value="${esc(i.seccion||'')}" placeholder="Reels, Producto, Institucional…"></label></div>
+  ${i.importada?`<div class="grid" style="grid-template-columns:1fr 1.3fr .9fr;gap:10px"><label class="f"><span>Marca</span><select id="ce-marca">${marcas.map(m=>`<option value="${m.id}" ${m.id===i.marcaId?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select></label>
+  <label class="f"><span>Brainstorming</span><input type="text" id="ce-camp" value="${esc(i.campanaNombre||'')}"></label><label class="f"><span>Fecha</span><input type="date" id="ce-fecha" value="${esc((i.fecha||'').slice(0,10))}"></label></div>`:''}
+  <label class="f"><span>Qué se ve</span><textarea id="ce-ve">${esc(i.queSeVe||'')}</textarea></label>
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px"><label class="f"><span>Qué es</span><input type="text" id="ce-es" value="${esc(i.queEs||'')}"></label><label class="f"><span>Qué hace la gente</span><input type="text" id="ce-hace" value="${esc(i.queHace||'')}"></label></div>
+  <label class="f"><span>Por qué quedó afuera</span><input type="text" id="ce-porque" value="${esc(i.porqueGuardada||'')}"></label>
+  <div class="row"><button class="btn pri" onclick="guardarCem('${id}')">Guardar</button><button class="btn ghost" onclick="abrirTumba('${id}')">Cancelar</button></div>`); }
+function guardarCem(id){ const i=byId(S.ideas,id); const g=k=>(document.getElementById(k)?.value||'').trim(); if(!g('ce-nombre')){ toast('Falta el nombre'); return; }
+  Object.assign(i,{nombre:g('ce-nombre'),tematica:g('ce-tem'),seccion:g('ce-sec'),queSeVe:g('ce-ve'),queEs:g('ce-es'),queHace:g('ce-hace'),porqueGuardada:g('ce-porque')});
+  if(i.importada){ i.marcaId=g('ce-marca')||i.marcaId; i.campanaNombre=g('ce-camp'); i.fecha=g('ce-fecha'); i.guardadaEn=i.fecha?i.fecha+'T12:00:00.000Z':i.guardadaEn; }
+  save(); toast('Idea guardada'); abrirTumba(id); }
+
+
+/* ---------- brainstormings anteriores: se suben los Word (.docx) y las ideas se arman solas ---------- */
+// Cómo se lee un Word del estudio: el primer renglón es el nombre del brainstorming; un renglón corto que termina en ":"
+// ("Ideas de Reel:", "Carrusel:") es una sección; cada punto de lista arranca una idea (lo que está en negrita es su nombre)
+// y los párrafos que siguen son su detalle. "De dónde surge:" se guarda como origen.
+let imDocs=[];
+async function leerDocx(file){   // un .docx es un zip: se busca word/document.xml y se descomprime en el navegador
+  const buf=new Uint8Array(await file.arrayBuffer()), dv=new DataView(buf.buffer);
+  let e=buf.length-22; while(e>=0&&dv.getUint32(e,true)!==0x06054b50) e--; if(e<0) throw new Error('no parece un .docx');
+  const n=dv.getUint16(e+10,true); let p=dv.getUint32(e+16,true);
+  for(let k=0;k<n;k++){ const metodo=dv.getUint16(p+10,true), comp=dv.getUint32(p+20,true), ln=dv.getUint16(p+28,true), lx=dv.getUint16(p+30,true), lc=dv.getUint16(p+32,true), off=dv.getUint32(p+42,true);
+    const nombre=new TextDecoder().decode(buf.subarray(p+46,p+46+ln));
+    if(nombre==='word/document.xml'){ const ini=off+30+dv.getUint16(off+26,true)+dv.getUint16(off+28,true); const datos=buf.subarray(ini,ini+comp);
+      if(metodo===0) return new TextDecoder().decode(datos);
+      return await new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text(); }
+    p+=46+ln+lx+lc; }
+  throw new Error('no encontré el texto del documento'); }
+function docxParrafos(xml){ const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main'; const d=new DOMParser().parseFromString(xml,'application/xml'); const body=d.getElementsByTagNameNS(W,'body')[0]; if(!body) return [];
+  const parr=p=>{ let txt='', neg='', enNeg=true;
+    for(const r of p.getElementsByTagNameNS(W,'r')){ const t=[...r.childNodes].map(c=>c.localName==='t'?c.textContent:c.localName==='tab'?' ':c.localName==='br'?'\n':'').join(''); if(!t) continue;
+      const rpr=[...r.childNodes].find(c=>c.localName==='rPr'); const bn=rpr&&[...rpr.childNodes].find(c=>c.localName==='b'); const b=!!bn&&!['0','false'].includes(bn.getAttributeNS(W,'val')||'');
+      if(enNeg&&b) neg+=t; else if(t.trim()) enNeg=false; txt+=t; }
+    const ppr=[...p.childNodes].find(c=>c.localName==='pPr'); const estilo=ppr?.getElementsByTagNameNS(W,'pStyle')[0]?.getAttributeNS(W,'val')||'';
+    return {txt:txt.replace(/[ \t]+/g,' ').trim(),neg:neg.replace(/[ \t]+/g,' ').trim(),lista:!!ppr&&ppr.getElementsByTagNameNS(W,'numPr').length>0,titulo:/^(heading|t[ií]tulo|title|ttulo)/i.test(estilo)}; };
+  const out=[];
+  for(const el of body.children){ if(el.localName==='p') out.push(parr(el));
+    else if(el.localName==='tbl') for(const tr of el.getElementsByTagNameNS(W,'tr')){ const celdas=[...tr.getElementsByTagNameNS(W,'tc')].map(tc=>[...tc.getElementsByTagNameNS(W,'p')].map(x=>parr(x).txt).filter(Boolean).join('\n')).filter(Boolean); if(celdas.length) out.push({txt:celdas.join('\n'),neg:celdas[0].length<90?celdas[0]:'',lista:true,titulo:false}); } }
+  // se anota qué párrafos vienen después de un renglón en blanco: así se distingue una sección ("Carrusel:") de un subtítulo dentro de una idea ("Historia 1:")
+  let vacio=true; out.forEach(x=>{ x.trasVacio=vacio; vacio=!x.txt; });
+  return out.filter(x=>x.txt); }
+const GENERICOS=/^(concepto|idea|reel|carrusel|historia|historias|post|activaci[oó]n|propuesta)$/i;
+function docxArmarIdea(a){ const f=a.partes[0]; let nombre='', resto=f.txt;
+  const neg=f.neg.replace(/[\s:.\-–—]+$/,'');
+  if(neg&&neg.length<=90&&f.neg.length<f.txt.length-3){ nombre=neg; resto=f.txt.slice(f.neg.length).replace(/^[\s:.,;\-–—]+/,''); }
+  else if(f.txt.length<=90&&!/[.:]\s+\S/.test(f.txt.replace(/[.:]$/,''))){ nombre=f.txt; resto=''; }   // la idea entera es corta: va completa como nombre
+  else { const m=f.txt.match(/^(.{3,70}?)[:.]\s+([^]+)$/); if(m&&!/https?$/i.test(m[1])){ nombre=m[1]; resto=m[2]; } }
+  if(!nombre||GENERICOS.test(nombre.trim())){ const base=GENERICOS.test(nombre.trim())?resto:f.txt; const pal=base.split(/\s+/); nombre=pal.slice(0,9).join(' ')+(pal.length>9?'…':''); }
+  nombre=nombre.replace(/^(reel|carrusel|historias?|post|activaci[oó]n)\s*[-–—:]\s*/i,'').replace(/^[“"'\s]+|[”"'\s:.]+$/g,'');
+  if(nombre===nombre.toUpperCase()&&/[A-ZÁÉÍÓÚÑ]{4}/.test(nombre)) nombre=nombre.toLowerCase();   // SI ESTÁ TODO EN MAYÚSCULAS, se pasa a texto normal
+  nombre=nombre.charAt(0).toUpperCase()+nombre.slice(1);
+  let det=[resto,...a.partes.slice(1).map(x=>x.txt)].filter(Boolean).join('\n').trim(); let origen='';
+  const ix=det.search(/de d[oó]nde surge\s*:/i); if(ix>=0){ const tras=det.slice(ix).replace(/^de d[oó]nde surge\s*:\s*/i,''); const fin=tras.search(/[.\n]/); origen=(fin>=0?tras.slice(0,fin):tras).trim(); det=(det.slice(0,ix)+(fin>=0?tras.slice(fin+1):'')).replace(/[ \t]+\n/g,'\n').trim(); }
+  if(det===nombre) det='';
+  return {nombre:nombre.replace(/^[“"']+|[”"']+$/g,'').trim().slice(0,80),queSeVe:det,queEs:a.seccion||'',seccion:a.seccion||'',origen}; }
+function docxIdeas(ps){ let titulo='', seccion='', actual=null; const ideas=[];
+  const esUrl=s=>/^https?:\/\/\S+(\s*\([^)]*\))?\.?$/i.test(s);
+  ps.forEach((x,ix)=>{
+    if(!titulo&&(x.titulo||ix===0)&&!x.lista&&x.txt.length<=90&&!/:$/.test(x.txt)){ titulo=x.txt; return; }
+    if((!x.lista&&x.txt.length<=45&&/:$/.test(x.txt)&&(x.trasVacio||!actual))||(x.titulo&&!x.lista)){ seccion=x.txt.replace(/:$/,'').replace(/^ideas?\s+(de|para)\s+/i,'').trim(); seccion=seccion.charAt(0).toUpperCase()+seccion.slice(1); actual=null; return; }
+    if(x.lista&&!esUrl(x.txt)){ actual={seccion,partes:[x]}; ideas.push(actual); return; }
+    if(actual) actual.partes.push(x); else { actual={seccion,partes:[x]}; ideas.push(actual); }
+  });
+  return {titulo,ideas:ideas.map(docxArmarIdea).filter(i=>i.nombre)}; }
+const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function adivinarMarca(texto){ texto=texto.toLowerCase(); let mejor=null, pts=0;
+  S.marcas.forEach(m=>{ const n=m.nombre.toLowerCase(); let p=(texto.match(new RegExp(escRe(n),'g'))||[]).length*3; n.split(/\s+/).filter(w=>w.length>3).forEach(w=>{ p+=(texto.match(new RegExp('\\b'+escRe(w)+'\\b','g'))||[]).length; }); if(p>pts){ pts=p; mejor=m; } });
+  return mejor; }
+async function imArchivos(files){ const st=document.getElementById('im-estado'); if(st) st.textContent='Leyendo…';
+  for(const f of files){
+    if(!/\.docx$/i.test(f.name)){ toast(`${f.name}: guardalo como .docx (en Word: Archivo → Guardar como → Documento de Word)`); continue; }
+    try{ const {titulo,ideas}=docxIdeas(docxParrafos(await leerDocx(f))); if(!ideas.length){ toast(`${f.name}: no encontré ideas`); continue; }
+      const nombre=titulo||f.name.replace(/\.docx$/i,''); const m=adivinarMarca(nombre+' '+f.name+' '+ideas.map(i=>i.nombre+' '+i.queSeVe).join(' '));
+      imDocs.push({archivo:f.name,titulo:nombre,marcaId:m?.id||'',fecha:'',tematica:nombre,ideas}); }
+    catch(e){ toast(`${f.name}: no se pudo leer (${e.message})`); } }
+  if(st) st.textContent=''; imPrevia(); }
+function importarCem(){ imDocs=[]; const marcas=S.marcas.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  modal=`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="box box-idea" role="dialog" aria-modal="true" aria-label="Subir brainstormings anteriores">
+    <div class="idea-det-h"><button class="cerrar" onclick="closeModal()" aria-label="Cerrar">×</button><div class="kicker">— Cementerio · Brainstormings anteriores</div><h2>Subir brainstormings</h2>
+      <div class="meta">Subí los Word de brainstormings que se hicieron antes de usar esta web: cada idea se arma sola, con su sección. Quedan en “Brainstormings anteriores”, listas para revivir.</div></div>
+    <div class="idea-det-b">${cemDatalists()}
+      <label class="im-drop" ondragover="event.preventDefault();this.classList.add('sobre')" ondragleave="this.classList.remove('sobre')" ondrop="event.preventDefault();this.classList.remove('sobre');imArchivos([...event.dataTransfer.files])">
+        <input type="file" accept=".docx" multiple onchange="imArchivos([...this.files]);this.value=''">
+        <b>Arrastrá los Word acá</b><span>o tocá para elegirlos · podés subir varios a la vez · .docx</span><em id="im-estado"></em></label>
+      <div id="im-docs"></div>
+      <details class="im-otro"><summary>O pegá las ideas como texto (de un mail, un Docs o una planilla)</summary>
+        <div class="dos" style="margin-top:12px"><label class="f" style="margin:0"><span>Marca</span><select id="im-marca" onchange="imPrevia()"><option value="">La de cada fila (columna Marca)</option>${marcas.map(m=>`<option value="${m.id}">${esc(m.nombre)}</option>`).join('')}</select></label>
+          <label class="f" style="margin:0"><span>Brainstorming</span><input type="text" id="im-camp" placeholder="Día del Padre 2025"></label></div>
+        <div class="dos" style="grid-template-columns:1fr 1fr 1fr;margin-top:12px"><label class="f" style="margin:0"><span>Fecha</span><input type="date" id="im-fecha"></label>
+          <label class="f" style="margin:0"><span>Temática</span><input type="text" id="im-tem" list="dl-tem" placeholder="Día del Padre"></label>
+          <label class="f" style="margin:0"><span>Sección</span><input type="text" id="im-sec" list="dl-sec" placeholder="Reels"></label></div>
+        <label class="f" style="margin:12px 0 0"><span>Las ideas</span><textarea id="im-texto" style="min-height:140px" oninput="imPrevia()" placeholder="Una idea por renglón (Nombre: detalle), o filas copiadas de una planilla:&#10;Nombre · Qué se ve · Qué es · Qué hace la gente · Sección · Temática · Marca · Fecha"></textarea>
+          <em><a href="#" onclick="event.preventDefault();plantillaCem()">Bajar plantilla para Google Sheets</a></em></label>
+        <div id="im-previa"></div>
+      </details>
+    </div>
+    <div class="idea-det-f"><button class="btn pri" id="im-ok" onclick="confirmarImportar()" disabled>Enterrar las ideas</button><button class="btn ghost" onclick="closeModal()">Cancelar</button><span class="small dim" id="im-falta"></span></div></div></div>`;
+  render(); }
+function imFecha(v){ v=(v||'').trim(); let m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`; m=v.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/); if(m){ const y=m[3].length===2?'20'+m[3]:m[3]; return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`; } return ''; }
+const CEM_COLS=[['nombre',/^(nombre|idea|titulo|título)/],['queSeVe',/(se ve|descrip|detalle)/],['queEs',/(qu[eé] es|formato)/],['queHace',/(hace|reacci)/],['seccion',/secci/],['tematica',/(tem[aá]tic|^tema)/],['marca',/marca|cliente/],['fecha',/fecha/],['campana',/(campa|brainstorm|reuni)/],['porque',/(por ?qu[eé]|motivo)/]];
+function imParsear(){ const txt=(document.getElementById('im-texto')?.value||'').replace(/\r/g,''); const filas=txt.split('\n').map(l=>l.trim()).filter(Boolean); if(!filas.length) return [];
+  if(!filas.some(l=>l.includes('\t'))) return filas.map(l=>{ const m=l.match(/^(.{2,70}?)\s*[:\-–—]\s+(.+)$/); return m?{nombre:m[1].trim(),queSeVe:m[2].trim()}:{nombre:l.length>70?l.slice(0,67).trim()+'…':l,queSeVe:l.length>70?l:''}; });
+  let cols=['nombre','queSeVe','queEs','queHace','seccion','tematica','marca','fecha']; let datos=filas.map(l=>l.split('\t').map(x=>x.trim()));
+  const map=datos[0].map(h=>(CEM_COLS.find(([,re])=>re.test(h.toLowerCase()))||[])[0]||null);
+  if(map.includes('nombre')){ cols=map; datos=datos.slice(1); }
+  return datos.filter(r=>r.some(Boolean)).map(r=>{ const o={}; cols.forEach((k,ix)=>{ if(k&&r[ix]) o[k]=r[ix]; }); if(!o.nombre&&o.queSeVe) o.nombre=o.queSeVe.slice(0,60); return o; }).filter(o=>o.nombre); }
+function imDocCampo(ix,k,v){ imDocs[ix][k]=v; imEstadoBoton(); }
+function imQuitarIdea(dx,ix){ imDocs[dx].ideas.splice(ix,1); if(!imDocs[dx].ideas.length) imDocs.splice(dx,1); imPrevia(); }
+function imEstadoBoton(){ const ok=document.getElementById('im-ok'), falta=document.getElementById('im-falta'); if(!ok) return;
+  const pegadas=imParsear(), marcaFija=document.getElementById('im-marca')?.value;
+  const n=imDocs.reduce((a,d)=>a+d.ideas.length,0)+pegadas.length;
+  const sinMarca=imDocs.filter(d=>!d.marcaId).length+(pegadas.length&&!marcaFija&&pegadas.some(o=>!o.marca)?1:0);
+  ok.disabled=!n||sinMarca>0; ok.textContent=n?`Enterrar ${n} idea${n===1?'':'s'}`:'Enterrar las ideas';
+  if(falta) falta.textContent=sinMarca?'Falta elegir la marca':''; }
+function imPrevia(){ const marcas=S.marcas.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  const dd=document.getElementById('im-docs');
+  if(dd) dd.innerHTML=imDocs.map((d,dx)=>{ const secs=[...new Set(d.ideas.map(i=>i.seccion||'Otras ideas'))];
+    return `<div class="im-doc"><div class="im-doc-h"><div><b>${esc(d.titulo)}</b><span>${esc(d.archivo)} · ${d.ideas.length} idea${d.ideas.length===1?'':'s'} · ${secs.map(esc).join(', ')}</span></div><button class="btn ghost sm" onclick="imDocs.splice(${dx},1);imPrevia()">Quitar</button></div>
+      <div class="dos im-campos">
+        <label class="f" style="margin:0"><span>Marca ${d.marcaId?'':'<b style="color:var(--warn)">· elegila</b>'}</span><select onchange="imDocCampo(${dx},'marcaId',this.value);imPrevia()"><option value="">Elegí la marca</option>${marcas.map(m=>`<option value="${m.id}" ${m.id===d.marcaId?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select></label>
+        <label class="f" style="margin:0"><span>Brainstorming</span><input type="text" value="${esc(d.titulo)}" onchange="imDocCampo(${dx},'titulo',this.value.trim())"></label>
+        <label class="f" style="margin:0"><span>Fecha</span><input type="date" value="${esc(d.fecha)}" onchange="imDocCampo(${dx},'fecha',this.value)"></label>
+        <label class="f" style="margin:0"><span>Temática</span><input type="text" list="dl-tem" value="${esc(d.tematica)}" onchange="imDocCampo(${dx},'tematica',this.value.trim())"></label></div>
+      <div class="im-lista">${d.ideas.map((o,ix)=>`<div class="im-it"><div class="row" style="gap:8px"><span class="etq">${esc(o.seccion||'Otras')}</span><b class="grow">${esc(o.nombre)}</b><button class="btn ghost sm" onclick="imQuitarIdea(${dx},${ix})" title="No cargar esta idea">✕</button></div>${o.queSeVe?`<span>${esc(o.queSeVe.slice(0,160))}${o.queSeVe.length>160?'…':''}</span>`:''}${o.origen?`<em>De dónde surge: ${esc(o.origen)}</em>`:''}</div>`).join('')}</div></div>`; }).join('');
+  const box=document.getElementById('im-previa'); const ideas=imParsear();
+  if(box){ const marcaFija=document.getElementById('im-marca').value; const nuevas=new Set(); ideas.forEach(o=>{ if(!marcaFija&&o.marca&&!S.marcas.some(m=>m.nombre.toLowerCase()===o.marca.toLowerCase())) nuevas.add(o.marca); });
+    box.innerHTML=!ideas.length?'':`<div class="bloque" style="margin-top:12px"><h4>Vista previa · ${ideas.length} idea${ideas.length===1?'':'s'}</h4>
+      ${!marcaFija&&ideas.some(o=>!o.marca)?`<p class="small" style="color:var(--warn);margin:0 0 8px">Elegí una marca: hay ideas que no la traen en su fila.</p>`:''}
+      ${nuevas.size?`<p class="small" style="color:var(--ban);margin:0 0 8px">Se van a crear estas marcas: ${[...nuevas].map(esc).join(', ')}</p>`:''}
+      <div class="im-lista">${ideas.slice(0,8).map(o=>`<div class="im-it"><b>${esc(o.nombre)}</b>${o.queSeVe&&o.queSeVe!==o.nombre?`<span>${esc(o.queSeVe.slice(0,110))}${o.queSeVe.length>110?'…':''}</span>`:''}<em>${[o.marca,o.tematica,o.seccion,o.fecha].filter(Boolean).map(esc).join(' · ')}</em></div>`).join('')}${ideas.length>8?`<div class="small dim">y ${ideas.length-8} más…</div>`:''}</div></div>`; }
+  imEstadoBoton(); }
+function confirmarImportar(){ const g=k=>(document.getElementById(k)?.value||'').trim(); let n=0;
+  const enterrar=(o,mid,camp,fecha,tem,sec)=>{ S.ideas.push({id:uid(),campanaId:null,marcaId:mid,importada:true,estado:'guardada',nombre:o.nombre.slice(0,80),queSeVe:o.queSeVe||'',queEs:o.queEs||'',queHace:o.queHace||'',seccion:o.seccion||sec||'',tematica:o.tematica||tem||'',origen:o.origen||'',campanaNombre:o.campana||camp||'Brainstorming anterior',fecha,porqueGuardada:o.porque||'',guardadaEn:fecha?fecha+'T12:00:00.000Z':new Date().toISOString()}); n++; };
+  if(imDocs.some(d=>!d.marcaId)){ toast('Elegí la marca de cada brainstorming'); return; }
+  imDocs.forEach(d=>d.ideas.forEach(o=>enterrar(o,d.marcaId,d.titulo,d.fecha,d.tematica,'')));
+  const marcaFija=g('im-marca'), fecha=g('im-fecha');
+  imParsear().forEach(o=>{ let mid=marcaFija; if(!mid){ let m=S.marcas.find(x=>x.nombre.toLowerCase()===(o.marca||'').toLowerCase()); if(!m&&o.marca){ m={id:uid(),nombre:o.marca}; S.marcas.push(m); } mid=m?.id; } if(!mid) return;
+    enterrar(o,mid,g('im-camp'),imFecha(o.fecha)||fecha,g('im-tem'),g('im-sec')); });
+  if(!n) return;
+  imDocs=[]; save(); modal=null; cemVista='anteriores'; render(); toast(`${n} idea${n===1?'':'s'} enterrada${n===1?'':'s'} en “Brainstormings anteriores”`); }
+function plantillaCem(){ const filas=[['Nombre','Qué se ve','Qué es','Qué hace la gente','Sección','Temática','Marca','Fecha'],['La manta','Cámara fija desde arriba de una manta; la caja se abre como mantel','Reel vertical 15 s','Guarda y comparte','Reels','Primavera','Tritato','21/09/2025']];
+  const csv=filas.map(r=>r.map(x=>`"${x.replace(/"/g,'""')}"`).join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'})); a.download='plantilla-cementerio-ideamia.csv'; a.click();
+  toast('Plantilla bajada: abrila en Google Sheets, completala y copiá las filas acá'); }
 
 /* ---------------- datos ---------------- */
 function viewDatos(){
