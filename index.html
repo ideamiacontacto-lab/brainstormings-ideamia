@@ -488,7 +488,9 @@ async function api(method,route,body){
 }
 function syncQuien(){ const c=campActual(); QUIEN=c?quienDe(c):''; }
 function campActual(){ const p=(location.hash||'').slice(2).split('/'); return (p[0]==='campana'||p[0]==='votar')?p[1]:null; }
-async function cargar(silencioso){
+let cargandoYa=false;
+async function cargar(silencioso){ if(silencioso&&cargandoYa) return; cargandoYa=true; try{ await cargar_(silencioso); } finally{ cargandoYa=false; } }
+async function cargar_(silencioso){
   const camp=campActual(); syncQuien();
   try{
     // el papel que se está llenando en esta pantalla (el propio, o el que carga el DC con “Votar por él”)
@@ -520,7 +522,7 @@ function seguirReunion(camp){
   else if(antes.e!=='cerrada'&&ahora.e==='cerrada'){ tab='decision'; toast('Ya hay idea elegida'); vib(); ultimoJSON=''; }
 }
 function escribiendo(){ const a=document.activeElement; return a && (a.tagName==='INPUT'||a.tagName==='TEXTAREA'||a.tagName==='SELECT') && a.type!=='checkbox'; }
-function poll(){ clearInterval(pollT); pollT=setInterval(()=>cargar(true), campActual()?2500:5000); }
+function poll(){ clearInterval(pollT); pollT=setInterval(()=>cargar(true), API_URL?(campActual()?4000:8000):(campActual()?2500:5000)); }
 
 /* guardar lo que carga el DC */
 let saveQ=Promise.resolve(), guardando=0, saveGen=0;
@@ -1029,7 +1031,8 @@ async function cargarPizarron(){
     bPaint(); if(B.notes.length&&(primera||!BV._manual)) bFit(false); }
   catch(e){ sync('Pizarrón: '+e.message,true); }
 }
-function pollPizarron(){ clearInterval(bpollT); bpollT=setInterval(cargarPizarron,2500); }
+let bCargando=false;
+function pollPizarron(){ clearInterval(bpollT); bpollT=setInterval(async()=>{ if(bCargando) return; bCargando=true; try{ await cargarPizarron(); } finally{ bCargando=false; } },API_URL?3000:2500); }
 
 /* dibujar */
 function bEnFoco(n,byN){ if(!bFoco) return true; if(n.tipo==='idea') return n.autorNombre===bFoco; return bRaices(n,byN).some(o=>o.autorNombre===bFoco); }
