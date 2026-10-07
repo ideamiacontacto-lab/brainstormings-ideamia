@@ -389,7 +389,7 @@ label.f span span,label.f span b{text-transform:none;letter-spacing:0}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(600px circle at var(--sx,50%) var(--sy,-20%),rgba(255,242,0,.055),transparent 60%)}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.045;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.wrap{position:relative;z-index:1}
+.wrap{position:relative}
 .top{z-index:5}
 #app>*{animation:none}
 #app.anim>*{animation:vin .5s var(--ease) both}
@@ -476,64 +476,97 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:90;opa
 .confeti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
 .confeti i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cae var(--t) cubic-bezier(.2,.6,.4,1) forwards;animation-delay:var(--dl)}
 @keyframes cae{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(var(--dx),110vh) rotate(var(--rot))}}
-/* ===== cementerio de ideas: luna, niebla, lápidas y una horda de zombies caminando abajo ===== */
-body.en-cem .wrap{padding-bottom:190px}
-.cem-hero{position:relative;padding:40px 0 30px;min-height:380px;display:flex;flex-direction:column;justify-content:center;overflow:visible}
-.cem-hero .luna{position:absolute;right:6%;top:10px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 38% 36%,#FFFBB8 0,#FFF200 45%,#D9CE00 100%);box-shadow:0 0 60px 10px rgba(255,242,0,.25),0 0 160px 50px rgba(255,242,0,.08);z-index:0}
-.cem-hero .luna::before,.cem-hero .luna::after{content:'';position:absolute;border-radius:50%;background:rgba(160,150,0,.28)}
-.cem-hero .luna::before{width:26px;height:26px;left:30%;top:52%} .cem-hero .luna::after{width:16px;height:16px;left:60%;top:28%}
-.cem-hero .murcielago{position:absolute;width:34px;height:14px;z-index:1;animation:vuelo 11s linear infinite}
-.cem-hero .murcielago svg{display:block;width:100%;height:100%;animation:aleteo .25s ease-in-out infinite alternate;transform-origin:center}
+/* ===== cementerio de ideas: luna, niebla, lápidas parejas, detalle de cada idea y zombies caminando abajo ===== */
+body.en-cem .wrap{padding-bottom:96px}
+.cem-hero{position:relative;padding:36px 0 26px;min-height:340px;display:flex;flex-direction:column;justify-content:center}
+.cem-hero>*{position:relative;z-index:2}
+.cem-hero .luna,.cem-hero .murcielago,.cem-hero .niebla{z-index:0}
+.cem-hero .luna{position:absolute;right:4%;top:6px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle at 38% 36%,#FFFBB8 0,#FFF200 45%,#D9CE00 100%);box-shadow:0 0 60px 10px rgba(255,242,0,.22),0 0 160px 50px rgba(255,242,0,.07)}
+.cem-hero .luna::before,.cem-hero .luna::after{content:'';position:absolute;border-radius:50%;background:rgba(160,150,0,.26)}
+.cem-hero .luna::before{width:24px;height:24px;left:30%;top:52%} .cem-hero .luna::after{width:15px;height:15px;left:60%;top:28%}
+.cem-hero .murcielago{position:absolute;width:30px;height:12px;animation:vuelo 11s linear infinite}
+.cem-hero .murcielago svg{display:block;width:100%;height:100%;animation:aleteo .25s ease-in-out infinite alternate}
 @keyframes aleteo{to{transform:scaleY(.4)}}
 @keyframes vuelo{0%{transform:translate(0,0)}25%{transform:translate(-60px,20px)}50%{transform:translate(-120px,-10px)}75%{transform:translate(-60px,-30px)}100%{transform:translate(0,0)}}
-.niebla{position:absolute;left:-30%;right:-30%;height:120px;pointer-events:none;background:radial-gradient(ellipse at 30% 50%,rgba(200,200,200,.10),transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(200,200,200,.08),transparent 55%);filter:blur(6px);animation:niebla 28s ease-in-out infinite alternate}
+.niebla{position:absolute;left:-30%;right:-30%;height:120px;pointer-events:none;background:radial-gradient(ellipse at 30% 50%,rgba(200,200,200,.09),transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(200,200,200,.07),transparent 55%);filter:blur(6px);animation:niebla 28s ease-in-out infinite alternate}
 .niebla.n1{bottom:-20px} .niebla.n2{bottom:40px;animation-duration:40s;opacity:.7}
 @keyframes niebla{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
 .cem-word .l2{-webkit-text-stroke-color:rgba(255,255,255,.3)}
-.cem-word .l1>span{text-shadow:0 0 40px rgba(255,242,0,.12)}
-.cem-filtros{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 34px;position:relative;z-index:2}
-/* lápidas */
-.tumbas{display:grid;gap:44px 22px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));align-items:end}
-.tumba{position:relative;padding-bottom:22px}
-.lapida{position:relative;z-index:1;border-radius:140px 140px 6px 6px;padding:46px 22px 20px;text-align:center;color:#D6D6D6;
-  background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.07),transparent 50%),linear-gradient(180deg,#3B3B3B,#232323 75%);
-  border:1px solid #474747;box-shadow:inset 0 2px 0 rgba(255,255,255,.06),inset 0 -14px 24px rgba(0,0,0,.35),0 18px 30px rgba(0,0,0,.5);
-  transform-origin:bottom center;transition:transform .35s var(--ease)}
-.lapida::before{content:'';position:absolute;inset:8px;border-radius:132px 132px 3px 3px;border:1px solid rgba(255,255,255,.05);pointer-events:none}
-.lapida::after{content:'';position:absolute;right:18%;top:24px;width:42px;height:60px;pointer-events:none;opacity:.35;
-  background:linear-gradient(115deg,transparent 46%,#151515 47%,#151515 51%,transparent 52%),linear-gradient(65deg,transparent 46%,#151515 47%,#151515 50%,transparent 51%) 0 22px/100% 60% no-repeat}
-.tumba:hover .lapida{transform:rotate(-1.5deg)}
-.lapida .cruz{font-size:22px;color:#6B6B6B;line-height:1}
-.lapida .rip{font-family:var(--f-display);font-size:30px;letter-spacing:.2em;color:#8E8E8E;text-shadow:0 1px 0 rgba(0,0,0,.8),0 -1px 0 rgba(255,255,255,.07);margin:4px 0 2px}
-.lapida .aqui{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#7A7A7A;font-weight:700}
-.lapida h3{font-family:var(--f-display);font-weight:400;font-size:34px;line-height:.95;color:#EDEDED;text-transform:uppercase;margin:6px 0 6px;text-shadow:0 2px 0 rgba(0,0,0,.7),0 -1px 0 rgba(255,255,255,.06)}
-.lapida .fechas{font-size:12px;color:#9A9A9A;letter-spacing:.04em}
-.lapida .epitafio{font-size:14px;color:#BDBDBD;font-style:italic;margin:12px 0 0;line-height:1.4;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
-.tumba:hover .lapida .epitafio{-webkit-line-clamp:unset}
-.lapida .porque{font-size:12.5px;color:#9A9A9A;margin:10px 0 0}
-.lapida .sc{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font-size:11.5px;color:#9A9A9A;margin-top:12px;font-variant-numeric:tabular-nums}
-.lapida .sc b{color:#E6E6E6}
-.lapida .tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0 0}
-.lapida .acc{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.lapida .btn.sm{background-color:transparent}
+.cem-word{font-size:clamp(64px,12vw,160px)}
+/* barra de herramientas */
+.cem-bar{position:sticky;top:72px;z-index:3;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 26px;padding:10px;background:rgba(17,17,17,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--r2)}
+.cem-bar .buscar{flex:1;min-width:200px;position:relative}
+.cem-bar .buscar input{padding-left:38px}
+.cem-bar .buscar svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--tx3);pointer-events:none}
+.cem-bar select{width:auto;min-width:150px}
+.cem-bar .cuantas{font-size:12px;color:var(--tx2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:0 6px;white-space:nowrap}
+.cem-orden{display:inline-flex;border:1px solid var(--line2);border-radius:var(--r);overflow:hidden}
+.cem-orden button{background:transparent;border:0;padding:10px 14px;font-size:13px;font-weight:600;color:var(--tx2)}
+.cem-orden button.on{background:var(--tx);color:var(--bg)}
+/* lápidas: todas del mismo alto, la info justa; se abren para ver todo */
+.tumbas{display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.tumba{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;height:340px;padding:44px 22px 18px;cursor:pointer;color:#D6D6D6;
+  border-radius:130px 130px 10px 10px;border:1px solid #333;
+  background:radial-gradient(120% 70% at 50% 0%,rgba(255,255,255,.06),transparent 60%),linear-gradient(180deg,#262626,#161616);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 14px 30px rgba(0,0,0,.45);
+  transition:transform .35s var(--ease),border-color .3s var(--ease),box-shadow .35s var(--ease)}
+.tumba:hover,.tumba:focus-visible{transform:translateY(-6px);border-color:#4A4A4A;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 24px 40px rgba(0,0,0,.55),0 0 0 1px rgba(255,242,0,.12)}
+.tumba:focus-visible{outline:2px solid var(--ban);outline-offset:3px}
+.tumba::after{content:'';position:absolute;left:-1px;right:-1px;bottom:-1px;height:10px;border-radius:0 0 10px 10px;background:linear-gradient(90deg,#2A2118,#1A140E,#2A2118);opacity:.9}
+.tumba .cruz{width:16px;height:22px;position:relative;opacity:.4;margin-bottom:10px}
+.tumba .cruz::before,.tumba .cruz::after{content:'';position:absolute;background:#9A9A9A;border-radius:1px}
+.tumba .cruz::before{left:7px;top:0;width:2px;height:22px} .tumba .cruz::after{left:1px;top:6px;width:14px;height:2px}
+.tumba .rip{font-family:var(--f-display);font-size:15px;letter-spacing:.32em;color:#777;margin-bottom:10px}
+.tumba h3{font-family:var(--f-display);font-weight:400;font-size:32px;line-height:.95;color:#F0F0F0;text-transform:uppercase;margin:0 0 8px;letter-spacing:.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 2px 0 rgba(0,0,0,.6)}
+.tumba .meta{font-size:12px;color:#8C8C8C;line-height:1.45;max-width:100%}
+.tumba .meta b{color:#B5B5B5;font-weight:600}
+.tumba .extracto{font-size:13.5px;color:#A8A8A8;line-height:1.45;margin:12px 0 0;font-style:italic;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tumba .pie{margin-top:auto;width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:1}
+.tumba .puntaje{font-family:var(--f-display);font-size:30px;line-height:1;color:#EDEDED;text-align:left}
+.tumba .puntaje small{font-family:var(--f-body);font-size:10px;letter-spacing:.1em;color:#777;font-weight:700;margin-left:3px}
+.tumba .marcas{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.tumba .chip{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:2px;background:rgba(255,242,0,.12);color:var(--ban);white-space:nowrap}
+.tumba .chip.vivo{background:rgba(169,212,143,.14);color:#A9D48F}
+.tumba .abrir{position:absolute;left:50%;bottom:-12px;transform:translate(-50%,6px);opacity:0;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--ban);color:var(--ban-ink);padding:5px 12px;border-radius:2px;transition:all .3s var(--ease);z-index:2;white-space:nowrap}
+.tumba:hover .abrir{opacity:1;transform:translate(-50%,0)}
+.tumba .mano{position:absolute;right:18px;bottom:6px;width:22px;opacity:0;transform:translateY(16px) rotate(-10deg);transition:all .45s var(--ease);z-index:0}
+.tumba:hover .mano{opacity:.9;transform:translateY(-10px) rotate(-10deg)}
+.tumba.destacada{border-color:var(--ban);box-shadow:0 0 0 1px var(--ban),0 0 50px rgba(255,242,0,.3)}
+.tumba.oculta{display:none}
+/* detalle de una idea (modal) */
+.modal .box.box-idea{max-width:720px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.idea-det-h{position:relative;padding:26px 26px 20px;background:radial-gradient(100% 120% at 100% 0%,rgba(255,242,0,.10),transparent 55%),linear-gradient(180deg,#1C1C1C,#141414);border-bottom:1px solid var(--line)}
+.idea-det-h .cerrar{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:transparent;color:var(--tx2);font-size:18px;line-height:1}
+.idea-det-h .cerrar:hover{color:var(--tx);border-color:var(--tx3)}
+.idea-det-h h2{font-size:clamp(34px,6vw,52px);margin:2px 0 8px;padding-right:40px}
+.idea-det-h .meta{font-size:13px;color:var(--tx2)}
+.idea-det-b{padding:22px 26px;overflow:auto;display:grid;gap:18px;flex:1;min-height:0;align-content:start}
+.idea-det-b .bloque h4{margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3)}
+.idea-det-b .bloque p{margin:0;font-size:16px;line-height:1.5;color:var(--tx);white-space:pre-wrap}
+.idea-det-b .bloque.cita p{font-size:18px;border-left:2px solid var(--ban);padding-left:14px}
+.idea-det-b .dos{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.notas-det{display:grid;gap:9px}
+.notas-det .fila{display:grid;grid-template-columns:150px 1fr 38px;gap:12px;align-items:center;font-size:13px;color:var(--tx2)}
+.notas-det .barra{height:6px;background:var(--sur2);border-radius:3px;overflow:hidden}
+.notas-det .barra i{display:block;height:100%;background:var(--tx2);border-radius:3px}
+.notas-det .fila.mejor .barra i{background:var(--ban)}
+.notas-det .fila b{color:var(--tx);text-align:right;font-variant-numeric:tabular-nums}
+.notas-det .total{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.notas-det .total b{font-family:var(--f-display);font-weight:400;font-size:44px;line-height:1;color:var(--tx)}
+.notas-det .total span{font-size:12px;color:var(--tx3);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.idea-det-f{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:16px 26px;border-top:1px solid var(--line);background:#111}
 .btn.revivir{border-color:#5E7A4E;color:#A9D48F;background:linear-gradient(90deg,#A9D48F 50%,transparent 50%) right/202% 100% no-repeat}
 .btn.revivir:hover{color:#0A0A0A;border-color:#A9D48F}
-.musgo{position:absolute;left:10px;right:10px;bottom:-2px;height:14px;z-index:2;border-radius:0 0 6px 6px;background:radial-gradient(ellipse at 20% 100%,#3E5A2E 0 30%,transparent 31%),radial-gradient(ellipse at 55% 100%,#33502A 0 35%,transparent 36%),radial-gradient(ellipse at 85% 100%,#3E5A2E 0 28%,transparent 29%)}
-.tierra{position:absolute;left:-8px;right:-8px;bottom:0;height:34px;z-index:0;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#2B2118,#140F0A 70%);box-shadow:0 8px 20px rgba(0,0,0,.6)}
-.mano{position:absolute;left:var(--mx,70%);bottom:14px;width:30px;z-index:0;transform:translateY(30px) rotate(-8deg);opacity:0;transition:transform .5s var(--ease),opacity .3s}
-.tumba:hover .mano{transform:translateY(-6px) rotate(-8deg);opacity:1}
-.tumba.destacada .lapida{box-shadow:0 0 0 2px var(--ban),0 0 40px rgba(255,242,0,.35)}
-.tumba.revivida .lapida{border-color:#5E7A4E}
 /* horda de zombies (como "Canvas crowd" de Skiper, pero zombies y en SVG) */
-.horda{position:fixed;left:0;right:0;bottom:0;height:170px;z-index:4;pointer-events:none;overflow:hidden;
-  background:linear-gradient(180deg,transparent,rgba(10,10,10,.75) 45%,#0A0A0A 85%)}
+.horda{position:relative;width:100vw;margin:56px 0 -96px calc(50% - 50vw);height:170px;z-index:1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,transparent,rgba(20,16,12,.35) 60%,#0A0A0A)}
 .horda::before{content:'';position:absolute;left:0;right:0;bottom:22px;height:44px;opacity:.5;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='44'%3E%3Cg fill='%23181818'%3E%3Cpath d='M20 44V18a12 12 0 0 1 24 0v26z'/%3E%3Cpath d='M96 44V24h-6v-6h6v-6h6v6h6v6h-6v20z'/%3E%3Cpath d='M150 44V14a15 15 0 0 1 30 0v30z'/%3E%3Cpath d='M222 44V28h-5v-5h5v-5h5v5h5v5h-5v16z'/%3E%3C/g%3E%3C/svg%3E") repeat-x bottom/260px 44px}
 .horda::after{content:'';position:absolute;left:0;right:0;bottom:0;height:24px;background:linear-gradient(180deg,#14100C,#0A0A0A)}
 .zombi{position:absolute;left:0;bottom:var(--b);width:var(--w);z-index:var(--z);pointer-events:auto;cursor:pointer;animation:camina var(--t) linear infinite;animation-delay:var(--dl);opacity:var(--o,1)}
 .zombi.izq{animation-name:caminaIzq}
 .zombi>div{animation:tambaleo .7s ease-in-out infinite alternate}
-.zombi.izq>div{transform:scaleX(-1)}
+.zombi.izq>div{animation-name:tambaleoIzq}
 .zombi svg{display:block;width:100%;height:auto;overflow:visible}
 .zombi .pa,.zombi .pb,.zombi .br{transform-box:view-box}
 .zombi .pa{transform-origin:30px 66px;animation:paso .7s ease-in-out infinite alternate}
@@ -543,11 +576,39 @@ body.en-cem .wrap{padding-bottom:190px}
 @keyframes camina{from{transform:translateX(-140px)}to{transform:translateX(calc(100vw + 140px))}}
 @keyframes caminaIzq{from{transform:translateX(calc(100vw + 140px))}to{transform:translateX(-140px)}}
 @keyframes tambaleo{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-4px) rotate(3deg)}}
-.zombi.izq>div{animation-name:tambaleoIzq}
 @keyframes tambaleoIzq{from{transform:scaleX(-1) translateY(0) rotate(-3deg)}to{transform:scaleX(-1) translateY(-4px) rotate(3deg)}}
 @keyframes paso{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
 @keyframes brazos{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
-@media (max-width:640px){ .horda{height:120px} .cem-hero .luna{width:96px;height:96px;right:2%} }
+/* celular */
+@media (max-width:640px){
+  body.en-cem .wrap{padding-bottom:80px} .horda{margin-bottom:-80px}
+  .cem-hero{min-height:0;padding:22px 0 18px}
+  .cem-hero .luna{width:74px;height:74px;right:0;top:0}
+  .cem-hero .murcielago{display:none}
+  .cem-hero .stats{grid-template-columns:repeat(3,1fr)}
+  .cem-hero .stats b{font-size:36px} .cem-hero .stats span{font-size:10px}
+  .cem-bar{top:58px;padding:8px;gap:8px}
+  .cem-bar .buscar{min-width:100%}
+  .cem-bar select{flex:1;min-width:0}
+  .cem-bar .cuantas{display:none}
+  .tumbas{grid-template-columns:1fr;gap:12px}
+  .tumba{height:auto;min-height:0;flex-direction:row;align-items:center;text-align:left;gap:14px;padding:16px 16px 18px;border-radius:44px 10px 10px 44px}
+  .tumba .cruz,.tumba .rip,.tumba .mano,.tumba .abrir,.tumba .extracto{display:none}
+  .tumba .cuerpo{flex:1;min-width:0}
+  .tumba h3{font-size:26px;-webkit-line-clamp:2}
+  .tumba .pie{margin:0;width:auto;flex-direction:column;align-items:flex-end;border:0;padding:0}
+  .tumba::after{display:none}
+  .tumba .lapidita{display:flex}
+  .modal{padding:0;align-items:flex-end}
+  .modal .box.box-idea{max-height:92vh;border-radius:14px 14px 0 0}
+  .idea-det-h{padding:22px 18px 16px} .idea-det-b{padding:18px} .idea-det-f{padding:12px 18px}
+  .idea-det-b .dos{grid-template-columns:1fr}
+  .idea-det-f>*{flex:1 1 0;text-align:center;justify-content:center;white-space:nowrap;padding-left:10px;padding-right:10px} .idea-det-f .grow{display:none} .idea-det-f .btn.pri,.idea-det-f .small{flex-basis:100%}
+  .notas-det .fila{grid-template-columns:110px 1fr 32px}
+  .horda{height:110px} .horda::before{bottom:16px;height:30px;background-size:180px 30px}
+  .zombi{width:calc(var(--w)*.62)}
+}
+.tumba .lapidita{display:none;flex:none;width:42px;height:52px;border-radius:21px 21px 4px 4px;background:linear-gradient(180deg,#333,#1E1E1E);border:1px solid #3C3C3C;align-items:center;justify-content:center;font-family:var(--f-display);font-size:12px;letter-spacing:.12em;color:#777}
 @media print{
   :root{--bg:#fff;--bg2:#fff;--sur:#fff;--sur2:#f3f0ea;--line:#ddd;--line2:#bbb;--tx:#111;--tx2:#444;--tx3:#777;--ban:#111;--ban-ink:#fff}
   body{background:#fff;color:#111} .top,.no-print,.toast{display:none!important} .wrap{padding:0;max-width:none}
@@ -1684,55 +1745,86 @@ function reabrirDecision(id){ if(!confirm('¿Deshacer la decisión? Las ideas vu
 
 /* ---------------- cementerio ---------------- */
 let cemFiltro={marca:'',q:''};
+let cemOrden='recientes';
+function cemFilas(){ const items=S.ideas.filter(i=>i.estado==='guardada'||i.estado==='acompana');
+  return items.map(i=>{ const c=byId(S.campanas,i.campanaId); const m=c?byId(S.marcas,c.marcaId):null; return {i,c,m,rs:c?.decision?.resumen?.[i.id]||null}; }).filter(r=>r.c&&r.m); }
+const cemTexto=i=>(i.nombre+' '+(i.queSeVe||'')+' '+(i.queEs||'')+' '+(i.queHace||'')+' '+(i.origen||'')).toLowerCase();
 function viewCementerio(){
-  const items=S.ideas.filter(i=>i.estado==='guardada'||i.estado==='acompana');
-  const rows=items.map(i=>{ const c=byId(S.campanas,i.campanaId); const m=c?byId(S.marcas,c.marcaId):null; return {i,c,m}; }).filter(r=>r.c&&r.m);
-  const filt=rows.filter(r=>(!cemFiltro.marca||r.m.id===cemFiltro.marca)&&(!cemFiltro.q||(r.i.nombre+' '+r.i.queSeVe+' '+r.i.queEs+' '+(r.i.origen||'')).toLowerCase().includes(cemFiltro.q.toLowerCase())));
-  filt.sort((a,b)=>(b.i.guardadaEn||'').localeCompare(a.i.guardadaEn||''));
-  const abiertas=S.campanas.filter(c=>c.estado!=='cerrada'&&!c.revelado);
-  const revividas=rows.reduce((a,r)=>a+(r.i.revivida||0),0);
+  const rows=cemFilas();
+  const filt=rows.filter(r=>!cemFiltro.marca||r.m.id===cemFiltro.marca);
+  filt.sort(cemOrden==='puntaje'?(a,b)=>(b.rs?.total||0)-(a.rs?.total||0):(a,b)=>(b.i.guardadaEn||'').localeCompare(a.i.guardadaEn||''));
+  const revividas=rows.reduce((a,r)=>a+(r.i.revivida||0),0), marcas=new Set(rows.map(r=>r.m.id)).size;
+  const q=(cemFiltro.q||'').toLowerCase();
   return `<section class="cem-hero">
     <div class="luna" aria-hidden="true"></div>
     <div class="murcielago" style="right:22%;top:30px" aria-hidden="true">${MURCI}</div>
-    <div class="murcielago" style="right:12%;top:120px;animation-delay:-4s;width:24px" aria-hidden="true">${MURCI}</div>
+    <div class="murcielago" style="right:12%;top:120px;animation-delay:-4s;width:22px" aria-hidden="true">${MURCI}</div>
     <div class="niebla n2" aria-hidden="true"></div><div class="niebla n1" aria-hidden="true"></div>
     <div class="kicker">— Donde descansan las que no ganaron</div>
     <h1 class="wordmark cem-word"><span class="l1"><span>Cementerio</span></span><span class="l2"><span>de <b>ideas</b></span></span></h1>
-    <p class="lead">No están muertas: <strong>están esperando otra campaña.</strong> Cuando falte una idea, se abre esto antes de inventar de cero.</p>
+    <p class="lead">No están muertas: <strong>están esperando otra campaña.</strong> Antes de inventar de cero, buscá acá.</p>
     <div class="stats">
-      <div><b data-count="${rows.length}">${rows.length}</b><span>idea${rows.length===1?'':'s'} enterrada${rows.length===1?'':'s'}</span></div>
-      <div><b data-count="${revividas}">${revividas}</b><span>vuelta${revividas===1?'':'s'} a la vida</span></div>
-      <div><b data-count="${new Set(rows.map(r=>r.m.id)).size}">${new Set(rows.map(r=>r.m.id)).size}</b><span>marcas</span></div>
+      <div><b data-count="${rows.length}">${rows.length}</b><span>enterrada${rows.length===1?'':'s'}</span></div>
+      <div><b data-count="${revividas}">${revividas}</b><span>revivida${revividas===1?'':'s'}</span></div>
+      <div><b data-count="${marcas}">${marcas}</b><span>marca${marcas===1?'':'s'}</span></div>
     </div>
   </section>
-  <div class="cem-filtros">
-    <select style="width:auto" onchange="cemFiltro.marca=this.value;render()"><option value="">Todas las marcas</option>${S.marcas.map(m=>`<option value="${m.id}" ${cemFiltro.marca===m.id?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select>
-    <input type="text" style="width:auto;flex:1;min-width:180px" placeholder="Buscar en nombre, qué se ve, qué es…" value="${esc(cemFiltro.q)}" oninput="cemFiltro.q=this.value;cemBuscar()">
-  </div>
+  ${rows.length?`<div class="cem-bar">
+    <label class="buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" placeholder="Buscar una idea…" value="${esc(cemFiltro.q)}" oninput="cemFiltro.q=this.value;cemBuscar()" aria-label="Buscar en el cementerio"></label>
+    <select onchange="cemFiltro.marca=this.value;render()" aria-label="Filtrar por marca"><option value="">Todas las marcas</option>${S.marcas.filter(m=>rows.some(r=>r.m.id===m.id)).map(m=>`<option value="${m.id}" ${cemFiltro.marca===m.id?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select>
+    <span class="cem-orden" role="group" aria-label="Ordenar"><button class="${cemOrden==='recientes'?'on':''}" onclick="cemOrden='recientes';render()">Recientes</button><button class="${cemOrden==='puntaje'?'on':''}" onclick="cemOrden='puntaje';render()">Mejor puntaje</button></span>
+    <span class="cuantas" id="cem-cuantas">${filt.length} idea${filt.length===1?'':'s'}</span>
+  </div>`:''}
   ${filt.length===0?`<div class="empty">${rows.length?'Nada con ese filtro.':'Todavía no hay ideas enterradas. Aparecen solas cuando se confirma la decisión de una campaña.'}</div>`:
-  `<div class="tumbas">${filt.map(({i,c,m},ix)=>{ const rs=c.decision?.resumen?.[i.id]; const cincos=rs?Q.filter(q=>rs.avg[q.k]>=4.5).map(q=>q.short):[];
-    return `<article class="tumba ${i.revivida?'revivida':''}" data-id="${i.id}" data-nombre="${esc(i.nombre)}">
-    <div class="tierra"></div>
-    <svg class="mano" style="--mx:${18+(ix*29)%60}%" viewBox="0 0 30 46" aria-hidden="true"><path d="M8 46 V22 Q8 19 10 19 Q12 19 12 22 V12 Q12 9 14 9 Q16 9 16 12 V8 Q16 5 18 5 Q20 5 20 8 V12 Q20 9.5 22 9.5 Q24 9.5 24 12 V26 Q27 21 29 23 Q30 24 28 28 L22 40 V46 Z" fill="#8FA37E" stroke="#5E6E52" stroke-width="1"/></svg>
-    <div class="lapida">
-      <div class="cruz" aria-hidden="true">✝</div>
-      <div class="rip">R.I.P.</div>
-      <div class="aqui">Aquí yace</div>
-      <h3>${esc(i.nombre)}</h3>
-      <div class="fechas">${esc(m.nombre)} · ${esc(c.nombre)}<br>✝ ${fmtDate((i.guardadaEn||c.decision?.fecha||'').slice(0,10))}</div>
-      ${i.queSeVe?`<p class="epitafio">“${esc(i.queSeVe)}”</p>`:''}
-      ${i.porqueGuardada?`<p class="porque">Quedó afuera porque ${esc(i.porqueGuardada.charAt(0).toLowerCase()+i.porqueGuardada.slice(1))}</p>`:''}
-      <div class="tags">${cincos.length?`<span class="tag ban">5 en ${cincos.join(', ')}</span>`:''}${i.revivida?`<span class="tag ok">Revivió ${i.revivida} ${i.revivida===1?'vez':'veces'}</span>`:''}</div>
-      ${rs?`<div class="sc"><span>Total <b>${rs.total}</b></span>${Q.map(q=>`<span>${q.short.replace('¿','').replace('?','')} <b>${rs.avg[q.k]}</b></span>`).join('')}</div>`:''}
-      <div class="acc"><a class="btn ghost sm" href="#/campana/${c.id}">Ver campaña</a><button class="btn ghost sm" onclick="copiarIdea('${i.id}')">Copiar</button>${isDC()&&abiertas.length?`<button class="btn sm revivir" onclick="revivir('${i.id}')">🧟 Revivir</button>`:''}${isDC()?`<button class="btn ghost sm danger" onclick="borrarIdea('${i.id}')">Borrar</button>`:''}</div>
-    </div>
-    <div class="musgo" aria-hidden="true"></div>
-  </article>`; }).join('')}</div>`}
+  `<div class="tumbas">${filt.map(({i,c,m,rs})=>{ const cincos=rs?Q.filter(q=>rs.avg[q.k]>=4.5).map(q=>q.short.replace('¿','').replace('?','')):[];
+    return `<article class="tumba ${q&&!cemTexto(i).includes(q)?'oculta':''}" data-id="${i.id}" data-nombre="${esc(i.nombre)}" tabindex="0" role="button" aria-label="Abrir ${esc(i.nombre)}" onclick="abrirTumba('${i.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirTumba('${i.id}')}">
+      <span class="lapidita" aria-hidden="true">RIP</span>
+      <span class="cruz" aria-hidden="true"></span>
+      <span class="rip">R.I.P.</span>
+      <div class="cuerpo">
+        <h3>${esc(i.nombre)}</h3>
+        <div class="meta"><b>${esc(m.nombre)}</b> · ${esc(c.nombre)}<br>✝ ${fmtDate((i.guardadaEn||c.decision?.fecha||'').slice(0,10))}</div>
+        ${i.queSeVe?`<p class="extracto">“${esc(i.queSeVe)}”</p>`:''}
+      </div>
+      <div class="pie">
+        <span class="puntaje">${rs?`${String(rs.total).replace('.',',')}<small>PTS</small>`:'<small>SIN NOTAS</small>'}</span>
+        <span class="marcas">${cincos.length?`<span class="chip" title="Sacó 5 en ${cincos.join(', ')}">5 en ${cincos.length===1?cincos[0]:cincos.length+' preguntas'}</span>`:''}${i.revivida?`<span class="chip vivo">Revivió ×${i.revivida}</span>`:''}</span>
+      </div>
+      <svg class="mano" viewBox="0 0 30 46" aria-hidden="true"><path d="M8 46 V22 Q8 19 10 19 Q12 19 12 22 V12 Q12 9 14 9 Q16 9 16 12 V8 Q16 5 18 5 Q20 5 20 8 V12 Q20 9.5 22 9.5 Q24 9.5 24 12 V26 Q27 21 29 23 Q30 24 28 28 L22 40 V46 Z" fill="#8FA37E" stroke="#5E6E52" stroke-width="1"/></svg>
+      <span class="abrir">Ver idea</span>
+    </article>`; }).join('')}</div>`}
   ${horda()}`;
 }
-// buscar sin redibujar todo (si no, se pierde el foco del campo)
+// la idea completa
+function abrirTumba(id){ const r=cemFilas().find(x=>x.i.id===id); if(!r) return; const {i,c,m,rs}=r;
+  const abiertas=S.campanas.filter(x=>x.estado!=='cerrada'&&!x.revelado); const dobles=c.dobles||[];
+  const maxQ=rs?Math.max(...Q.map(q=>rs.avg[q.k]||0)):0;
+  const bloque=(t,v,cls)=>v?`<div class="bloque ${cls||''}"><h4>${t}</h4><p>${esc(v)}</p></div>`:'';
+  modal=`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="box box-idea" role="dialog" aria-modal="true" aria-label="${esc(i.nombre)}">
+    <div class="idea-det-h"><button class="cerrar" onclick="closeModal()" aria-label="Cerrar">×</button>
+      <div class="kicker">— R.I.P. · ${esc(m.nombre)}</div><h2>${esc(i.nombre)}</h2>
+      <div class="meta">${esc(c.nombre)} · enterrada el ${fmtDate((i.guardadaEn||c.decision?.fecha||'').slice(0,10))}${i.revivida?` · revivió ${i.revivida} ${i.revivida===1?'vez':'veces'}`:''}</div></div>
+    <div class="idea-det-b">
+      ${bloque('Qué se ve',i.queSeVe,'cita')}
+      <div class="dos">${bloque('Qué es',i.queEs)}${bloque('Qué hace la gente',i.queHace)}</div>
+      ${bloque('De dónde salió',i.origen)}
+      ${bloque('Por qué quedó afuera',i.porqueGuardada)}
+      ${rs?`<div class="bloque"><h4>Cómo la votaron</h4><div class="notas-det"><div class="total"><b>${String(rs.total).replace('.',',')}</b><span>puntos en total</span></div>
+        ${Q.map(q=>{ const v=rs.avg[q.k]||0; return `<div class="fila ${v===maxQ&&v>=4?'mejor':''}"><span>${q.short}${dobles.includes(q.k)?' <span style="color:var(--ban)">×2</span>':''}</span><span class="barra"><i style="width:${v/5*100}%"></i></span><b>${String(v).replace('.',',')}</b></div>`; }).join('')}</div></div>`:''}
+    </div>
+    <div class="idea-det-f">
+      ${isDC()?(abiertas.length?`<button class="btn pri" onclick="revivir('${i.id}')">🧟 Usar en otra campaña</button>`:`<button class="btn pri" disabled title="Primero creá una campaña nueva">🧟 Usar en otra campaña</button><span class="small dim">No hay campañas abiertas</span>`):''}
+      <button class="btn" onclick="copiarIdea('${i.id}')">Copiar</button>
+      <a class="btn ghost" href="#/campana/${c.id}" onclick="modal=null">Ver campaña</a>
+      <span class="grow"></span>
+      ${isDC()?`<button class="btn ghost sm danger" onclick="borrarIdea('${i.id}')">Borrar</button>`:''}
+    </div></div></div>`;
+  render(); setTimeout(()=>document.querySelector('.box-idea .cerrar')?.focus(),0); }
+// buscar sin redibujar todo (así no se pierde el foco del campo)
 let cemBuscarT=null;
-function cemBuscar(){ clearTimeout(cemBuscarT); cemBuscarT=setTimeout(()=>{ const q=(cemFiltro.q||'').toLowerCase(); document.querySelectorAll('.tumba[data-id]').forEach(t=>{ const i=byId(S.ideas,t.dataset.id); const txt=i?(i.nombre+' '+i.queSeVe+' '+i.queEs+' '+(i.origen||'')).toLowerCase():''; t.style.display=!q||txt.includes(q)?'':'none'; }); },120); }
+function cemBuscar(){ clearTimeout(cemBuscarT); cemBuscarT=setTimeout(()=>{ const q=(cemFiltro.q||'').toLowerCase(); let n=0;
+  document.querySelectorAll('.tumba[data-id]').forEach(t=>{ const i=byId(S.ideas,t.dataset.id); const ok=!q||(i&&cemTexto(i).includes(q)); t.classList.toggle('oculta',!ok); if(ok) n++; });
+  const c=document.getElementById('cem-cuantas'); if(c) c.textContent=`${n} idea${n===1?'':'s'}`; },120); }
 function copiarIdea(id){ const i=byId(S.ideas,id); const t=`${i.nombre}\nQué se ve: ${i.queSeVe}\nQué es: ${i.queEs}${i.queHace?`\nQué hace la gente: ${i.queHace}`:''}`; navigator.clipboard?.writeText(t).then(()=>toast('Idea copiada')).catch(()=>prompt('Copiala:',t)); }
 function revivir(ideaId){
   const i=byId(S.ideas,ideaId); const abiertas=S.campanas.filter(c=>c.estado!=='cerrada'&&!c.revelado);
