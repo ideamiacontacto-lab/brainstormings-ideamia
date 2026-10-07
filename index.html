@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ideamia · Votación de ideas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#171411; --bg2:#1F1B17; --sur:#221E19; --sur2:#2B2620; --line:#2F2A23; --line2:#463E33;
+  --tx:#F3EDE1; --tx2:#A99F8E; --tx3:#6F675B;
+  --ban:#F5C531; --ban-ink:#221B00;
+  --ok:#9CC985; --warn:#E6A163; --bad:#DE7070; --cem:#7C7466;
+  --r:12px; --r2:18px;
+}
+*{box-sizing:border-box}
+html{font-size:16px} @media (min-width:900px){ html{font-size:17px} }
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Bricolage Grotesque",system-ui,sans-serif;font-optical-sizing:auto;line-height:1.5;-webkit-font-smoothing:antialiased}
+::selection{background:var(--ban);color:var(--ban-ink)}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ban);outline-offset:2px}
+@keyframes vin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+#app>*{animation:vin .18s ease-out}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* layout */
+.top{display:flex;align-items:center;gap:22px;padding:16px 26px;position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:5}
+.top .logo{font-weight:800;letter-spacing:.18em;font-size:13px;text-decoration:none;color:var(--tx)}
+.top .logo b{color:var(--ban)}
+.top nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.top nav a{text-decoration:none;padding:7px 12px;border-radius:999px;color:var(--tx2);font-size:14px;position:relative}
+.top nav a:hover{color:var(--tx)}
+.top nav a.on{color:var(--tx)} .top nav a.on::after{content:'';position:absolute;left:12px;right:12px;bottom:2px;height:2px;background:var(--ban);border-radius:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:36px 26px 96px}
+h1{font-size:40px;line-height:1.05;margin:0 0 8px;font-weight:700;letter-spacing:-.02em}
+h2{font-size:24px;margin:40px 0 14px;font-weight:600;letter-spacing:-.01em}
+h3{font-size:16px;margin:18px 0 8px;font-weight:600}
+p{margin:0 0 10px}
+.muted{color:var(--tx2)} .small{font-size:13px} .dim{color:var(--tx3)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+
+/* controls */
+.btn{background:var(--sur2);border:1px solid transparent;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;min-height:40px;transition:background .15s,transform .05s}
+.btn:hover{background:var(--line2)}
+.btn:active{transform:scale(.98)}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button.tag{cursor:pointer} button.tag::before{display:none}
+.btn.pri{background:var(--ban);color:var(--ban-ink);font-weight:700}
+.btn.pri:hover{background:#ffd54a}
+.btn.ghost{background:transparent;color:var(--tx2)}
+.btn.ghost:hover{color:var(--tx);background:var(--sur2)}
+.btn.sm{padding:7px 13px;font-size:13px;min-height:34px}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input[type=text],input[type=password],input[type=time],input[type=date],input[type=number],select,textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;font-size:15px;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ban)}
+textarea{min-height:76px;resize:vertical}
+label.f{display:block;margin-bottom:12px}
+label.f span{display:block;font-size:13px;color:var(--tx2);margin-bottom:5px}
+label.f em{font-style:normal;color:var(--tx3);font-size:12px;display:block;margin-top:4px}
+
+/* cards */
+.card{background:var(--sur);border:1px solid transparent;border-radius:var(--r2);padding:20px}
+.card.click{cursor:pointer;transition:background .15s,transform .15s}
+.card.click:hover{background:var(--sur2);transform:translateY(-1px)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--sur2);color:var(--tx2);border:0;font-weight:600;letter-spacing:.01em}
+.tag::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+.tag.ban{background:var(--ban);color:var(--ban-ink)} .tag.ban::before{display:none}
+.tag.ok{background:rgba(156,201,133,.12);color:var(--ok)}
+.tag.cem{background:transparent;color:var(--cem);box-shadow:inset 0 0 0 1px var(--line2)}
+.tag.warn{background:rgba(230,161,99,.12);color:var(--warn)}
+.tag.bad{background:rgba(222,112,112,.12);color:var(--bad)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;margin:28px 0 26px;overflow-x:auto;scrollbar-width:none;padding:4px;background:var(--sur);border-radius:999px;width:max-content;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:none;border:0;padding:9px 16px;color:var(--tx2);border-radius:999px;white-space:nowrap;font-size:14px;font-weight:600;transition:background .15s,color .15s}
+.tabs button:hover{color:var(--tx)}
+.tabs button.on{color:var(--tx);background:var(--sur2)}
+.tabs button .n{display:none}
+.tabs button .dim{color:var(--tx3);font-weight:500;margin-left:2px}
+
+/* idea card */
+.idea{border-left:3px solid var(--line2)}
+.idea.va{border-left-color:var(--ban)}
+.idea.acompana{border-left-color:var(--ok)}
+.idea.guardada{border-left-color:var(--cem);opacity:.85}
+.idea h3{margin:0 0 6px;font-size:18px}
+.idea dl{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.idea dt{color:var(--tx3)} .idea dd{margin:0}
+
+/* voting */
+.paper{background:var(--sur);border-radius:var(--r2);padding:20px;position:relative}
+.paper.down{background:repeating-linear-gradient(135deg,var(--sur) 0 8px,var(--sur2) 8px 10px);color:var(--tx3);text-align:center;padding:24px}
+.scale{display:flex;gap:6px}
+.scale button{flex:1;min-height:48px;border-radius:var(--r);border:1px solid transparent;background:var(--bg2);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:3px;transition:background .12s}
+.scale button:hover{background:var(--sur2)}
+.scale button b{font-size:20px;line-height:1}
+.scale button span{font-size:12px;font-weight:400;color:var(--tx2);line-height:1.3}
+.scale button.on span{color:var(--ban-ink);opacity:.8}
+.progvoto{position:sticky;bottom:12px;z-index:3;margin:14px 0 0;padding:12px 16px;background:var(--sur2);border:0;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px;font-size:14px}
+.progvoto .b{flex:1;height:6px;background:var(--bg2);border-radius:6px;overflow:hidden} .progvoto .b i{display:block;height:100%;background:var(--ban)}
+.progvoto.ok{border-color:var(--ok)} .progvoto.ok .b i{background:var(--ok)}
+@media (max-width:640px){ .scale{flex-direction:column} .scale button{flex-direction:row;align-items:center;gap:12px} .scale button b{min-width:18px} }
+.scale button.on{background:var(--ban);color:var(--ban-ink)}
+.q{margin:18px 0 8px;font-size:16px}
+.q b{font-weight:600}
+.q .x2{color:var(--ban);font-weight:700;margin-left:6px}
+.rub{font-size:12px;color:var(--tx3);display:flex;justify-content:space-between;gap:8px;margin-top:5px}
+.rub span{flex:1} .rub span:nth-child(2){text-align:center} .rub span:nth-child(3){text-align:right}
+
+/* results table */
+.tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl th,.tbl td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl thead th{font-weight:600;font-size:14px;color:var(--tx2)}
+.tbl .qn{font-weight:500}
+.tbl .x2{color:var(--ban);font-size:12px;font-weight:700;margin-left:5px}
+.tbl .avg{font-size:19px;font-weight:600}
+.tbl .w{font-size:13px;color:var(--tx3);display:block}
+.tbl .spread{font-size:12px;color:var(--warn);display:block}
+.tbl tfoot td{border-bottom:0;border-top:2px solid var(--line2);padding-top:16px}
+.tbl .tot{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.tbl .win .tot{color:var(--ban)}
+.tbl .win .avg,.tbl .win th{color:var(--tx)}
+.obs li{margin:0 0 10px;padding-left:14px;border-left:2px solid var(--line2)}
+.obs li.ban{border-left-color:var(--ban)} .obs li.warn{border-left-color:var(--warn)} .obs li.ok{border-left-color:var(--ok)}
+.obs{list-style:none;padding:0;margin:0}
+
+/* decision */
+.dec{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.dec .card h4{margin:0 0 4px;font-size:13px;color:var(--tx2);font-weight:500}
+.dec .card .who{font-size:20px;font-weight:700;margin-bottom:8px}
+
+/* cemetery */
+.cem-head{display:flex;align-items:end;gap:18px;flex-wrap:wrap}
+.cem-item{border-left:3px solid var(--cem)}
+.cem-item .sc{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--tx2);margin-top:8px;font-variant-numeric:tabular-nums}
+.cem-item .sc b{color:var(--tx);font-weight:600}
+
+.empty{padding:44px 24px;text-align:center;color:var(--tx2);border:1px dashed var(--line2);border-radius:var(--r2);font-size:16px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
+.toast.show{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal .box{background:var(--sur);border:1px solid var(--line2);border-radius:16px;padding:22px;max-width:620px;width:100%;max-height:90vh;overflow:auto}
+.back{display:inline-block;color:var(--tx2);text-decoration:none;font-size:14px;margin-bottom:14px}
+.back:hover{color:var(--tx)}
+.kpi{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+@media (max-width:640px){
+  .wrap{padding:22px 16px 80px} h1{font-size:32px} .top{padding:12px 16px}
+  .g3{grid-template-columns:repeat(2,1fr);gap:10px} .g3 .card{padding:14px} .g3 .card h3{font-size:16px!important}
+  .tbl th,.tbl td{padding:9px 6px} .tbl .tot{font-size:26px} .tbl .avg{font-size:16px}
+}
+
+.gate{max-width:480px;margin:48px auto 0}
+.gate .card{padding:26px}
+.gate h1{font-size:46px}
+.who{font-size:20px;font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--sur);border-radius:999px;padding:5px 6px 5px 14px;font-size:13px;color:var(--tx2)}
+.pill .btn{padding:3px 9px}
+.sync{font-size:12px;color:var(--tx3)}
+.share{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg2);border:1px dashed var(--line2);border-radius:var(--r2);padding:14px 16px}
+.share code{font-size:13px;color:var(--tx2);word-break:break-all;flex:1;min-width:200px}
+.sync.err{color:var(--bad)}
+
+.doc{max-width:720px}
+.doc h1{font-size:30px;margin-bottom:2px}
+.doc .meta{color:var(--tx2);margin-bottom:26px}
+.doc section{margin:0 0 20px;padding:0 0 18px;border-bottom:1px solid var(--line)}
+.doc section h3{margin:0 0 6px;font-size:13px;color:var(--tx3);font-weight:500}
+.doc section p{font-size:17px;white-space:pre-wrap}
+.doc .frase{font-size:24px;font-weight:600;line-height:1.25}
+.doc .dobles{display:flex;gap:8px;flex-wrap:wrap}
+.prox .card{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;padding:18px 22px}
+.prox .fecha{font-variant-numeric:tabular-nums;text-align:center;min-width:60px;padding:8px 0;border-right:1px solid var(--line2)}
+.prox .fecha b{display:block;font-size:30px;line-height:1;font-weight:800;letter-spacing:-.03em}
+.prox .fecha span{font-size:12px;color:var(--tx2);display:block;margin-top:4px}
+@media (max-width:640px){.prox .card{grid-template-columns:auto 1fr}.prox .acc{grid-column:1/-1}}
+/* reloj */
+.reloj{position:sticky;top:64px;z-index:4;background:var(--sur);border-radius:var(--r2);margin:22px 0 0;padding:16px 20px 14px}
+.reloj .fila{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.reloj .t{font-size:52px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;min-width:150px;color:var(--ban)}
+.reloj .t.over{color:var(--bad)} .reloj .t.pausa{color:var(--tx3)}
+.reloj .fase{font-weight:600;font-size:16px} .reloj .hint{font-size:13px;color:var(--tx2);max-width:520px;line-height:1.4}
+.reloj .barra{height:3px;background:var(--sur2);border-radius:4px;margin-top:12px;overflow:hidden}
+.reloj .barra i{display:block;height:100%;background:var(--ban);transition:width .5s linear}
+.reloj .barra i.over{background:var(--bad)}
+.reloj .chips{display:flex;gap:0;margin-top:10px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.reloj .chips::-webkit-scrollbar{display:none}
+.reloj .chips button{background:none;border:0;padding:4px 10px 4px 0;font-size:12px;color:var(--tx3);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.reloj .chips button::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--line2)}
+.reloj .chips button.on{color:var(--tx);font-weight:600} .reloj .chips button.on::before{background:var(--ban);box-shadow:0 0 0 3px rgba(245,197,49,.25)}
+.reloj .chips button.hecha{color:var(--tx2)} .reloj .chips button.hecha::before{background:var(--tx2)}
+.reloj .chips button:disabled{cursor:default}
+.reloj .btn{min-height:36px}
+/* pizarrón */
+html,body{overflow-x:clip}
+.btool{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0 10px}
+.bsw{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:var(--tx2);cursor:pointer;background:var(--sur);padding:7px 13px;border-radius:999px;font-weight:600}
+.bsw input{accent-color:var(--ban);width:16px;height:16px;margin:0}
+input.bbus{width:120px;padding:7px 13px;font-size:13px;border-radius:999px;min-height:34px}
+.bvista{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden}
+.bvista button{background:transparent;border:0;padding:6px 12px;font-size:13px;color:var(--tx2)} .bvista button.on{background:var(--tx);color:var(--bg)}
+.blista{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.blista .col{background:var(--sur);border-radius:var(--r2);padding:14px;border-top:4px solid var(--c,var(--line2))}
+.blista .col h4{margin:0 0 8px;font-size:14px;color:var(--tx2);font-weight:600}
+.blista .it{background:var(--c,#F3E3A2);color:#1E1A12;border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:14px;line-height:1.35;cursor:pointer}
+.blista .it.sel{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ban)}
+.blista .it.cruce{background:#EEF3F8;color:#11263A;border-top:3px solid #6E9CC6} .blista .it.final{background:var(--ban);color:var(--ban-ink);font-weight:600}
+.blista .it .num{font-size:11px;font-weight:800;opacity:.6;margin-right:6px}
+.blista .it .srcl{font-size:12.5px;opacity:.8;margin-top:4px;font-weight:400}
+.blista .it.oculta{background:repeating-linear-gradient(135deg,#E9DDB0 0 8px,#E2D3A0 8px 12px)}
+.bacc{min-height:10px}
+.bpop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:40}
+.bpop .box{background:var(--sur);border:1px solid var(--line2);border-radius:16px 16px 0 0;padding:18px 18px 28px;width:100%;max-width:560px;max-height:80vh;overflow:auto}
+@media (min-width:641px){ .bpop{align-items:center} .bpop .box{border-radius:16px;padding-bottom:18px} }
+.bwrap{position:relative;height:76vh;min-height:460px;width:calc(100vw - 48px);margin-left:calc(50% - 50vw + 24px);background-color:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;touch-action:none;cursor:grab;outline:none;
+  background-image:radial-gradient(color-mix(in srgb,var(--line2) 80%,transparent) 1.2px,transparent 1.2px);background-size:22px 22px}
+.bwrap.full{position:fixed;inset:0;width:auto;height:auto;margin:0;border-radius:0;border:0;z-index:30}
+body.bfull{overflow:hidden}
+.bwrap.panning{cursor:grabbing}
+.bworld{position:absolute;left:0;top:0;width:1px;height:1px;transform-origin:0 0}
+.bworld svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}
+.zona{position:absolute;top:58px;font-size:20px;font-weight:700;color:var(--tx3);pointer-events:none;white-space:nowrap;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
+.zona i{width:13px;height:13px;border-radius:4px;background:var(--c)}
+.zona span{font-size:13px;color:var(--tx2);font-weight:600;background:var(--sur2);padding:1px 8px;border-radius:999px}
+.pit{position:absolute;width:200px;min-height:84px;padding:10px 12px 14px;border-radius:6px;background:var(--c,#F6E7A6);color:#1E1A12;box-shadow:0 1px 0 rgba(0,0,0,.18),0 8px 20px rgba(0,0,0,.28);
+  font-size:14.5px;line-height:1.38;cursor:default;user-select:none;-webkit-user-select:none;touch-action:none;transition:box-shadow .15s,opacity .2s}
+.pit:hover{box-shadow:0 1px 0 rgba(0,0,0,.18),0 14px 30px rgba(0,0,0,.38)}
+.pit.sel{box-shadow:0 0 0 3px var(--bg2),0 0 0 6px var(--ban),0 14px 30px rgba(0,0,0,.4);z-index:2}
+.pit.drag{opacity:.93;z-index:5;cursor:grabbing}
+.pit.apagada{opacity:.2}
+.pit.oculta{background:repeating-linear-gradient(135deg,var(--c) 0 8px,color-mix(in srgb,var(--c) 82%,#000) 8px 11px)}
+.pit .ph-h{display:flex;gap:6px;align-items:center;font-size:11.5px;font-weight:800;opacity:.78;margin-bottom:5px;letter-spacing:.02em;flex-wrap:wrap}
+.pit .ph-h .who{font-weight:700;background:rgba(0,0,0,.09);padding:1px 7px;border-radius:999px}
+.pit .tx{white-space:pre-wrap;word-break:break-word}
+.pit .ph{opacity:.5;font-style:italic;font-weight:400}
+.pit.cruce{background:#EEF3F8;color:#11263A;border-top:5px solid #6E9CC6;width:240px}
+.pit.cruce .tit{font-weight:800;font-size:15.5px;line-height:1.25;margin-bottom:7px}
+.pit .srcs{display:flex;flex-direction:column;gap:5px}
+.pit .src{font-size:13px;line-height:1.3;padding:5px 8px 5px 17px;background:#fff;border-radius:5px;position:relative;word-break:break-word}
+.pit .src i{position:absolute;left:6px;top:6px;bottom:6px;width:6px;border-radius:3px}
+.pit .src b{font-weight:800;opacity:.55;margin-right:3px}
+.pit.final{background:#FFF200;color:#221B00;width:270px;border:3px solid #FFF1BC;padding:12px 14px 16px}
+.pit.final .nm{font-weight:800;font-size:19px;line-height:1.15;margin:2px 0 8px}
+.pit .fq{font-size:13px;margin-top:6px} .pit .fq span{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.6}
+.pit .de{font-size:11.5px;opacity:.7;margin-top:8px;font-weight:700}
+.pit .env{font-size:12px;font-weight:800;margin-top:6px}
+.pit .con{position:absolute;right:-15px;top:50%;margin-top:-15px;width:30px;height:30px;border-radius:50%;background:#6E9CC6;border:3px solid var(--bg2);cursor:crosshair;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800;line-height:1;opacity:0;transition:opacity .15s,transform .15s}
+.pit:hover .con,.pit.sel .con{opacity:1}
+.pit .con:hover{transform:scale(1.15)}
+.pit .rs{position:absolute;right:0;bottom:0;width:20px;height:20px;cursor:nwse-resize;opacity:0;border-bottom-right-radius:6px;
+  background:linear-gradient(135deg,transparent 52%,rgba(0,0,0,.35) 52%,rgba(0,0,0,.35) 60%,transparent 60%,transparent 72%,rgba(0,0,0,.35) 72%,rgba(0,0,0,.35) 80%,transparent 80%)}
+.pit:hover .rs,.pit.sel .rs{opacity:1}
+@media (hover:none){ .pit.sel .con,.pit.sel .rs{opacity:1} }
+.pit.linktarget{box-shadow:0 0 0 4px #6E9CC6,0 14px 30px rgba(0,0,0,.4)}
+.pit textarea.bedit{width:100%;background:rgba(255,255,255,.6);border:0;border-radius:4px;padding:4px 6px;font:inherit;color:inherit;resize:none;min-height:44px;outline:2px solid rgba(0,0,0,.25);display:block}
+.pit.draft{box-shadow:0 0 0 3px var(--bg2),0 0 0 6px var(--ban),0 14px 30px rgba(0,0,0,.4);z-index:6}
+.bley{position:absolute;left:10px;top:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap;z-index:3;pointer-events:none}
+.bley button{pointer-events:auto;display:inline-flex;align-items:center;gap:7px;background:color-mix(in srgb,var(--sur) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:999px;padding:5px 11px 5px 8px;font-size:12.5px;font-weight:600;color:var(--tx)}
+.bley button:hover{border-color:var(--tx3)}
+.bley button i{width:12px;height:12px;border-radius:4px;background:var(--c)} .bley i.cr{background:#EEF3F8;box-shadow:inset 0 3px 0 #6E9CC6} .bley i.fi{background:#FFF200}
+.bley button b{color:var(--tx3);font-weight:700}
+.bley button.on{background:var(--tx);color:var(--bg)} .bley button.on b{color:var(--bg)}
+.bfloat{position:absolute;z-index:6;display:flex;gap:3px;padding:5px;background:var(--sur);border:1px solid var(--line2);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.45);white-space:nowrap}
+.bfloat[hidden]{display:none}
+.bfloat.static{position:static;display:inline-flex;flex-wrap:wrap;white-space:normal;margin-bottom:12px}
+.bf{background:transparent;border:0;border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600;color:var(--tx);min-height:34px} .bf:hover{background:var(--sur2)}
+.bf.pri{background:var(--ban);color:var(--ban-ink)} .bf.pri:hover{background:#ffd54a} .bf.danger{color:var(--bad)} .bf.ghost{color:var(--tx3)}
+.bzoom{position:absolute;right:12px;bottom:12px;display:flex;gap:2px;align-items:center;z-index:3;background:var(--sur);border:1px solid var(--line2);border-radius:12px;padding:3px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.bzoom button{width:34px;height:34px;border-radius:9px;background:transparent;border:0;font-size:17px;color:var(--tx);display:flex;align-items:center;justify-content:center} .bzoom button:hover{background:var(--sur2)}
+.bzoom span{font-size:12px;color:var(--tx2);min-width:42px;text-align:center;font-variant-numeric:tabular-nums}
+.bmini{position:absolute;right:12px;bottom:60px;z-index:3;background:color-mix(in srgb,var(--sur) 92%,transparent);border:1px solid var(--line2);border-radius:10px;padding:5px;cursor:pointer}
+.bmini[hidden]{display:none}
+.bmini svg{display:block}
+.bhelp{position:absolute;left:12px;bottom:12px;z-index:2;font-size:12px;color:var(--tx3);max-width:calc(100% - 300px);pointer-events:none;line-height:1.45}
+.bhelp b{color:var(--tx2)} .bhelp .mas{color:#6E9CC6}
+.baviso{position:absolute;left:50%;transform:translateX(-50%);top:54px;z-index:3;background:var(--sur);border:1px solid var(--line2);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--tx2);width:max-content;max-width:min(560px,calc(100% - 20px))}
+.bmarq{position:absolute;border:1.5px dashed var(--ban);background:rgba(255,242,0,.08);pointer-events:none}
+.arb{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.35}
+.arb:last-child{border-bottom:0}
+.arb i{flex:none;width:10px;height:10px;border-radius:3px;transform:translateY(1px)}
+.arb b{flex:none}
+.bsale{background:var(--bg2);border-radius:var(--r);padding:8px 14px;margin:6px 0 16px}
+.bsale>.small{margin:4px 0 2px}
+.mis{margin:6px 0 14px;border:1px dashed var(--line2)}
+.mis .slot{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.mis .slot b{font-variant-numeric:tabular-nums;color:var(--tx3);text-align:right}
+.mis .slot.ok b{color:var(--ok)}
+.mis .prog{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.mis .prog .tag i{width:10px;height:10px;border-radius:3px;background:var(--c);display:inline-block}
+/* decisión con varias ganadoras */
+.decop{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;color:var(--tx)}
+.decop:hover{border-color:var(--line2)} .decop.on{border-color:var(--ban);background:color-mix(in srgb,var(--ban) 10%,var(--bg2))}
+.decop .ck{width:24px;height:24px;border-radius:7px;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--ban-ink);flex:none}
+.decop.on .ck{background:var(--ban);border-color:var(--ban)}
+.decop .pts{font-size:22px;letter-spacing:-.02em}
+@media (max-width:640px){ .bwrap{height:66vh;min-height:380px;width:auto;margin-left:0} .bwrap.full{height:auto} .bhelp,.bmini{display:none} input.bbus{width:90px} }
+@media (max-width:640px){
+  #topsub,#sync{display:none} .top{gap:10px;padding:10px 12px} .top nav{flex-wrap:nowrap;overflow-x:auto;gap:2px} .top nav a{padding:6px 9px;font-size:13px;white-space:nowrap} .pill{white-space:nowrap}
+  .reloj{top:58px;padding:12px 14px} .reloj .fila{display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+  .reloj .fila>.row,.reloj .fila>.btn{grid-column:1/-1} .reloj .t{font-size:38px;min-width:0} .reloj .fase{font-size:14px} .reloj .hint{font-size:12px}
+  .reloj .hint{display:none} .reloj.eq{position:static} .reloj.eq .chips{display:none} .reloj.eq .t{font-size:28px}
+}
+/* ===== estética de la marca Ideamia (la misma que Reportes): negro, blanco y amarillo #FFF200 ·
+   Bebas Neue (títulos), Syne (subtítulos), Outfit (texto). Pisa lo de arriba sin cambiar clases. ===== */
+:root{
+  --bg:#0A0A0A; --bg2:#0F0F0F; --sur:#111111; --sur2:#191919; --line:#1E1E1E; --line2:#2C2C2C;
+  --tx:#FFFFFF; --tx2:#8A8A8A; --tx3:#555555;
+  --ban:#FFF200; --ban-ink:#0A0A0A;
+  --ok:#5CE38A; --warn:#FFB454; --bad:#FF6B6B; --cem:#6E6E6E;
+  --r:4px; --r2:6px;
+  --f-display:'Bebas Neue',Impact,sans-serif; --f-title:'Syne',system-ui,sans-serif; --f-body:'Outfit',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.8,.2,1);
+}
+body{font-family:var(--f-body);background:var(--bg)}
+h1,h2{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.95}
+h1{font-size:56px;margin-bottom:12px} h2{font-size:34px}
+h3{font-family:var(--f-title);font-weight:700;letter-spacing:-.01em}
+.gate h1{font-size:72px}
+@media (max-width:640px){ h1{font-size:44px} .gate h1{font-size:56px} }
+/* encabezado */
+.top{background:rgba(10,10,10,.92);border-bottom:1px solid var(--line);padding:18px 26px}
+.top .logo{font-family:var(--f-body);font-weight:800;font-size:15px;letter-spacing:.14em}
+.top nav a{border-radius:2px;font-weight:500}
+.top nav a.on::after{height:2px;bottom:0}
+#progreso{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--ban);transition:width .1s linear}
+/* botones: barrido amarillo como en ideamia.es */
+.btn{border-radius:2px;font-family:var(--f-body);font-weight:600;letter-spacing:.01em;border:1px solid var(--line2);background:linear-gradient(90deg,var(--ban) 50%,transparent 50%) right/202% 100% no-repeat;color:var(--tx);transition:background-position .45s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.btn:hover{background-position:left;color:var(--ban-ink);border-color:var(--ban)}
+.btn.pri{background:linear-gradient(90deg,var(--bg) 50%,var(--ban) 50%) right/202% 100% no-repeat;color:var(--ban-ink);border-color:var(--ban);font-weight:700}
+.btn.pri:hover{background-position:left;color:var(--ban)}
+.btn.ghost{border-color:transparent;color:var(--tx2);background:linear-gradient(90deg,var(--sur2) 50%,transparent 50%) right/202% 100% no-repeat}
+.btn.ghost:hover{color:var(--tx);border-color:transparent}
+.btn.danger,.btn.ghost.danger{color:var(--bad)} .btn.danger:hover{color:var(--bad)}
+.btn:disabled,.btn:disabled:hover{background-position:right;opacity:.4}
+.btn.pri:disabled:hover{color:var(--ban-ink)}
+/* tarjetas, etiquetas y campos */
+.card{border:1px solid var(--line);border-radius:var(--r)}
+.card.click:hover{border-color:var(--line2);background:var(--sur)}
+.tag{border-radius:2px;font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px}
+.tag.ban{background:var(--ban);color:var(--ban-ink)}
+.pill{border-radius:2px;border:1px solid var(--line)}
+input[type=text],input[type=password],input[type=time],input[type=date],input[type=number],select,textarea{background:var(--sur);border:1px solid var(--line2);border-radius:var(--r);font-family:var(--f-body)}
+input:hover,select:hover,textarea:hover{border-color:#3A3A3A}
+input:focus,select:focus,textarea:focus{border-color:var(--ban);box-shadow:0 0 0 1px var(--ban)}
+input::placeholder,textarea::placeholder{color:#4A4A4A}
+label.f span{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2)}
+label.f span span,label.f span b{text-transform:none;letter-spacing:0}
+/* pestañas: subrayado amarillo */
+.tabs{background:transparent;border-radius:0;border-bottom:1px solid var(--line);padding:0;gap:2px;width:100%}
+.tabs button{border-radius:0;padding:12px 14px;position:relative;font-weight:600}
+.tabs button.on{background:transparent;color:var(--tx)}
+.tabs button.on::after{content:'';position:absolute;left:10px;right:10px;bottom:-1px;height:2px;background:var(--ban)}
+/* resto */
+.empty{border-radius:var(--r);border-color:var(--line2)}
+.modal{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+.modal .box{border-radius:var(--r2);border-color:var(--line2);border-top:2px solid var(--ban)}
+.bpop .box{border-top:2px solid var(--ban)}
+.toast{background:var(--sur2);color:var(--tx);border:1px solid var(--line2);border-left:3px solid var(--ban);border-radius:2px;top:78px;bottom:auto}
+.back{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ban)}
+.back:hover{color:var(--tx)}
+.kpi{font-family:var(--f-display);font-weight:400;font-size:64px;letter-spacing:0}
+.reloj{border:1px solid var(--line);border-radius:var(--r2)}
+.reloj .t{font-family:var(--f-display);font-weight:400;font-size:68px;letter-spacing:.01em}
+.reloj .barra i{background:var(--ban)}
+.prox .fecha b{font-family:var(--f-display);font-weight:400;font-size:42px;letter-spacing:0}
+.tbl .tot{font-family:var(--f-display);font-weight:400;font-size:46px;letter-spacing:0}
+.paper{border:1px solid var(--line);border-radius:var(--r2)}
+.scale button{border-radius:var(--r);border:1px solid var(--line2)}
+.scale button.on{border-color:var(--ban)}
+.share{border-radius:var(--r2)}
+.idea{border-left-width:2px}
+.doc h1{font-size:46px}
+.bwrap{border-radius:var(--r2);border-color:var(--line)}
+.bley button,.bfloat,.bzoom,.bmini,.baviso{border-radius:4px}
+.bf{border-radius:2px}
+.decop{border-radius:var(--r)}
+#app>*{animation:vin .35s var(--ease) both}
+@media print{
+  :root{--bg:#fff;--bg2:#fff;--sur:#fff;--sur2:#f3f0ea;--line:#ddd;--line2:#bbb;--tx:#111;--tx2:#444;--tx3:#777;--ban:#111;--ban-ink:#fff}
+  body{background:#fff;color:#111} .top,.no-print,.toast{display:none!important} .wrap{padding:0;max-width:none}
+  .tag{border-color:#999} .doc section{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#/">IDEAMIA<b>.</b></a><i id="progreso"></i>
+  <span class="muted small" id="topsub" style="display:none">Votación de ideas</span><span class="sync" id="sync"></span>
+  <nav>
+    <a href="#/" id="nav-home">Marcas</a>
+    <a href="#/cementerio" id="nav-cem">Cementerio de ideas</a>
+    <a href="#/datos" id="nav-datos">Datos</a>
+    <span id="nav-who"></span>
+  </nav>
+</header>
+<main class="wrap" id="app"></main>
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script>
+/* ---------------- constantes de la metodología ---------------- */
+const Q = [
+  {k:'sirve',    full:'¿Sirve para lo que pidió el brief?',       short:'¿Sirve?',        planilla:'Impacto',
+   r1:'Es linda y nada más.', r3:'Da que hablar, pero nadie hace lo que queríamos.', r5:'Lo que queremos que pase está adentro de la pieza.'},
+  {k:'podemos',  full:'¿Lo podemos hacer con lo que tenemos?',    short:'¿Podemos?',      planilla:'Factibilidad',
+   r1:'Falta algo que no tenemos ni conseguimos.', r3:'Se puede, pero justo: si llueve, se cae.', r5:'Se filma con lo nuestro, el día que dijimos.'},
+  {k:'solo',     full:'¿Lo puede hacer cualquiera, o solo nosotros?', short:'¿Solo nosotros?', planilla:'Diferenciación',
+   r1:'Lo hace cualquiera. Lo vimos cinco veces.', r3:'Está bien hecho, pero ya existía.', r5:'No lo hizo nadie del rubro y se nota que es nuestro.'},
+  {k:'marca',    full:'¿Se nota que es de esta marca?',            short:'¿Es de la marca?', planilla:'Alineación',
+   r1:'Podría ser de cualquiera, o va contra el tono.', r3:'Encaja, pero no suma nada nuevo.', r5:'Suma a lo que la gente ya reconoce de la marca.'},
+  {k:'comparte', full:'¿Alguien se lo mandaría a un amigo?',       short:'¿Se comparte?',  planilla:'Audiencia',
+   r1:'Se ve y se olvida.', r3:'Gusta, pero nadie mueve un dedo.', r5:'Hay un motivo claro para mandárselo a alguien.'},
+];
+const QK = Object.fromEntries(Q.map(q=>[q.k,q]));
+const TIPOS = {
+  fecha_fija:{label:'Fecha fija', dobles:['sirve','podemos'], why:'Hay un día que no se puede correr: tiene que servir y tiene que llegar filmado.'},
+  marca:{label:'Construir marca', dobles:['solo','marca'], why:'No hay apuro. Importa que sea nuestra y que sume a lo que venimos armando.'},
+  gente_nueva:{label:'Llegar a gente nueva', dobles:['comparte','solo'], why:'Importa que la gente lo pase y que llame la atención de quien no nos conoce.'},
+  personalizado:{label:'Personalizado', dobles:null, why:'Elegí vos cuáles dos cuentan doble. Igual: se decide antes de tener ideas.'},
+};
+const ROLES_DEFAULT = ['Guionista','Filmmaker','Diseñador','Community'];
+const FASES = [
+  {n:'Fase 1', t:'Cada uno solo', min:15, tab:'pizarron', hint:'En silencio, sin espiar, en papel o en el celular. Cinco ideas mínimo, un renglón cada una. Nadie muestra nada.'},
+  {n:'Fase 2 · Ronda 1', t:'Leer', min:10, tab:'pizarron', hint:'Cada uno lee sus cinco de corrido y el DC las carga en el pizarrón. Nadie comenta.'},
+  {n:'Fase 2 · Ronda 2', t:'Cruzar', min:15, tab:'pizarron', hint:'“La 3 con la 14.” Tocá dos o más notas y “Cruzar”. No se mata sin arreglar: va con un “¿y si…?” atrás.'},
+  {n:'Fase 2 · Ronda 3', t:'Nombrar', min:5, tab:'pizarron', hint:'Las mezclas que quedaron en pie se cierran: nombre, qué se ve, qué es, qué hace la gente. Salen tres finales.'},
+  {n:'Fase 3', t:'Poner notas', min:15, tab:'votar', hint:'Cada uno anota solo. Se dan vuelta los papeles todos a la vez.'},
+  {n:'Fase 4', t:'Elegir', min:10, tab:'decision', hint:'Gana el número más alto salvo argumento agarrado del brief. Una va; las otras al cementerio.'},
+];
+const MARCAS_INICIALES = ['Isco','Quality Tienda','Quality Mayorista','Gabriel Varisco','Tritato','1talquecocina','DyB'];
+
+/* ---------------- estado ---------------- */
+let S = {rev:0,marcas:[],campanas:[],ideas:[]};   // lo que carga el DC (servidor)
+let V = [];                                       // papeles de la campaña abierta en pantalla
+let ROLE = sessionStorage.getItem('ideamia_role') || null;   // 'dc' | 'smm' | 'votante'
+let PASS = sessionStorage.getItem('ideamia_pass') || '';
+let QUIEN = '';     // rol con el que vota este dispositivo en la campaña abierta
+let NOMBRE = localStorage.getItem('ideamia_nombre') || '';
+const etq=p=>{ const n=papel(p)?.nombre; return n?`${p} · ${n}`:p; };
+let ROL_PREF=localStorage.getItem('ideamia_rol')||'';
+const quienDe=c=>{ const v=localStorage.getItem('ideamia_quien_'+c); if(v==='-') return ''; if(v) return v;
+  // si al entrar eligió rol, se usa directo en cada campaña donde ese rol vota y nadie más lo tomó
+  const camp=byId(S.campanas,c); const pv=V.find(x=>x.participante===ROL_PREF);
+  return ROL_PREF&&NOMBRE&&camp&&(camp.participantes||[]).includes(ROL_PREF)&&!(pv&&pv.nombre&&pv.nombre.toLowerCase()!==NOMBRE.toLowerCase())?ROL_PREF:''; };
+let cargado=false, tab='brief', votante=null, modal=null, pollT=null, ultimoJSON='';
+let T=null, SKEW=0;   // reloj de la campaña abierta y diferencia con el reloj del servidor
+const DEV=localStorage.getItem('ideamia_dev')||(()=>{ const k=Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('ideamia_dev',k); return k; })();
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const byId=(arr,id)=>arr.find(x=>x.id===id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate=d=>{ if(!d) return ''; const [y,m,dd]=d.slice(0,10).split('-'); return `${dd}/${m}/${y}`; };
+const fmtReunion=d=>d?fmtDate(d)+(d.length>10?' a las '+d.slice(11,16):''):'';
+const isDC=()=>ROLE==='dc';
+const puedeBrief=()=>ROLE==='dc'||ROLE==='smm';
+const estadoCamp=c=>c.estado==='cerrada'?['Decidida','ban']:c.revelado?['Notas a la vista','ban']:c.votacionAbierta?['Votación abierta','ok']:c.enCurso?['En reunión','ok']:['Brief listo',''];
+const ROL_LABEL={dc:'Director creativo',smm:'Social media manager',votante:'Votante'};
+function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2200); }
+function sync(t,err){ const el=document.getElementById('sync'); el.textContent=t||''; el.className='sync'+(err?' err':''); }
+
+/* ---------------- API ---------------- */
+// Con IDEAMIA_API (config.js) habla con el Apps Script de Google; sin eso, con la función de Netlify (/api/).
+const API_URL=String(window.IDEAMIA_API||'').trim();
+async function api(method,route,body){
+  let status, d={};
+  if(API_URL){
+    // todo va por POST text/plain: así Google no pide permiso previo (CORS) y la contraseña no viaja en la URL
+    let r; try{ r=await fetch(API_URL,{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({method,route,body:body||null,pass:PASS||''})}); }
+    catch(e){ const err=new Error('Sin conexión con el servidor'); err.status=0; throw err; }
+    let w={}; try{ w=await r.json(); }catch(e){ w={status:r.ok?502:r.status,data:{error:'El servidor respondió algo raro. Probá de nuevo.'}}; }
+    status=w.status||r.status; d=w.data||{};
+  } else {
+    const h={'content-type':'application/json'}; if(PASS) h['x-pass']=PASS;
+    const r=await fetch('/api/'+route,{method,headers:h,body:body?JSON.stringify(body):undefined});
+    status=r.status; try{ d=await r.json(); }catch(e){}
+  }
+  if(status>=400){ const e=new Error(d.error||('Error '+status)); e.status=status; e.data=d; throw e; }
+  return d;
+}
+function syncQuien(){ const c=campActual(); QUIEN=c?quienDe(c):''; }
+function campActual(){ const p=(location.hash||'').slice(2).split('/'); return (p[0]==='campana'||p[0]==='votar')?p[1]:null; }
+async function cargar(silencioso){
+  const camp=campActual(); syncQuien();
+  try{
+    // el papel que se está llenando en esta pantalla (el propio, o el que carga el DC con “Votar por él”)
+    const quien=isDC()&&votante?votante:QUIEN; const gen=saveGen;
+    const d=await api('GET','state'+(camp?`?camp=${camp}&who=${encodeURIComponent(quien)}&dev=${DEV}`:''));
+    if(guardando||votoPend||gen!==saveGen) return;   // si se guardó algo mientras llegaba, esta lectura ya es vieja
+    const j=JSON.stringify([d.state,d.votos,d.timer&&{...d.timer,_:0}]);
+    // nunca borrar de la pantalla un papel que se está llenando acá
+    const nuevos=d.votos||[]; const local=V.find(v=>v.participante===quien);
+    // el papel propio lo escribe solo esta pantalla: lo local manda siempre (una lectura vieja del servidor no puede pisar un toque reciente)
+    if(quien&&local&&local.notas){ const i=nuevos.findIndex(v=>v.participante===quien); if(i<0) nuevos.push(local); else { const sv=nuevos[i].notas||{}; const nt={}; for(const k of new Set([...Object.keys(sv),...Object.keys(local.notas)])) nt[k]={...(sv[k]||{}),...(local.notas[k]||{})}; nuevos[i]={...nuevos[i],notas:nt,completo:local.completo||nuevos[i].completo}; } }
+    S=d.state; BASE=clon(d.state); V=nuevos; T=d.timer||null; if(d.now) SKEW=d.now-Date.now(); cargado=true; sync('');
+    if(!S.marcas.length && !S._vacioVisto) S._vacioVisto=true;
+    seguirReunion(camp);
+    if(j!==ultimoJSON){ if(bdrag||modal||(silencioso&&escribiendo())){ pendRender=true; return; } ultimoJSON=j; render(); }
+  }catch(e){ sync(e.status===500?e.message:'Sin conexión con el servidor',true); if(!cargado) render(); }
+}
+let PREV={};
+function seguirReunion(camp){
+  // quien no maneja la reunión va solo a donde está pasando lo importante
+  if(!camp){ // en la portada: avisar cuando se abre una votación
+    S.campanas.forEach(c=>{ const a=!!c.votacionAbierta&&!c.revelado, k='h'+c.id; if(PREV[k]===false&&a&&!puedeBrief()){ toast(`Se abrió la votación: ${c.nombre}`); try{ navigator.vibrate&&navigator.vibrate(120); }catch(e){} } PREV[k]=a; }); return; }
+  const c=byId(S.campanas,camp); if(!c) return;
+  const ahora={a:!!c.votacionAbierta,r:!!c.revelado,e:c.estado}, antes=PREV[camp]; PREV[camp]=ahora;
+  if(!antes||puedeBrief()) return;
+  const vib=()=>{ try{ navigator.vibrate&&navigator.vibrate(120); }catch(e){} };
+  if(!antes.a&&ahora.a&&!ahora.r){ tab='votar'; toast('Se abrió la votación'); vib(); ultimoJSON=''; }
+  else if(!antes.r&&ahora.r){ tab='resultados'; toast('Se dieron vuelta los papeles'); vib(); ultimoJSON=''; }
+  else if(antes.e!=='cerrada'&&ahora.e==='cerrada'){ tab='decision'; toast('Ya hay idea elegida'); vib(); ultimoJSON=''; }
+}
+function escribiendo(){ const a=document.activeElement; return a && (a.tagName==='INPUT'||a.tagName==='TEXTAREA'||a.tagName==='SELECT') && a.type!=='checkbox'; }
+function poll(){ clearInterval(pollT); pollT=setInterval(()=>cargar(true), campActual()?2500:5000); }
+
+/* guardar lo que carga el DC */
+let saveQ=Promise.resolve(), guardando=0, saveGen=0;
+let BASE=null;   // último estado confirmado por el servidor
+const clon=o=>JSON.parse(JSON.stringify(o));
+function mezclarObj(b,l,r){ if(!b) return l; const o={...r}; for(const k of new Set([...Object.keys(l),...Object.keys(b)])){ if(JSON.stringify(l[k])!==JSON.stringify(b[k])) { if(k in l) o[k]=l[k]; else delete o[k]; } } return o; }
+function mezclarCol(b,l,r){
+  const bm=new Map((b||[]).map(x=>[x.id,x])), lm=new Map(l.map(x=>[x.id,x])), out=[], vistos=new Set();
+  for(const x of r){ vistos.add(x.id); const bx=bm.get(x.id), lx=lm.get(x.id);
+    if(bx&&!lx) continue;                                   // lo borré acá
+    if(lx&&JSON.stringify(lx)!==JSON.stringify(bx)) out.push(mezclarObj(bx,lx,x));   // lo cambié acá: gana mi cambio, campo por campo
+    else out.push(x); }
+  for(const x of l) if(!vistos.has(x.id)&&!bm.has(x.id)) out.push(x);   // lo agregué acá
+  return out; }
+function mezclar(base,local,remoto){ return {rev:remoto.rev, marcas:mezclarCol(base?.marcas,local.marcas,remoto.marcas), campanas:mezclarCol(base?.campanas,local.campanas,remoto.campanas), ideas:mezclarCol(base?.ideas,local.ideas,remoto.ideas)}; }
+function save(){ if(!puedeBrief()) return Promise.resolve(); guardando++; saveGen++; const r=saveQ.then(()=>_save()).finally(()=>{ guardando--; saveGen++; }); saveQ=r.catch(()=>{}); return r; }
+async function _save(intento=0){
+  try{ const d=await api('PUT','state',{rev:S.rev,marcas:S.marcas,campanas:S.campanas,ideas:S.ideas}); S.rev=d.state.rev; BASE=clon(S); sync(''); }
+  catch(e){ if(e.status===403&&e.data?.state){ toast(e.message); S=e.data.state; BASE=clon(S); render(); }
+    else if(e.status===409&&e.data?.state&&intento<4){ const remoto=e.data.state; S=mezclar(BASE,S,remoto); BASE=clon(remoto); return _save(intento+1); }
+    else if(e.status===409){ toast('No se pudo guardar: probá de nuevo.'); S=e.data.state; BASE=clon(S); render(); } else if(e.status===401){ toast('La contraseña ya no vale. Volvé a entrar.'); salir(); } else toast('No se pudo guardar: '+e.message); }
+}
+
+/* ---------------- votos ---------------- */
+function papel(p){ return V.find(v=>v.participante===p); }
+function nota(ideaId,p){ return papel(p)?.notas?.[ideaId]||{}; }
+function completo(p){ return !!papel(p)?.completo; }
+let votoT=null, votoPend=0, votoTok=0;   // mientras hay un voto sin guardar, el refresco no pisa lo que se marcó
+function setNota(campId,ideaId,p,k,n){
+  let v=papel(p); if(!v){ v={campanaId:campId,participante:p,notas:{},completo:false}; V.push(v); }
+  v.notas=v.notas||{}; v.notas[ideaId]=v.notas[ideaId]||{}; v.notas[ideaId][k]=n;
+  const ideas=ideasDe(campId); v.completo=ideas.length>0&&ideas.every(i=>Q.every(q=>v.notas[i.id]?.[q.k]));
+  render(); sync('Guardando…');
+  const tok=++votoTok; votoPend=1; clearTimeout(votoT); votoT=setTimeout(async()=>{ try{ const d=await api('POST','voto',{campanaId:campId,participante:p,nombre:(isDC()?(v.nombre||''):NOMBRE),dev:DEV,notas:v.notas}); if(tok===votoTok){ Object.assign(v,d.voto); sync(''); } }catch(e){ sync('No se guardó el voto: '+e.message,true); toast(e.message); } finally{ if(tok===votoTok) votoPend=0; } },300);
+}
+
+/* ---------------- cálculo ---------------- */
+function ideasDe(campId){ return S.ideas.filter(i=>i.campanaId===campId); }
+const r1=x=>Math.round(x*10)/10;
+function calc(camp){
+  const ideas=ideasDe(camp.id), dobles=camp.dobles||[];
+  const ps=V.filter(v=>v.completo&&v.notas);
+  const res=ideas.map(idea=>{
+    const cells={}; let total=0;
+    Q.forEach(q=>{
+      const vals=ps.map(v=>+v.notas[idea.id]?.[q.k]).filter(x=>x>=1);
+      const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+      const mult=dobles.includes(q.k)?2:1;
+      cells[q.k]={avg,mult,w:avg*mult,vals,spread:vals.length?Math.max(...vals)-Math.min(...vals):0};
+      total+=avg*mult;
+    });
+    return {idea,cells,total:r1(total),n:ps.length};
+  });
+  res.sort((a,b)=>b.total-a.total); return res;
+}
+function observaciones(camp,res){
+  const o=[]; if(!res.length||res.every(r=>r.n===0)) return o;
+  const dobles=camp.dobles||[]; const top=res[0], second=res[1];
+  if(second && Math.abs(top.total-second.total)<0.05) o.push({c:'warn',t:`Empate entre <b>${esc(top.idea.nombre)}</b> y <b>${esc(second.idea.nombre)}</b>. Desempata el DC, y tiene que decir en voz alta qué parte del brief resuelve mejor la que elige.`});
+  else if(second){ const d=r1(top.total-second.total); o.push({c:'ban',t:`Gana <b>${esc(top.idea.nombre)}</b> con ${top.total}${d<=3?`, pero por poco (${d} sobre ${esc(second.idea.nombre)}). La votación ordena, no descarta.`:` (${d} de diferencia sobre ${esc(second.idea.nombre)}).`}`}); }
+  const min=Math.min(...res.map(r=>r.total)), maxP=Q.reduce((a,q)=>a+5*(dobles.includes(q.k)?2:1),0);
+  if(min>=maxP*0.7) o.push({c:'ok',t:`Ninguna bajó de ${min} sobre ${maxP}. No hay ninguna mala: las que no ganan no se tiran, se guardan.`});
+  res.slice(1).forEach(r=>{ const cincos=Q.filter(q=>{ const c=r.cells[q.k]; return c.avg>=4.5 && res.every(x=>x===r||x.cells[q.k].avg<c.avg); }); if(cincos.length) o.push({c:'ok',t:`<b>${esc(r.idea.nombre)}</b> no gana pero tiene el 5 en ${cincos.map(q=>`“${q.short}”`).join(' y ')}. Va al cementerio igual, pero marcada: es la primera a revisar cuando haga falta algo de ese perfil.`}); });
+  res.slice(1).forEach(r=>{ let worst=null; Q.forEach(q=>{ const c=r.cells[q.k]; const loss=(5-c.avg)*c.mult; if(!worst||loss>worst.loss) worst={q,loss,c}; }); if(worst&&worst.c.avg<=3) o.push({c:'',t:`Lo que hundió a <b>${esc(r.idea.nombre)}</b> fue “${worst.q.short}” (${r1(worst.c.avg)}).${worst.c.mult===2?' Y acá esa pregunta contaba doble.':''}`}); });
+  res.forEach(r=>Q.forEach(q=>{ const c=r.cells[q.k]; if(c.spread>=3) o.push({c:'warn',t:`En <b>${esc(r.idea.nombre)}</b>, “${q.short}” tiene notas de ${Math.min(...c.vals)} a ${Math.max(...c.vals)}. Casi siempre entendieron la idea distinto: se aclara y se vuelve a votar esa fila.`}); }));
+  (camp.participantes||[]).forEach(p=>{ if(res.length<2||!completo(p)) return; const sesgo=res.some(r=>Q.every(q=>res.every(x=>+nota(r.idea.id,p)[q.k]>=+nota(x.idea.id,p)[q.k]))&&Q.some(q=>res.some(x=>+nota(r.idea.id,p)[q.k]>+nota(x.idea.id,p)[q.k]+1))); if(sesgo) o.push({c:'warn',t:`${esc(etq(p))} puso notas más altas en todas las preguntas a la misma idea. Puede ser legítimo, pero es el patrón de “votar para que gane la tuya”.`}); });
+  const dq=Q.filter(q=>dobles.includes(q.k)); if(dq.length) o.push({c:'',t:`Las que contaban doble en esta campaña eran ${dq.map(q=>`“${q.short}”`).join(' y ')}. La ganadora sacó ${dq.map(q=>`“${q.short}” ${r1(top.cells[q.k].avg)}`).join(' y ')}. Nadie toca el doble ahora.`});
+  return o;
+}
+
+/* ---------------- router ---------------- */
+window.addEventListener('hashchange',()=>{ if((location.hash||'').startsWith('#/votar/')) tab='votar'; votante=null; ultimoJSON=''; render(); cargar(); poll(); });
+function go(h){ location.hash=h; }
+function render(){
+  const app=document.getElementById('app');
+  const navWho=document.getElementById('nav-who');
+  if(!ROLE){ app.innerHTML=viewGate(); navWho.innerHTML=''; if(modal) app.insertAdjacentHTML('beforeend',modal); return; }
+  navWho.innerHTML=`<span class="pill">${ROLE==='votante'?esc([NOMBRE,QUIEN||ROL_PREF].filter(Boolean).join(' · ')||'Equipo'):ROL_LABEL[ROLE]}<button class="btn ghost sm" onclick="salir()">Salir</button></span>`;
+  if(!cargado){ app.innerHTML=`<div class="empty">Cargando…</div>`; return; }
+  const h=location.hash||'#/'; const parts=h.slice(2).split('/');
+  document.querySelectorAll('.top nav a').forEach(a=>a.classList.remove('on'));
+  if(parts[0]==='cementerio'){ document.getElementById('nav-cem').classList.add('on'); app.innerHTML=viewCementerio(); }
+  else if(parts[0]==='datos'){ document.getElementById('nav-datos').classList.add('on'); app.innerHTML=viewDatos(); }
+  else if(parts[0]==='marca'){ document.getElementById('nav-home').classList.add('on'); app.innerHTML=viewMarca(parts[1]); }
+  else if(parts[0]==='campana'){ document.getElementById('nav-home').classList.add('on'); app.innerHTML=viewCampana(parts[1]); }
+  else if(parts[0]==='brief'){ app.innerHTML=viewBriefDoc(parts[1]); }
+  else if(parts[0]==='votar'){ document.getElementById('nav-home').classList.add('on'); app.innerHTML=viewCampana(parts[1]); }
+  else { document.getElementById('nav-home').classList.add('on'); app.innerHTML=viewHome(); }
+  if(modal) app.insertAdjacentHTML('beforeend',modal);
+  if(document.getElementById('bwrap')||document.getElementById('blista')) bPaint();
+  document.getElementById('topsub').textContent=parts[0]==='cementerio'?'Cementerio de ideas':'Votación de ideas';
+}
+function openModal(html){ modal=`<div class="modal"><div class="box">${html}</div></div>`; render(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modal) closeModal(); });
+let pendRender=false;
+function closeModal(){ modal=null; render(); if(pendRender){ pendRender=false; ultimoJSON=''; cargar(); } }
+
+/* ---------------- entrada: quién sos ---------------- */
+function viewGate(){
+  return `<div class="gate">
+    <h1 style="margin-bottom:4px">¿Quién sos?</h1>
+    <p class="muted" style="margin-bottom:22px">El SMM carga el brief antes de la reunión. El director creativo carga las ideas y maneja la votación. El resto entra a leer los briefs y a votar.</p>
+    <div class="card" style="margin-bottom:14px">
+      <div class="who" style="margin-bottom:6px">Soy del equipo</div>
+      <p class="small muted">Ver los próximos brainstormings, leer los briefs y votar. Sin contraseña.</p>
+      <label class="f"><span>Tu nombre</span><input type="text" id="g-nombre" maxlength="40" value="${esc(NOMBRE)}" placeholder="Zaira" autocomplete="given-name"></label>
+      <div class="small muted" style="margin:2px 0 6px">Tu rol</div>
+      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">${ROLES_DEFAULT.map(r=>`<button type="button" class="btn ${ROL_PREF===r?'pri':''}" data-rol="${esc(r)}" style="padding:11px" onclick="document.querySelectorAll('[data-rol]').forEach(b=>b.classList.toggle('pri',b===this))">${esc(r)}</button>`).join('')}</div>
+      <button class="btn pri" onclick="entrar('votante')">Entrar</button>
+    </div>
+    <div class="card">
+      <div class="who" style="margin-bottom:6px">Soy el SMM o el director creativo</div>
+      <p class="small muted">Cada uno tiene su contraseña; según cuál pongas, entrás con ese rol.</p>
+      <label class="f"><span>Contraseña</span><input type="password" id="g-pass" onkeydown="if(event.key==='Enter')entrar('dc')"></label>
+      <button class="btn" onclick="entrar('dc')">Entrar con contraseña</button>
+    </div>
+  </div>`;
+}
+async function entrar(role){
+  if(role==='dc'){
+    const p=document.getElementById('g-pass').value; if(!p) return;
+    try{ PASS=p; const d=await api('POST','login'); ROLE=d.rol; sessionStorage.setItem('ideamia_role',d.rol); sessionStorage.setItem('ideamia_pass',p); }
+    catch(e){ PASS=''; toast(e.status===401?'Contraseña incorrecta':e.message); return; }
+  } else {
+    const n=(document.getElementById('g-nombre')?.value||'').trim(); const r=document.querySelector('[data-rol].pri')?.dataset.rol||'';
+    if(!n){ toast('Poné tu nombre'); document.getElementById('g-nombre')?.focus(); return; }
+    if(!r){ toast('Elegí tu rol'); return; }
+    NOMBRE=n; ROL_PREF=r; localStorage.setItem('ideamia_nombre',n); localStorage.setItem('ideamia_rol',r);
+    ROLE='votante'; PASS=''; sessionStorage.setItem('ideamia_role','votante'); sessionStorage.removeItem('ideamia_pass'); }
+  render(); await cargar(); poll();
+}
+function salir(){ ROLE=null; PASS=''; sessionStorage.removeItem('ideamia_role'); sessionStorage.removeItem('ideamia_pass'); votante=null; render(); }
+
+/* ---------------- home / marca ---------------- */
+function viewHome(){
+  const marcas=S.marcas.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  const cem=S.ideas.filter(i=>i.estado==='guardada').length;
+  const hayEjemplo=S.campanas.some(c=>c.nombre==='Día del Estudiante y de la Primavera');
+  const prox=S.campanas.filter(c=>c.estado!=='cerrada').sort((a,b)=>(a.reunion||a.fecha||'9').localeCompare(b.reunion||b.fecha||'9'));
+  const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `<h1>Próximos brainstormings</h1>
+  <p class="muted">Los briefs que hay que leer antes de sentarse a la mesa. Si no leíste el brief, no entrás.</p>
+  ${prox.length===0?`<div class="empty" style="margin-top:16px">No hay reuniones cargadas. ${puedeBrief()?'Creá una campaña desde su marca.':'El SMM las carga con el brief.'}</div>`:
+  `<div class="grid prox" style="margin-top:16px">${prox.map(c=>{ const m=byId(S.marcas,c.marcaId); const d=c.reunion?new Date(c.reunion):null; const n=ideasDe(c.id).length;
+    return `<div class="card">
+      <div class="fecha">${d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}${c.reunion.length>10?' · '+c.reunion.slice(11,16):''}</span>`:`<b>?</b><span>sin fecha</span>`}</div>
+      <div><div class="small muted">${esc(m?.nombre||'')}</div><h3 style="margin:0 0 4px;font-size:19px">${esc(c.nombre)||'<span class="dim">Sin nombre</span>'}</h3>
+        <div class="row small muted"><span class="tag ${estadoCamp(c)[1]}">${estadoCamp(c)[0]}</span>${c.fecha?`<span>Se publica el ${fmtDate(c.fecha)}</span>`:''}<span>Doble: ${(c.dobles||[]).map(k=>QK[k].short).join(' y ')}</span></div></div>
+      <div class="row acc">${puedeBrief()&&(isDC()||!c.revelado)?`<button class="btn ghost sm danger" onclick="borrarCampana('${c.id}')">Borrar</button>`:''}<a class="btn sm ${c.votacionAbierta&&!c.revelado?'':'pri'}" href="#/brief/${c.id}">Ver brief</a>${c.votacionAbierta&&!c.revelado?`<a class="btn sm pri" href="#/votar/${c.id}">Votar</a>`:c.revelado?`<a class="btn ghost sm" href="#/campana/${c.id}">Ver resultados</a>`:puedeBrief()?`<a class="btn ghost sm" href="#/campana/${c.id}">Abrir campaña</a>`:''}</div>
+    </div>`; }).join('')}</div>`}
+  <h2 style="margin-top:40px">Marcas</h2>
+  <div class="row" style="margin:6px 0 20px">
+    ${puedeBrief()?`<button class="btn pri" onclick="nuevaMarca()">Nueva marca</button>${!S.marcas.length?`<button class="btn" onclick="cargarMarcasIniciales()">Cargar las marcas del estudio</button>`:''}`:''}${isDC()&&!hayEjemplo?`<button class="btn ghost" onclick="cargarEjemplo()">Cargar el ejemplo de Tritato</button>`:''}
+    <span class="grow"></span><a class="btn ghost" href="#/cementerio">${cem} idea${cem===1?'':'s'} en el cementerio</a>
+  </div>
+  ${marcas.length===0?`<div class="empty">Todavía no hay marcas.</div>`:
+  `<div class="grid g3">${marcas.map(m=>{ const cs=S.campanas.filter(c=>c.marcaId===m.id); const ab=cs.filter(c=>c.estado!=='cerrada').length;
+    return `<div class="card click" onclick="go('#/marca/${m.id}')"><div class="row"><h3 class="grow" style="margin:0 0 6px;font-size:20px">${esc(m.nombre)}</h3>${puedeBrief()?`<button class="btn ghost sm danger" onclick="event.stopPropagation();borrarMarca('${m.id}')">Borrar</button>`:''}</div><div class="muted small">${cs.length} campaña${cs.length===1?'':'s'}${ab?` · ${ab} abierta${ab===1?'':'s'}`:''}</div></div>`; }).join('')}</div>`}`;
+}
+function cargarMarcasIniciales(){ MARCAS_INICIALES.forEach(n=>{ if(!S.marcas.some(m=>m.nombre.toLowerCase()===n.toLowerCase())) S.marcas.push({id:uid(),nombre:n}); }); save(); render(); }
+function nuevaMarca(){ openModal(`<h2 style="margin-top:0">Nueva marca</h2><label class="f"><span>Nombre</span><input type="text" id="m-nombre"></label><div class="row"><button class="btn pri" onclick="guardarMarca()">Crear marca</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`); setTimeout(()=>document.getElementById('m-nombre')?.focus(),0); }
+function guardarMarca(){ const n=document.getElementById('m-nombre').value.trim(); if(!n) return; const m={id:uid(),nombre:n}; S.marcas.push(m); save(); modal=null; go('#/marca/'+m.id); toast('Marca creada'); }
+async function borrarMarca(id){ if(!confirm('¿Borrar la marca con todas sus campañas, ideas y votos?')) return; const cs=S.campanas.filter(c=>c.marcaId===id).map(c=>c.id); for(const c of cs) await api('DELETE','extras/'+c).catch(()=>{}); S.ideas=S.ideas.filter(i=>!cs.includes(i.campanaId)); S.campanas=S.campanas.filter(c=>!cs.includes(c.id)); S.marcas=S.marcas.filter(m=>m.id!==id); await save(); go('#/'); render(); toast('Marca borrada'); }
+
+function viewMarca(id){
+  const m=byId(S.marcas,id); if(!m) return `<div class="empty">Esa marca no existe.</div>`;
+  const cs=S.campanas.filter(c=>c.marcaId===id).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  return `<a class="back" href="#/">← Marcas</a>
+  <div class="row"><h1 class="grow">${esc(m.nombre)}</h1>${puedeBrief()?`<button class="btn ghost sm danger" onclick="borrarMarca('${m.id}')">Borrar marca</button>`:''}</div>
+  ${puedeBrief()?`<div class="row" style="margin:18px 0 24px"><button class="btn pri" onclick="nuevaCampana('${m.id}')">Nueva campaña</button></div>`:'<div style="height:14px"></div>'}
+  ${cs.length===0?`<div class="empty">Sin campañas todavía.</div>`:
+  `<div class="grid g2">${cs.map(c=>{ const n=ideasDe(c.id).length; const va=S.ideas.filter(i=>i.campanaId===c.id&&i.estado==='va').map(i=>i.nombre).join(', ');
+    return `<div class="card click" onclick="go('#/campana/${c.id}')">
+      <div class="row" style="margin-bottom:6px"><span class="tag ${estadoCamp(c)[1]}">${estadoCamp(c)[0]}</span><span class="dim small">${fmtDate(c.fecha)}</span><span class="grow"></span>${puedeBrief()&&(isDC()||!c.revelado)?`<button class="btn ghost sm danger" onclick="event.stopPropagation();borrarCampana('${c.id}')">Borrar</button>`:''}</div>
+      <h3 style="margin:0 0 4px;font-size:19px">${esc(c.nombre)||'<span class="dim">Sin nombre</span>'}</h3>
+      <div class="muted small">${TIPOS[c.tipo]?.label||''} · ${n} idea${n===1?'':'s'}${va?` · va <b>${esc(va)}</b>`:''}</div></div>`; }).join('')}</div>`}`;
+}
+
+/* ---------------- campaña ---------------- */
+function nuevaCampana(marcaId){
+  const c={id:uid(),marcaId,nombre:'',fecha:'',publica:'',reunion:'',votacionAbierta:false,tipo:'fecha_fija',dobles:['sirve','podemos'],problema:'',numero:'',numeroHoy:'',porque:'',contamos:'',noQueremos:'',participantes:ROLES_DEFAULT.slice(),estado:'abierta',revelado:false,decision:null,creada:new Date().toISOString()};
+  S.campanas.push(c); save(); tab='brief'; go('#/campana/'+c.id);
+}
+function viewCampana(id){
+  const c=byId(S.campanas,id); if(!c) return `<div class="empty">Esa campaña no existe.</div>`;
+  const m=byId(S.marcas,c.marcaId); const ideas=ideasDe(c.id);
+  const votaron=(c.participantes||[]).filter(p=>completo(p)).length;
+  const tabs=[['brief','Brief','0'],['pizarron','Pizarrón','1·2'],['ideas','Finales','2'],['votar','Votar','3'],['resultados','Resultados','3'],['decision','Decisión','4']];
+  return `<a class="back" href="#/marca/${c.marcaId}">← ${esc(m?.nombre||'Marca')}</a>
+  <div class="row"><div class="grow"><h1>${esc(c.nombre)||'<span class="dim">Campaña sin nombre</span>'}</h1>
+    <div class="row small muted">${c.reunion?`<span>Reunión ${fmtReunion(c.reunion)}</span>`:''}${c.fecha?`<span>Se publica el ${fmtDate(c.fecha)}</span>`:''}<span class="tag">${TIPOS[c.tipo]?.label}</span><span class="tag">Doble: ${(c.dobles||[]).map(k=>QK[k].short).join(' y ')||'sin definir'}</span>${c.estado==='cerrada'?'<span class="tag ban">Decidida</span>':''}</div></div>
+    ${puedeBrief()&&!(c.revelado&&!isDC())?`<button class="btn ghost sm danger" onclick="borrarCampana('${c.id}')">Borrar</button>`:''}</div>
+  ${c.estado!=='cerrada'?relojHTML(c):''}
+  <div class="tabs">${tabs.filter(([k])=>isDC()||k==='brief'||k==='ideas'||k==='pizarron'||(k==='votar'&&c.votacionAbierta&&!c.revelado)||((k==='resultados'||k==='decision')&&c.revelado)).map(([k,l,f])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';votante=null;render();if(tab==='pizarron')cargarPizarron()"><span class="n">Fase ${f}</span>${l}${k==='ideas'?` <span class="dim">${ideas.length}</span>`:k==='votar'?` <span class="dim">${votaron}/${(c.participantes||[]).length}</span>`:''}</button>`).join('')}</div>
+  ${tab==='brief'?tabBrief(c):tab==='pizarron'?tabPizarron(c):tab==='ideas'?tabIdeas(c):tab==='votar'?tabVotar(c):tab==='resultados'?tabResultados(c):tabDecision(c)}`;
+}
+async function borrarCampana(id){ if(!confirm('¿Borrar la campaña con sus ideas y votos?')) return; const c=byId(S.campanas,id); await api('DELETE','extras/'+id).catch(()=>{}); S.ideas=S.ideas.filter(i=>i.campanaId!==id); S.campanas=S.campanas.filter(x=>x.id!==id); await save(); if(campActual()===id) go('#/marca/'+c.marcaId); else render(); toast('Campaña borrada'); }
+let briefT={};
+function setCq(id,k,v){ clearTimeout(briefT[k]); briefT[k]=setTimeout(()=>{ const c=byId(S.campanas,id); if(c&&c[k]!==v){ c[k]=v; save(); } },900); }
+function setC(id,k,v){ clearTimeout(briefT[k]);  const c=byId(S.campanas,id); c[k]=v; if(k==='tipo'&&TIPOS[v].dobles) c.dobles=TIPOS[v].dobles.slice(); save(); if(k==='tipo'||k==='nombre'||k==='fecha') render(); }
+function toggleDoble(id,k){ const c=byId(S.campanas,id); if(c.tipo!=='personalizado') return; if(c.dobles.includes(k)) c.dobles=c.dobles.filter(x=>x!==k); else if(c.dobles.length<2) c.dobles.push(k); else { c.dobles.shift(); c.dobles.push(k); } save(); render(); }
+function setReunion(id,d,t){ const c=byId(S.campanas,id); const dd=d!==null?d:(c.reunion||'').slice(0,10); const tt=t!==null?t:(c.reunion||'').slice(11,16); c.reunion=dd?(dd+(tt?'T'+tt:'')):''; save(); render(); }
+function setParticipantes(id,v){ const c=byId(S.campanas,id); c.participantes=v.split(',').map(s=>s.trim()).filter(Boolean); save(); render(); }
+
+function tabBrief(c){
+  const locked=c.revelado||c.estado==='cerrada';
+  if(!puedeBrief()||locked) return `<div class="row no-print" style="margin-bottom:8px"><span class="muted grow">${locked?'Brief bloqueado: ya se dieron vuelta los papeles.':'Lo escribió el SMM. Leelo antes de la reunión.'}</span><a class="btn sm" href="#/brief/${c.id}">Ver completo / exportar PDF</a></div>${briefDoc(c)}`;
+  return `<div class="row no-print"><p class="muted grow" style="margin:0">Lo escribe el SMM uno o dos días antes. El brief decide la mitad de lo que va a salir. Se guarda solo al salir de cada campo.</p><a class="btn sm" href="#/brief/${c.id}">Ver como documento / exportar PDF</a></div>
+  <div class="grid g2" style="margin-top:16px">
+   <div>
+    <label class="f"><span>Nombre de la campaña</span><input type="text" value="${esc(c.nombre)}" oninput="setCq('${c.id}','nombre',this.value)" onchange="setC('${c.id}','nombre',this.value)" placeholder="Día del Estudiante y de la Primavera"></label>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <label class="f"><span>Reunión de brainstorming: día</span><input type="date" value="${esc((c.reunion||'').slice(0,10))}" onchange="setReunion('${c.id}',this.value,null)"></label>
+      <label class="f"><span>Hora</span><input type="time" value="${esc((c.reunion||'').slice(11,16))}" onchange="setReunion('${c.id}',null,this.value)"><em>Aparece en “Próximos brainstormings” para todo el equipo.</em></label>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <label class="f"><span>Se publica el</span><input type="date" value="${esc(c.fecha)}" onchange="setC('${c.id}','fecha',this.value)"></label>
+      <label class="f"><span>Piezas previas desde</span><input type="date" value="${esc(c.publica)}" onchange="setC('${c.id}','publica',this.value)"></label>
+    </div>
+    <label class="f"><span>El problema en una frase</span><input type="text" value="${esc(c.problema)}" oninput="setCq('${c.id}','problema',this.value)" onchange="setC('${c.id}','problema',this.value)"><em>Una sola. Si necesitás dos, todavía no está claro.</em></label>
+    <div class="grid" style="grid-template-columns:2fr 1fr">
+      <label class="f"><span>Qué número queremos mover</span><input type="text" value="${esc(c.numero)}" oninput="setCq('${c.id}','numero',this.value)" onchange="setC('${c.id}','numero',this.value)"></label>
+      <label class="f"><span>Número de hoy</span><input type="text" value="${esc(c.numeroHoy)}" oninput="setCq('${c.id}','numeroHoy',this.value)" onchange="setC('${c.id}','numeroHoy',this.value)"></label>
+    </div>
+    <label class="f"><span>Por qué le va a importar a la gente</span><textarea oninput="setCq('${c.id}','porque',this.value)" onchange="setC('${c.id}','porque',this.value)">${esc(c.porque)}</textarea></label>
+    <label class="f"><span>Con qué contamos y con qué no</span><textarea oninput="setCq('${c.id}','contamos',this.value)" onchange="setC('${c.id}','contamos',this.value)">${esc(c.contamos)}</textarea></label>
+    <label class="f"><span>Qué no queremos ver</span><textarea oninput="setCq('${c.id}','noQueremos',this.value)" onchange="setC('${c.id}','noQueremos',this.value)">${esc(c.noQueremos)}</textarea></label>
+    <label class="f"><span>Quiénes votan</span><input type="text" value="${esc((c.participantes||[]).join(', '))}" onchange="setParticipantes('${c.id}',this.value)" ${locked?'disabled':''}><em>Separados por coma. Cada uno elige su nombre de esta lista al entrar a votar.</em></label>
+   </div>
+   <div>
+    <div class="card">
+      <h3 style="margin-top:0">Qué dos preguntas cuentan doble</h3>
+      <p class="muted small">Se decide acá, antes de que nadie tenga una idea. Después de ver las notas no se toca.</p>
+      <label class="f"><span>Tipo de campaña</span><select onchange="setC('${c.id}','tipo',this.value)" ${locked?'disabled':''}>${Object.entries(TIPOS).map(([k,t])=>`<option value="${k}" ${c.tipo===k?'selected':''}>${t.label}</option>`).join('')}</select><em>${TIPOS[c.tipo].why}</em></label>
+      <div class="grid" style="gap:6px">${Q.map(q=>{ const on=(c.dobles||[]).includes(q.k); return `<button class="btn ${on?'pri':''}" style="text-align:left;display:flex;justify-content:space-between" ${locked||c.tipo!=='personalizado'?'disabled':''} onclick="toggleDoble('${c.id}','${q.k}')"><span>${q.short}</span><span>${on?'×2':'×1'}</span></button>`; }).join('')}</div>
+      ${locked?`<p class="small dim" style="margin-top:12px">Bloqueado: ya se dieron vuelta los papeles.</p>`:''}
+    </div>
+   </div>
+  </div>`;
+}
+
+/* ---------------- brief como documento ---------------- */
+function briefDoc(c){
+  const m=byId(S.marcas,c.marcaId); const dq=(c.dobles||[]).map(k=>QK[k]);
+  const sec=(t,v,cls)=>v?`<section><h3>${t}</h3><p class="${cls||''}">${esc(v)}</p></section>`:'';
+  return `<article class="doc">
+    <div class="small muted">Brief de brainstorming · ${esc(m?.nombre||'')}</div>
+    <h1>${esc(c.nombre)||'Campaña sin nombre'}</h1>
+    <div class="meta">${c.reunion?`Reunión ${fmtReunion(c.reunion)}`:'Reunión sin fecha'}${c.fecha?` · se publica el ${fmtDate(c.fecha)}`:''}${c.publica?` · piezas previas desde el ${fmtDate(c.publica)}`:''}</div>
+    ${sec('El problema en una frase',c.problema,'frase')}
+    ${(c.numero||c.numeroHoy)?`<section><h3>Qué número queremos mover</h3><p>${esc(c.numero)}${c.numeroHoy?`<br><span class="muted">Hoy: ${esc(c.numeroHoy)}</span>`:''}</p></section>`:''}
+    ${sec('Por qué le va a importar a la gente',c.porque)}
+    ${sec('Con qué contamos y con qué no',c.contamos)}
+    ${sec('Qué no queremos ver',c.noQueremos)}
+    <section><h3>Qué dos preguntas cuentan doble</h3><div class="dobles">${dq.map(q=>`<span class="tag ban">${q.short} ×2</span>`).join('')}</div><p class="small muted" style="margin-top:8px">${TIPOS[c.tipo]?.label}. ${TIPOS[c.tipo]?.why||''}</p></section>
+    <section style="border:0"><h3>Quiénes votan</h3><p>${esc((c.participantes||[]).join(', '))}</p>
+    <p class="small muted" style="margin-top:14px">Traé cinco ideas, no una. Un renglón cada una. Si no leíste el brief, no entrás.</p></section>
+  </article>`;
+}
+function viewBriefDoc(id){
+  const c=byId(S.campanas,id); if(!c) return `<div class="empty">Esa campaña no existe.</div>`;
+  return `<div class="row no-print" style="margin-bottom:18px"><a class="back" href="#/campana/${c.id}" style="margin:0">← Campaña</a><span class="grow"></span><button class="btn pri sm" onclick="window.print()">Exportar PDF</button></div>${briefDoc(c)}
+  <p class="small dim no-print" style="margin-top:24px">“Exportar PDF” abre el diálogo de impresión: elegí “Guardar como PDF” y mandalo por WhatsApp o Discord. O compartí directamente el link de esta página.</p>`;
+}
+
+/* ---------------- reloj de la reunión ---------------- */
+const pad=n=>String(n).padStart(2,'0');
+const mmss=ms=>{ const neg=ms<0; ms=Math.abs(ms); const t=Math.floor(ms/1000); return (neg?'+':'')+pad(Math.floor(t/60))+':'+pad(t%60); };
+function relojCalc(){
+  const t=T||{fase:0,corriendo:false,inicio:null,acumulado:0,extra:0};
+  const now=Date.now()+SKEW; const el=t.acumulado+(t.corriendo&&t.inicio?now-t.inicio:0);
+  const dur=FASES[t.fase].min*60000+(t.extra||0);
+  return {t,el,dur,resta:dur-el,f:FASES[t.fase]};
+}
+function relojHTML(c){
+  const r=relojCalc(); const dc=isDC();
+  const totalMin=FASES.reduce((a,f)=>a+f.min,0);
+  return `<div class="reloj ${dc?'':'eq'}" data-camp="${c.id}">
+    <div class="fila">
+      <div class="t ${r.resta<0?'over':''} ${!r.t.corriendo?'pausa':''}" id="rj-t">${mmss(Math.max(r.resta,-5999000))}</div>
+      <div class="grow"><div class="fase"><span class="dim">${r.f.n} ·</span> ${r.f.t} <span class="dim small">${r.f.min+(r.t.extra||0)/60000} min${!r.t.corriendo?(r.el>0?' · en pausa':' · sin arrancar'):''}</span></div><div class="hint">${!dc&&!r.t.corriendo&&r.el===0&&r.t.fase===0?'<b>Todavía no arrancó.</b> Lo arranca el director creativo desde su pantalla. ':''}${r.f.hint}</div></div>
+      ${dc?`<div class="row">
+        <button class="btn sm" onclick="reloj('${c.id}','anterior')" ${r.t.fase===0?'disabled':''} title="Fase anterior">⏮</button>
+        ${r.t.corriendo?`<button class="btn pri sm" onclick="reloj('${c.id}','parar')">Parar</button>`:`<button class="btn pri sm" onclick="reloj('${c.id}','seguir')">${r.el>0?'Seguir':'Arrancar'}</button>`}
+        <button class="btn sm" onclick="reloj('${c.id}','sumar',1)" title="Sumar un minuto">+1</button>
+        <button class="btn sm" onclick="reloj('${c.id}','sumar',-1)" title="Restar un minuto">−1</button>
+        <button class="btn sm" onclick="reloj('${c.id}','siguiente')" ${r.t.fase===FASES.length-1?'disabled':''}>Siguiente fase ⏭</button>
+      </div>`:(r.f.tab&&tab!==r.f.tab&&(r.f.tab==='pizarron'||(r.f.tab==='votar'&&c.votacionAbierta&&!c.revelado)||(r.f.tab==='decision'&&c.revelado))?`<button class="btn pri sm" onclick="tab='${r.f.tab}';render();if(tab==='pizarron')cargarPizarron()">Ir ${r.f.tab==='pizarron'?'al pizarrón':r.f.tab==='votar'?'a votar':'a la decisión'}</button>`:'')}
+    </div>
+    <div class="barra"><i id="rj-b" class="${r.resta<0?'over':''}" style="width:${Math.min(100,Math.max(0,r.el/r.dur*100))}%"></i></div>
+    <div class="chips">${FASES.map((f,i)=>`<button class="${i===r.t.fase?'on':i<r.t.fase?'hecha':''}" ${dc?`onclick="reloj('${c.id}','ir',${i})"`:'disabled'}>${f.t} · ${f.min}’</button>`).join('')}
+      ${dc?`<button onclick="if(confirm('¿Reiniciar el reloj a la Fase 1?'))reloj('${c.id}','reiniciar')">Reiniciar</button>`:''}<span class="dim small" style="align-self:center;margin-left:6px;white-space:nowrap">${totalMin} min en la mesa</span></div>
+  </div>`;
+}
+// Al pasar a "Poner notas": las finales del pizarrón pasan solas a votación y la votación se abre.
+async function prepararVotacion(campId){
+  const c=byId(S.campanas,campId); if(!c||c.revelado||c.estado==='cerrada') return;
+  try{ const d=await api('GET',`board?camp=${campId}&dev=${DEV}`); const pend=(d.notes||[]).filter(n=>n.tipo==='final'&&!n.enviada);
+    if(pend.length) await pasarFinales(campId,d.notes,pend); }catch(e){}
+  const c2=byId(S.campanas,campId);   // después de guardar, S puede ser otro objeto (mezcla): se vuelve a buscar
+  if(c2&&ideasDe(campId).length&&!c2.votacionAbierta){ c2.votacionAbierta=true; await save(); toast('Votación abierta: ya pueden votar desde el celular'); }
+  else if(!ideasDe(campId).length) toast('No hay finales para votar: marcá alguna en el pizarrón');
+  ultimoJSON=''; render();
+}
+async function reloj(campId,accion,x){
+  try{ const d=await api('POST','timer',{campanaId:campId,accion,min:x,fase:x}); T=d.timer; if(d.now) SKEW=d.now-Date.now(); avisado=null;
+    if(accion==='siguiente'||accion==='ir'||accion==='anterior'){ const f=FASES[T.fase]; if(f.tab&&tab!==f.tab){ tab=f.tab; }
+      if(T.fase===4) await prepararVotacion(campId); }
+    ultimoJSON=''; render(); if(tab==='pizarron') cargarPizarron(); }
+  catch(e){ toast(e.message); }
+}
+let avisado=null;
+function beep(){ try{ const a=new (window.AudioContext||window.webkitAudioContext)(); [0,0.25,0.5].forEach(t0=>{ const o=a.createOscillator(), g=a.createGain(); o.frequency.value=880; g.gain.setValueAtTime(.18,a.currentTime+t0); g.gain.exponentialRampToValueAtTime(.001,a.currentTime+t0+.2); o.connect(g); g.connect(a.destination); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+.22); }); }catch(e){} try{ navigator.vibrate&&navigator.vibrate([200,100,200]); }catch(e){} }
+setInterval(()=>{
+  const el=document.getElementById('rj-t'); if(!el||!T) return;
+  const r=relojCalc(); el.textContent=mmss(Math.max(r.resta,-5999000)); el.classList.toggle('over',r.resta<0);
+  const b=document.getElementById('rj-b'); if(b){ b.style.width=Math.min(100,Math.max(0,r.el/r.dur*100))+'%'; b.classList.toggle('over',r.resta<0); }
+  const k=T.fase+'-'+(T.extra||0); if(r.t.corriendo&&r.resta<=0&&avisado!==k){ avisado=k; beep(); toast('Terminó: '+r.f.t+'. El reloj manda.'); }
+},250);
+
+/* ---------------- pizarrón ---------------- */
+// Estilo Miro: las notas nacen acomodadas solas (una columna por persona, después Cruces y Finales)
+// y después se mueven, se agrandan y se cruzan como quieras. El lugar y el tamaño quedan guardados.
+let B={camp:null,notes:[],meta:{mostrar:false,equipo:true},ocultas:0,autores:0,progreso:[]};
+let BV={x:24,y:24,s:.8,_manual:false}, bsel=new Set(), bdrag=null, bpollT=null;
+let bMut=0, bPend=0, bFoco='', bFull=false, bInline=null, bHover=null, bAnimT=0;
+let BVISTA=localStorage.getItem('ideamia_bvista')||(window.innerWidth<700?'lista':'mapa');
+function bSetVista(v){ BVISTA=v; localStorage.setItem('ideamia_bvista',v); bsel.clear(); render(); if(v==='mapa') setTimeout(()=>bFit(false),0); }
+const COLW=224, ROWY0=112, GAP=16, CRW=262;
+const BW={idea:200,cruce:240,final:270};
+const PALETA=['#FFC9A8','#B9E6A5','#A9D5F5','#DCC2F5','#F9DC86','#F6B5D1','#A9E7D8','#F0CFA6','#C7CAF7','#DCE89C','#F5AFA8','#B3DDE8'];
+const SUELTA='#E9E3D6';
+let AUTOR='';
+function personas(){ const vistos=[]; B.notes.filter(n=>n.tipo==='idea'&&n.autorNombre).sort((a,b)=>a.creado-b.creado).forEach(n=>{ if(!vistos.includes(n.autorNombre)) vistos.push(n.autorNombre); }); if(AUTOR&&!vistos.includes(AUTOR)) vistos.push(AUTOR); return vistos; }
+function etiquetaPersona(k){ if(!k) return 'Suelta'; const i=personas().indexOf(k); return i>=0?'Persona '+(i+1):k; }
+function colorPersona(k){ if(!k) return SUELTA; const i=personas().indexOf(k); return i<0?SUELTA:PALETA[i%PALETA.length]; }
+function colorNota(n){ return n.tipo==='idea'?colorPersona(n.autorNombre):n.tipo==='cruce'?'#9DBBD8':'#FFF200'; }
+const bById=()=>Object.fromEntries(B.notes.map(n=>[n.id,n]));
+const bEl=id=>document.querySelector(`#bnotes .pit[data-id="${id}"]`);
+const bNota=id=>B.notes.find(n=>n.id===id);
+const bTxt=o=>o.tipo==='final'?(o.nombre||o.texto||''):(o.texto||'');
+// el DC siempre; el resto del equipo cuando el DC deja el pizarrón abierto y las ideas ya están destapadas
+function bPuede(){ return isDC()||(!!ROLE&&!!B.meta.equipo&&!!B.meta.mostrar); }
+const bTienePos=n=>n.pos===true||(n.pos!==false&&!!(n.x||n.y));
+function bRect(n){ let w=n._w, h=n._h; if(!w){ const el=bEl(n.id); w=el?el.offsetWidth:(n.w||BW[n.tipo]||200); h=el?el.offsetHeight:(n.h||110); } return {x:n.x||0,y:n.y||0,w,h}; }
+function bMedir(){ document.querySelectorAll('#bnotes .pit').forEach(el=>{ const n=bNota(el.dataset.id); if(n){ n._w=el.offsetWidth; n._h=el.offsetHeight; } }); }
+function bZonaX(tipo){ const cx=40+Math.max(personas().length,3)*COLW+70; return tipo==='cruce'?cx:tipo==='final'?cx+2*CRW+60:40; }
+// primer lugar libre (sin pisar otra nota) en una zona
+function bLibre(x0,cols,colW,w,h,y0,excl){ const rs=B.notes.filter(n=>bTienePos(n)&&!excl?.has(n.id)).map(bRect); const M=12;
+  for(let y=y0;y<40000;y+=10) for(let c=0;c<cols;c++){ const x=x0+c*colW; if(!rs.some(r=>x<r.x+r.w+M&&x+w+M>r.x&&y<r.y+r.h+M&&y+h+M>r.y)) return {x,y}; }
+  return {x:x0,y:y0}; }
+function bSpot(tipo,autor,excl){ const w=BW[tipo]||200, h=tipo==='final'?190:tipo==='cruce'?140:100;
+  if(tipo==='idea'){ const ps=personas(); let ci=autor?ps.indexOf(autor):-1; if(ci<0) ci=autor?ps.length:Math.max(ps.length,3);
+    const x=autor?40+ci*COLW:40; const mias=B.notes.filter(n=>n.tipo==='idea'&&(n.autorNombre||'')===(autor||'')&&bTienePos(n)&&!excl?.has(n.id));
+    const y0=mias.length?Math.max(...mias.map(n=>{ const r=bRect(n); return r.y+r.h; }))+GAP:ROWY0;
+    return bLibre(x,1,COLW,w,h,y0,excl); }
+  return bLibre(bZonaX(tipo),tipo==='cruce'?2:1,CRW,w,h,ROWY0,excl); }
+function bOrdenar(todas){ const pend=B.notes.filter(n=>!n._tmp&&(todas||!bTienePos(n))); if(!pend.length) return [];
+  const ex=new Set(pend.map(n=>n.id)); const orden={idea:0,cruce:1,final:2};
+  pend.sort((a,b)=>orden[a.tipo]-orden[b.tipo]||(a.creado-b.creado)||(a.numero-b.numero));
+  for(const n of pend){ const p=bSpot(n.tipo,n.autorNombre,ex); n.x=p.x; n.y=p.y; n.pos=true; ex.delete(n.id); }
+  return pend; }
+function bMover(ns){ ns.forEach(n=>{ const el=bEl(n.id); if(el){ el.style.left=n.x+'px'; el.style.top=n.y+'px'; } }); }
+async function bGuardarPos(ns){ ns=ns.filter(n=>!n._tmp); if(!ns.length||!bPuede()) return; bMut++; bPend++;
+  try{ await api('PATCH','board/'+B.camp,{pos:ns.map(n=>({id:n.id,x:n.x,y:n.y,...(n.w?{w:n.w}:{}),...(n.h?{h:n.h}:{})}))}); }
+  catch(e){ toast('No se guardó dónde quedó: '+e.message); } finally{ bPend--; bMut++; } }
+function bOrdenarTodo(){ if(!confirm('¿Acomodar todas las notas en columnas otra vez? Se pierde lo que moviste a mano.')) return; const ns=bOrdenar(true); bMover(ns); bLines(); bGuardarPos(ns); bFit(true); }
+
+function tabPizarron(c){
+  if(B.camp!==c.id){ B={camp:c.id,notes:[],meta:{mostrar:false,equipo:true},ocultas:0,autores:0,progreso:[]}; bsel.clear(); bFoco=''; cargarPizarron(); }
+  const finales=B.notes.filter(n=>n.tipo==='final'), pend=finales.filter(n=>!n.enviada);
+  return `<p class="muted" id="bintro">${bIntro()}</p>
+  <div id="bmis">${misIdeasHTML()}</div>
+  <div class="btool" id="btool">${bToolHTML(c)}</div>
+  ${BVISTA==='lista'?`<div id="bacc" class="bacc"></div><div id="blista">${bListaHTML()}</div>`:`<div class="bwrap ${bFull?'full':''}" id="bwrap" data-camp="${c.id}" tabindex="-1">
+    <div class="bworld" id="bworld"><div id="bzonas"></div><svg id="blines"></svg><div id="bnotes"></div></div>
+    <div id="bley" class="bley"></div>
+    <div id="baviso"></div>
+    <div id="bfloat" class="bfloat" hidden></div>
+    <div class="bhelp" id="bhelp">${bAyuda()}</div>
+    <div id="bmini" class="bmini" hidden></div>
+    <div class="bzoom"><button onclick="bZoom(1/1.25)" title="Alejar (−)">−</button><span id="bzpct">${Math.round(BV.s*100)}%</span><button onclick="bZoom(1.25)" title="Acercar (+)">+</button><button onclick="bVerTodo()" title="Ver todo el pizarrón (0)">⤢</button><button onclick="bPantalla()" title="${bFull?'Salir de pantalla completa (Esc)':'Pantalla completa (F)'}">${bFull?'✕':'⛶'}</button></div>
+  </div>`}
+  ${isDC()&&finales.length?`<div class="card" style="margin-top:16px"><div class="row"><div class="grow"><b>${finales.length} final${finales.length===1?'':'es'}</b> <span class="muted small">${pend.length?`· ${pend.length} sin pasar a votación`:'· todas pasadas a votación'}</span>${finales.length>3?`<div class="small" style="color:var(--warn)">Quedaron más de tres. Si son más de tres, no se mezcló nada: se eligieron favoritas.</div>`:''}</div>${pend.length?`<button class="btn pri" onclick="bPasarFinales('${c.id}')">Pasar finales a votación</button>`:`<button class="btn" onclick="tab='ideas';render()">Ver finales</button>`}</div></div>`:''}`;
+}
+function bToolHTML(c){ let h='';
+  if(isDC()) h+=B.meta.mostrar?`<button class="btn sm" onclick="bMostrar(false)" title="El equipo deja de ver las ideas">Taparlas</button>`:`<button class="btn pri sm" onclick="bMostrar(true)">Destapar las ideas</button>`;
+  if(isDC()) h+=`<label class="bsw" title="Si está prendido, el equipo puede mover, cruzar y nombrar desde su celular"><input type="checkbox" ${B.meta.equipo?'checked':''} onchange="bEquipo(this.checked)">El equipo también edita</label>`;
+  else if(bPuede()) h+=`<span class="tag ok">Podés mover, cruzar y nombrar</span>`;
+  else if(B.meta.mostrar) h+=`<span class="tag">Solo lectura</span>`;
+  h+=`<span class="muted small">${B.notes.length} nota${B.notes.length===1?'':'s'}${B.ocultas?` · ${B.ocultas} tapada${B.ocultas===1?'':'s'}`:''}</span><span class="grow"></span>`;
+  if(BVISTA==='mapa'&&B.notes.length) h+=`<input type="text" class="bbus" placeholder="Ir a la #…" inputmode="numeric" onkeydown="if(event.key==='Enter'){bIrA(this.value);this.select()}">`;
+  if(isDC()&&BVISTA==='mapa'&&B.notes.length) h+=`<button class="btn ghost sm" onclick="bOrdenarTodo()" title="Volver a acomodar todo en columnas">Acomodar</button>`;
+  if(isDC()&&B.notes.length) h+=`<button class="btn ghost sm danger" onclick="bVaciar()">Vaciar</button>`;
+  h+=`<span class="bvista"><button class="${BVISTA==='lista'?'on':''}" onclick="bSetVista('lista')">Lista</button><button class="${BVISTA==='mapa'?'on':''}" onclick="bSetVista('mapa')">Pizarrón</button></span>`;
+  return h; }
+function bTool(){ const t=document.getElementById('btool'); if(!t||t.contains(document.activeElement)) return; const c=byId(S.campanas,B.camp); if(c) t.innerHTML=bToolHTML(c); }
+
+/* lista: todas las notas legibles, por columnas */
+function bListaHTML(){
+  if(!B.notes.length) return `<div class="empty">Todavía no hay notas.</div>`;
+  const ps=personas(); const byN=bById();
+  const it=n=>{ const oc=!B.meta.mostrar&&n.tipo==='idea'&&n.mia; const orig=(n.from||[]).map(id=>byN[id]).filter(Boolean);
+    const cuerpo=n.tipo==='final'?`${esc(n.nombre||n.texto)}<div class="srcl">${esc(n.queSeVe||'')}</div>`:n.tipo==='cruce'?`${n.texto?`<b>${esc(n.texto)}</b>`:'<span class="dim">Cruce</span>'}<div class="srcl">${orig.map(o=>`#${o.numero} ${esc(bTxt(o))}`).join(' <b>+</b> ')}</div>`:esc(n.texto);
+    return `<div class="it ${n.tipo} ${oc?'oculta':''} ${bsel.has(n.id)?'sel':''}" style="--c:${colorNota(n)}" onclick="bListaClick('${n.id}')"><span class="num">#${n.numero}</span>${cuerpo}${n.enviada?' <span class="small">✓ en votación</span>':''}</div>`; };
+  const col=(t,ns,color)=>`<div class="col" style="--c:${color}"><h4>${t} <span class="dim">${ns.length}</span></h4>${ns.map(it).join('')||'<span class="small dim">Todavía ninguna</span>'}</div>`;
+  const sueltas=B.notes.filter(n=>n.tipo==='idea'&&!n.autorNombre);
+  return `<div class="blista">${ps.map(k=>col(esc(etiquetaPersona(k)),B.notes.filter(n=>n.tipo==='idea'&&n.autorNombre===k).sort((a,b)=>a.creado-b.creado),colorPersona(k))).join('')}
+  ${sueltas.length?col('Sueltas',sueltas,SUELTA):''}
+  ${col('Cruces',B.notes.filter(n=>n.tipo==='cruce').sort((a,b)=>a.numero-b.numero),'#6E9CC6')}
+  ${col('Finales',B.notes.filter(n=>n.tipo==='final').sort((a,b)=>a.numero-b.numero),'#FFF200')}</div>`;
+}
+function bListaClick(id){ if(!bPuede()){ bLeer(id); return; } if(bsel.has(id)) bsel.delete(id); else bsel.add(id); bPaint(); }
+
+/* acciones sobre lo elegido (barra flotante en el pizarrón, barra fija en la lista) */
+function bAccionesHTML(){ const ns=[...bsel].map(bNota).filter(Boolean); const n=ns.length; const ed=bPuede(); if(!n) return '';
+  let h='';
+  if(ed&&n>=2){ const cr=ns.filter(x=>x.tipo==='cruce').length===1; h+=`<button class="bf pri" onclick="bCruzar()">${cr?'Sumar al cruce':'Cruzar'} ${ns.map(x=>'#'+x.numero).join(' + ')}</button>`; }
+  if(n===1){ const x=ns[0]; h+=`<button class="bf" onclick="bAbrir('${x.id}')">${ed?(x.tipo==='final'?'Editar final':'Abrir y editar'):'Ver grande'}</button>`; if(ed&&x.tipo!=='final') h+=`<button class="bf pri" onclick="bEditarFinal('${x.id}')">★ Hacer final</button>`; }
+  if(n>=2&&document.getElementById('bwrap')) h+=`<button class="bf" onclick="bVerSel()">Acercar</button>`;
+  if(isDC()) h+=`<button class="bf danger" onclick="bBorrar()">Borrar${n>1?' '+n:''}</button>`;
+  h+=`<button class="bf ghost" onclick="bsel.clear();bSelPaint()" title="Soltar (Esc)">✕</button>`;
+  return h; }
+function bFlotante(){ const f=document.getElementById('bfloat'); if(!f) return; const ns=[...bsel].map(bNota).filter(n=>n&&bEl(n.id));
+  if(!ns.length||(bdrag&&bdrag.moved)||bInline){ f.hidden=true; return; }
+  const rs=ns.map(bRect); const x0=Math.min(...rs.map(r=>r.x)), x1=Math.max(...rs.map(r=>r.x+r.w)), y0=Math.min(...rs.map(r=>r.y)), y1=Math.max(...rs.map(r=>r.y+r.h));
+  f.innerHTML=bAccionesHTML(); f.hidden=false; const wr=document.getElementById('bwrap'); const W=wr.clientWidth, H=wr.clientHeight;
+  const fw=f.offsetWidth, fh=f.offsetHeight; let left=BV.x+((x0+x1)/2)*BV.s-fw/2, top=BV.y+y0*BV.s-fh-14;
+  if(top<50) top=BV.y+y1*BV.s+14; left=Math.max(8,Math.min(W-fw-8,left)); top=Math.max(50,Math.min(H-fh-60,top));
+  f.style.left=left+'px'; f.style.top=top+'px'; }
+function bAbrir(id){ const n=bNota(id); if(!n) return; if(!bPuede()) return bLeer(id); (n.tipo==='final'?bEditarFinal:bEditar)(id); }
+function bSelPaint(){ if(document.getElementById('blista')){ bPaint(); return; } document.querySelectorAll('#bnotes .pit').forEach(el=>el.classList.toggle('sel',bsel.has(el.dataset.id))); bLines(); bFlotante(); }
+
+/* qué hay adentro de un cruce o una final, hasta llegar a las ideas sueltas */
+function bArbol(n,byN,seen=new Set(),nivel=0){ return (n.from||[]).map(id=>byN[id]).filter(o=>o&&!seen.has(o.id)).map(o=>{ seen.add(o.id);
+  return `<div class="arb" style="padding-left:${nivel*18}px"><i style="background:${colorNota(o)}"></i><b>#${o.numero}</b><span><span class="dim small">${o.tipo==='idea'?esc(etiquetaPersona(o.autorNombre)):o.tipo==='cruce'?'Cruce':'Final'} · </span>${esc(bTxt(o))||'<span class="dim">(sin texto)</span>'}</span></div>`+bArbol(o,byN,seen,nivel+1); }).join(''); }
+function bRaices(n,byN,seen=new Set()){ if(seen.has(n.id)) return []; seen.add(n.id); if(n.tipo==='idea') return [n]; return (n.from||[]).flatMap(id=>byN[id]?bRaices(byN[id],byN,seen):[]); }
+function bSaleDe(n){ const byN=bById();
+  if(n.tipo==='idea') return `<div class="bsale"><div class="small muted">La idea · ${esc(etiquetaPersona(n.autorNombre))}</div><div class="arb"><i style="background:${colorNota(n)}"></i><b>#${n.numero}</b><span>${esc(n.texto)}</span></div></div>`;
+  const a=bArbol(n,byN); return `<div class="bsale"><div class="small muted">${n.tipo==='final'?'Sale de':'Lo que se cruza'}</div>${n.tipo==='cruce'&&n.texto?`<p style="margin:6px 0;font-weight:700">${esc(n.texto)}</p>`:''}${a||'<p class="small dim">Todavía no tiene notas adentro.</p>'}</div>`; }
+
+/* leer grande (equipo sin permiso de edición) */
+function bLeer(id){ const n=bNota(id); if(!n) return;
+  const cuerpo=n.tipo==='final'?`<h2 style="margin:0 0 10px">${esc(n.nombre||n.texto)}</h2><p><b>Qué se ve:</b> ${esc(n.queSeVe||'')}</p><p><b>Qué es:</b> ${esc(n.queEs||'')}</p><p><b>Qué hace la gente:</b> ${esc(n.queHace||'')}</p>${bSaleDe(n)}`
+    :n.tipo==='cruce'?bSaleDe(n):`<p style="font-size:19px;line-height:1.4;margin:0 0 10px">${esc(n.texto)}</p><p class="small muted">${esc(etiquetaPersona(n.autorNombre))}</p>`;
+  document.getElementById('bpop')?.remove(); const d=document.createElement('div'); d.id='bpop'; d.className='bpop'; d.onclick=e=>{ if(e.target===d) d.remove(); };
+  d.innerHTML=`<div class="box"><div class="row" style="margin-bottom:10px"><span class="tag" style="background:${colorNota(n)};color:#1E1A12">#${n.numero}${n.tipo==='final'?' · Final':n.tipo==='cruce'?' · Cruce':''}</span><span class="grow"></span><button class="btn ghost sm" onclick="document.getElementById('bpop').remove()">Cerrar</button></div>${cuerpo}</div>`; document.body.appendChild(d); }
+
+/* cargar las cinco de cada persona (DC) */
+function ideasDe_(nombre){ return B.notes.filter(n=>n.tipo==='idea'&&(n.autorNombre||'')===nombre).sort((a,b)=>a.creado-b.creado); }
+function misIdeasHTML(){
+  const ps=personas(); const cnt=k=>B.notes.filter(n=>n.tipo==='idea'&&n.autorNombre===k).length;
+  const prog=B.progreso||[];
+  if(!isDC()){ const tot=prog.reduce((a,p)=>a+p.n,0); return tot?`<p class="small muted" style="margin:0 0 10px">${tot} idea${tot===1?'':'s'} cargada${tot===1?'':'s'} de ${prog.length} persona${prog.length===1?'':'s'}.</p>`:''; }
+  const mis=AUTOR?ideasDe_(AUTOR):[]; const slots=Math.max(5,mis.length+(mis.length>=5?1:0));
+  const abierto=!T||T.fase<=1;
+  const botones=`<div class="prog">${ps.map(k=>`<button class="tag ${k===AUTOR?'ban':''}" style="cursor:pointer;padding:6px 12px;font-size:13px;--c:${colorPersona(k)}" onclick="bSetAutor(${esc(JSON.stringify(k))})"><i></i>${esc(etiquetaPersona(k))} · ${cnt(k)}/5</button>`).join('')}<button class="tag" style="cursor:pointer;padding:6px 12px;font-size:13px" onclick="bNuevaPersona()">+ Persona</button></div>`;
+  const cuerpo=`${botones}
+    ${AUTOR?`<div style="margin-top:12px">${Array.from({length:slots},(_,i)=>{ const n=mis[i]; return `<div class="slot ${n?'ok':''}"><b>${i+1}</b><input type="text" maxlength="300" data-slot="${i}" value="${esc(n?.texto||'')}" placeholder="${i<5?`Idea ${i+1} de ${etiquetaPersona(AUTOR)}`:'Otra idea'}" onkeydown="if(event.key==='Enter'){event.preventDefault();bSlot(${i},this.value,this)}" onblur="bSlot(${i},this.value,this)">${n?`<span class="small dim">#${n.numero}</span>`:'<span></span>'}</div>`; }).join('')}</div>`:`<p class="small dim" style="margin:10px 0 0">Tocá “+ Persona” para empezar con quien lee primero.</p>`}`;
+  if(!abierto) return `<details class="card mis" style="padding:12px 16px"><summary style="cursor:pointer"><b>Cargar ideas</b> <span class="dim">${B.notes.filter(n=>n.tipo==='idea').length} cargadas · tocá para sumar</span></summary><div style="margin-top:10px">${cuerpo}</div></details>`;
+  return `<div class="card mis"><h3 style="margin:0">Cargar ideas <span class="dim" style="font-weight:500">${AUTOR?`${etiquetaPersona(AUTOR)} · ${Math.min(mis.length,5)} de 5`:''}</span></h3>
+    <p class="small muted" style="margin:6px 0 10px">Sin nombres: cada uno es una columna con su color. Quien lee sus cinco en voz alta es una persona; vos las cargás. Enter guarda y pasa a la siguiente.</p>${cuerpo}</div>`;
+}
+function bNuevaPersona(){ const ps=personas(); let i=ps.length+1; while(ps.includes('Persona '+i)) i++; bSetAutor('Persona '+i); }
+function bSetAutor(v){ AUTOR=(v||'').trim(); const m=document.getElementById('bmis'); if(m){ m._forzar=true; bMis(); } const libre=[...document.querySelectorAll('#bmis input[data-slot]')].find(x=>!x.value); libre?.focus(); bZonas(); bLeyenda(); }
+// Carga optimista: la idea aparece y el cursor pasa al siguiente casillero al instante; el guardado va por detrás, en orden.
+let bCola=Promise.resolve();
+function bSlot(i,v,el){
+  v=(v||'').trim(); if(!AUTOR){ if(v) toast('Tocá “+ Persona” primero'); return; }
+  const n=ideasDe_(AUTOR)[i];
+  if(n){ if(v&&v!==n.texto){ n.texto=v; if(n._tmp) return; bPatch(n.id,{texto:v}); } return; }
+  if(!v) return;
+  const campId=B.camp, autor=AUTOR; const p=bSpot('idea',autor);
+  const tmp={id:'tmp'+uid(),campanaId:campId,numero:'…',tipo:'idea',texto:v,autorNombre:autor,from:[],creado:Date.now(),mia:true,_tmp:true,x:p.x,y:p.y,pos:true};
+  B.notes.push(tmp);
+  B.progreso=B.progreso||[]; const pr=B.progreso.find(q=>q.nombre===autor); if(pr) pr.n++; else B.progreso.push({nombre:autor,n:1});
+  el.closest('.slot')?.classList.add('ok');
+  const bm=document.getElementById('bmis');
+  let next=document.querySelector(`#bmis input[data-slot="${i+1}"]`);
+  if(!next&&bm){ bm._forzar=true; bMis(); next=document.querySelector(`#bmis input[data-slot="${i+1}"]`); }
+  next?.focus();
+  bPaint(); if(!BV._manual) bFit(true);
+  if(i===4) toast(`Listo, ${etiquetaPersona(autor)} tiene sus cinco. Tocá “+ Persona” para seguir.`);
+  bPend++; bMut++;
+  bCola=bCola.then(async()=>{
+    try{ const enviado=tmp.texto; const d=await api('POST','board/'+campId,{dev:DEV,tipo:'idea',texto:enviado,autorNombre:autor,x:tmp.x,y:tmp.y});
+      const {x,y}=tmp; Object.assign(tmp,d.note,{x,y}); delete tmp._tmp;
+      if(tmp.texto!==enviado) await api('PATCH',`board/${campId}/${tmp.id}`,{texto:tmp.texto}).catch(()=>{});
+    }catch(e){ B.notes=B.notes.filter(x=>x!==tmp); toast('No se guardó: '+e.message); }
+    finally{ bPend--; bMut++; B._j=''; if(!bPend){ bPaint(); const m=document.getElementById('bmis'); if(m&&!m.contains(document.activeElement)){ m._forzar=true; bMis(); } } }
+  });
+}
+function bMis(){ const m=document.getElementById('bmis'); if(!m) return; const a=document.activeElement; if(a&&m.contains(a)&&!m._forzar) return; m._forzar=false; const f=a&&m.contains(a)?a.dataset.slot:null; const d=m.querySelector('details'); const ab=d?d.open:false; m.innerHTML=misIdeasHTML(); if(ab){ const d2=m.querySelector('details'); if(d2) d2.open=true; } if(f!=null) m.querySelector(`input[data-slot="${f}"]`)?.focus(); }
+
+/* traer del servidor */
+async function cargarPizarron(){
+  const c=campActual(); if(!c||tab!=='pizarron') return;
+  if(bdrag||modal||bPend||bInline||pinch) return;
+  const g=bMut;
+  try{ const d=await api('GET',`board?camp=${c}&dev=${DEV}`);
+    if(bdrag||modal||bPend||bInline||pinch||g!==bMut) return;   // mientras llegaba se tocó algo acá: esta lectura ya es vieja
+    const j=JSON.stringify([d.notes,d.meta,d.ocultas,d.progreso]); if(j===B._j&&B.camp===c) return;
+    const primera=!B._fit||B.camp!==c;
+    B={camp:c,notes:d.notes,meta:d.meta,ocultas:d.ocultas,autores:d.autores,progreso:d.progreso||[],_j:j,_fit:true};
+    [...bsel].forEach(id=>{ if(!B.notes.some(n=>n.id===id)) bsel.delete(id); });
+    bPaint(); if(B.notes.length&&(primera||!BV._manual)) bFit(false); }
+  catch(e){ sync('Pizarrón: '+e.message,true); }
+}
+function pollPizarron(){ clearInterval(bpollT); bpollT=setInterval(cargarPizarron,2500); }
+
+/* dibujar */
+function bEnFoco(n,byN){ if(!bFoco) return true; if(n.tipo==='idea') return n.autorNombre===bFoco; return bRaices(n,byN).some(o=>o.autorNombre===bFoco); }
+function bNotaHTML(n,byN,ed){
+  const oc=!B.meta.mostrar&&n.tipo==='idea'&&n.mia;
+  const orig=(n.from||[]).map(id=>byN[id]).filter(Boolean);
+  const cls=['pit',n.tipo,bsel.has(n.id)?'sel':'',oc?'oculta':'',bEnFoco(n,byN)?'':'apagada'].join(' ');
+  const quien=n.tipo==='idea'?`<span class="who">${esc(etiquetaPersona(n.autorNombre))}</span>`:n.tipo==='cruce'?'<span class="who">Cruce</span>':'<span class="who">★ Final</span>';
+  const fuente=o=>`<div class="src"><i style="background:${colorNota(o)}"></i><b>#${o.numero}</b>${esc(bTxt(o))||'<span class="ph">sin texto</span>'}</div>`;
+  let body;
+  if(n.tipo==='idea') body=`<div class="tx">${esc(n.texto)||'<span class="ph">Doble clic para escribir</span>'}</div>`;
+  else if(n.tipo==='cruce') body=`<div class="tx tit">${esc(n.texto)||'<span class="ph">¿Qué sale de cruzarlas? (doble clic)</span>'}</div><div class="srcs">${orig.map(fuente).join('')||'<div class="ph">Arrastrá el + de una nota hasta acá</div>'}</div>`;
+  else body=`<div class="nm">${esc(n.nombre||n.texto)}</div>${n.queSeVe?`<div class="fq"><span>Qué se ve</span>${esc(n.queSeVe)}</div>`:''}${n.queEs?`<div class="fq"><span>Qué es</span>${esc(n.queEs)}</div>`:''}${n.queHace?`<div class="fq"><span>Qué hace la gente</span>${esc(n.queHace)}</div>`:''}${orig.length?`<div class="de">Sale de #${orig.map(o=>o.numero).join(' + #')}</div>`:''}${n.enviada?'<div class="env">✓ En votación</div>':''}`;
+  return `<div class="${cls}" data-id="${n.id}" style="left:${n.x||0}px;top:${n.y||0}px;width:${n.w||BW[n.tipo]||200}px;${n.h?`min-height:${n.h}px;`:''}--c:${colorNota(n)}"><div class="ph-h"><span class="num">#${n.numero}</span>${quien}${oc?'<span class="who">tapada</span>':''}</div>${body}${ed&&n.tipo!=='final'&&!n._tmp?'<span class="con" title="Arrastrá hasta otra nota para cruzarlas">+</span>':''}${ed&&!n._tmp?'<span class="rs" title="Arrastrá para agrandar"></span>':''}</div>`;
+}
+function bPaint(){
+  const bl=document.getElementById('blista'); if(bl) bl.innerHTML=bListaHTML();
+  const ac=document.getElementById('bacc'); if(ac) ac.innerHTML=bsel.size?`<div class="bfloat static">${bAccionesHTML()}</div>`:(bPuede()&&B.notes.length?'<p class="small dim" style="margin:0 0 10px">Tocá notas para elegirlas: con dos o más las podés cruzar.</p>':'');
+  bMis(); bTool(); const it0=document.getElementById('bintro'); if(it0) it0.innerHTML=bIntro();
+  const w=document.getElementById('bworld'); if(!w) return;
+  if(bInline) return;   // no se redibuja mientras alguien escribe adentro de una nota
+  const byN=bById(); const ed=bPuede();
+  document.getElementById('bnotes').innerHTML=B.notes.map(n=>bNotaHTML(n,byN,ed)).join('');
+  bMedir();
+  if(B.notes.some(n=>!bTienePos(n))){ const ns=bOrdenar(false); bMover(ns); bGuardarPos(ns); }   // las notas viejas, sin lugar guardado, se acomodan solas una vez
+  bZonas(); bLeyenda(); bLines(); bApplyView(); bAviso();
+  const it=document.getElementById('bintro'); if(it) it.innerHTML=bIntro(); const ay=document.getElementById('bhelp'); if(ay) ay.innerHTML=bAyuda();
+}
+function bZonas(){ const z=document.getElementById('bzonas'); if(!z) return; const ps=personas();
+  z.innerHTML=ps.map((k,i)=>`<div class="zona" style="left:${40+i*COLW}px;--c:${colorPersona(k)}"><i></i>${esc(etiquetaPersona(k))}<span>${B.notes.filter(n=>n.tipo==='idea'&&n.autorNombre===k).length}</span></div>`).join('')
+    +(ps.length?'':`<div class="zona" style="left:40px">Ideas</div>`)+`<div class="zona" style="left:${bZonaX('cruce')}px">Cruces</div><div class="zona" style="left:${bZonaX('final')}px">Finales</div>`; }
+function bLeyenda(){ const l=document.getElementById('bley'); if(!l) return; const ps=personas(); const n=t=>B.notes.filter(x=>x.tipo===t).length;
+  l.innerHTML=ps.map(k=>`<button class="${bFoco===k?'on':''}" style="--c:${colorPersona(k)}" onclick="bFocoPersona(${esc(JSON.stringify(k))})" title="Ver solo lo de ${esc(etiquetaPersona(k))}"><i></i>${esc(etiquetaPersona(k))} <b>${B.notes.filter(x=>x.tipo==='idea'&&x.autorNombre===k).length}</b></button>`).join('')
+    +`<button onclick="bVerTipo('cruce')"><i class="cr"></i>Cruces <b>${n('cruce')}</b></button><button onclick="bVerTipo('final')"><i class="fi"></i>Finales <b>${n('final')}</b></button>`
+    +(bFoco?`<button onclick="bFocoPersona('')">✕ Ver todas</button>`:''); }
+function bAviso(){ const av=document.getElementById('baviso'); if(!av) return;
+  av.innerHTML=!B.meta.mostrar?`<div class="baviso">${isDC()?'<b>Tapadas:</b> el equipo todavía no las ve. Se destapan al pasar a la Ronda 1 o con “Destapar las ideas”.':`<b>Fase 1: cada uno solo, en papel.</b> ${B.ocultas?`El DC ya cargó ${B.ocultas} idea${B.ocultas===1?'':'s'}. `:''}Se ven cuando las destape.`}</div>`:(!B.notes.length&&bPuede()?`<div class="baviso">Hacé <b>doble clic</b> en cualquier lugar para crear una nota.</div>`:''); }
+function bLines(){
+  const svg=document.getElementById('blines'); if(!svg) return; const byN=bById(); const act=new Set([...bsel,bHover].filter(Boolean));
+  let h='<defs>'+['#6E9CC6','#D9CC00'].map((c,i)=>`<marker id="bm${i}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('')+'</defs>';
+  for(const n of B.notes) for(const id of (n.from||[])){ const s0=byN[id]; if(!s0) continue; const a=bRect(s0), b=bRect(n);
+    let x1,y1,x2,y2,horiz=true;
+    if(a.x+a.w<=b.x){ x1=a.x+a.w; x2=b.x-4; y1=a.y+a.h/2; y2=b.y+b.h/2; }
+    else if(b.x+b.w<=a.x){ x1=a.x; x2=b.x+b.w+4; y1=a.y+a.h/2; y2=b.y+b.h/2; }
+    else { horiz=false; x1=a.x+a.w/2; x2=b.x+b.w/2; if(a.y+a.h<=b.y){ y1=a.y+a.h; y2=b.y-4; } else { y1=a.y; y2=b.y+b.h+4; } }
+    const on=!act.size||act.has(n.id)||act.has(id); const fin=n.tipo==='final';
+    const d=horiz?`M${x1},${y1} C${(x1+x2)/2},${y1} ${(x1+x2)/2},${y2} ${x2},${y2}`:`M${x1},${y1} C${x1},${(y1+y2)/2} ${x2},${(y1+y2)/2} ${x2},${y2}`;
+    h+=`<path d="${d}" fill="none" stroke="${fin?'#D9CC00':'#6E9CC6'}" stroke-width="${act.size&&on?4:2.5}" ${fin?'':'stroke-dasharray="8 6"'} opacity="${on?.95:.15}" marker-end="url(#bm${fin?1:0})"/>`; }
+  svg.innerHTML=h; }
+function bApplyView(){ const w=document.getElementById('bworld'); if(!w) return; w.style.transform=`translate(${BV.x}px,${BV.y}px) scale(${BV.s})`;
+  const wr=document.getElementById('bwrap'); if(wr){ wr.style.backgroundSize=`${22*BV.s}px ${22*BV.s}px`; wr.style.backgroundPosition=`${BV.x}px ${BV.y}px`; }
+  const z=document.getElementById('bzpct'); if(z) z.textContent=Math.round(BV.s*100)+'%';
+  bMinimapa(); bFlotante(); }
+function bMinimapa(){ const m=document.getElementById('bmini'), wr=document.getElementById('bwrap'); if(!m||!wr) return; if(B.notes.length<2){ m.hidden=true; return; } m.hidden=false;
+  const rs=B.notes.map(n=>[n,bRect(n)]); const W=wr.clientWidth,H=wr.clientHeight; const vx=-BV.x/BV.s, vy=-BV.y/BV.s, vw=W/BV.s, vh=H/BV.s;
+  const x0=Math.min(vx,...rs.map(o=>o[1].x)), y0=Math.min(vy,...rs.map(o=>o[1].y)), x1=Math.max(vx+vw,...rs.map(o=>o[1].x+o[1].w)), y1=Math.max(vy+vh,...rs.map(o=>o[1].y+o[1].h));
+  const MW=170, MH=110, k=Math.min(MW/(x1-x0),MH/(y1-y0)); m._map={x0,y0,k};
+  m.innerHTML=`<svg width="${MW}" height="${MH}">${rs.map(([n,r])=>`<rect x="${(r.x-x0)*k}" y="${(r.y-y0)*k}" width="${Math.max(2,r.w*k)}" height="${Math.max(2,r.h*k)}" rx="1" fill="${colorNota(n)}"/>`).join('')}<rect x="${(vx-x0)*k}" y="${(vy-y0)*k}" width="${vw*k}" height="${vh*k}" fill="rgba(255,242,0,.08)" stroke="#FFF200" stroke-width="1.5" rx="2"/></svg>`; }
+function bMiniIr(e){ const m=document.getElementById('bmini'), wr=document.getElementById('bwrap'); const mp=m?._map; if(!mp) return; const r=m.querySelector('svg').getBoundingClientRect();
+  const wx=mp.x0+(e.clientX-r.left)/mp.k, wy=mp.y0+(e.clientY-r.top)/mp.k; BV._manual=true; bAnimarA({x:wr.clientWidth/2-wx*BV.s,y:wr.clientHeight/2-wy*BV.s,s:BV.s},true); }
+
+/* cámara */
+function bAnimarA(t,anim){ const id=++bAnimT; if(!anim){ BV.x=t.x; BV.y=t.y; BV.s=t.s; bApplyView(); return; }
+  const o={x:BV.x,y:BV.y,s:BV.s}, t0=performance.now();
+  const paso=now=>{ if(id!==bAnimT) return; const k=Math.min(1,(now-t0)/280), e=1-Math.pow(1-k,3); BV.x=o.x+(t.x-o.x)*e; BV.y=o.y+(t.y-o.y)*e; BV.s=o.s+(t.s-o.s)*e; bApplyView(); if(k<1) requestAnimationFrame(paso); };
+  requestAnimationFrame(paso); }
+// legible: si para que entre todo hay que achicar demasiado, se prioriza el ancho y se arranca desde arriba
+function bVerNotas(ns,anim=true,maxS=1.1,legible=false){ const wr=document.getElementById('bwrap'); if(!wr||!ns.length) return; const rs=ns.map(bRect); const pad=40, top=52;
+  const x0=Math.min(...rs.map(r=>r.x))-pad, y0=Math.min(...rs.map(r=>r.y))-pad-50, x1=Math.max(...rs.map(r=>r.x+r.w))+pad, y1=Math.max(...rs.map(r=>r.y+r.h))+pad;
+  const W=wr.clientWidth, H=wr.clientHeight-top; let s=Math.max(.1,Math.min(maxS,W/(x1-x0),H/(y1-y0)));
+  const MIN=W<700?.42:.6; if(legible&&s<MIN) s=Math.max(s,Math.min(MIN,maxS,W/(x1-x0)));
+  const y=(y1-y0)*s>H?top-y0*s:top+(H-(y1-y0)*s)/2-y0*s;
+  bAnimarA({x:(W-(x1-x0)*s)/2-x0*s, y, s},anim); }
+function bFit(anim){ BV._manual=false; if(!B.notes.length){ bAnimarA({x:24,y:20,s:.85},false); return; } bVerNotas(B.notes,!!anim,1.1,true); }
+function bVerTodo(){ BV._manual=false; if(B.notes.length) bVerNotas(B.notes,true,1.1,false); }
+function bVerSel(){ BV._manual=true; bVerNotas([...bsel].map(bNota).filter(Boolean),true,1.3); }
+function bVerTipo(t){ const ns=B.notes.filter(n=>n.tipo===t); if(!ns.length){ toast(t==='final'?'Todavía no hay finales':'Todavía no hay cruces'); return; } BV._manual=true; bVerNotas(ns,true,1.2); }
+function bFocoPersona(k){ bFoco=bFoco===k?'':k; bPaint(); if(bFoco){ const byN=bById(); BV._manual=true; bVerNotas(B.notes.filter(n=>n.tipo==='idea'&&n.autorNombre===bFoco),true,1.25); } else bFit(true); }
+function bIrA(v){ const num=parseInt(String(v).replace(/[^0-9]/g,''),10); const n=B.notes.find(x=>x.numero===num); if(!n){ toast(`No hay ninguna nota #${v}`); return; } bsel.clear(); bsel.add(n.id); bSelPaint(); BV._manual=true; bVerNotas([n],true,1.3); }
+function bZoom(k,cx,cy){ const wr=document.getElementById('bwrap'); if(!wr) return; bAnimT++; BV._manual=true; cx=cx??wr.clientWidth/2; cy=cy??wr.clientHeight/2; const s2=Math.max(.1,Math.min(2.5,BV.s*k)); BV.x=cx-(cx-BV.x)*(s2/BV.s); BV.y=cy-(cy-BV.y)*(s2/BV.s); BV.s=s2; bApplyView(); }
+function bPantalla(v){ bFull=v===undefined?!bFull:v; document.body.classList.toggle('bfull',bFull); render(); setTimeout(()=>bFit(true),30); }
+function bWorldPt(x,y){ const r=document.getElementById('bwrap').getBoundingClientRect(); return [(x-r.left-BV.x)/BV.s,(y-r.top-BV.y)/BV.s]; }
+function bNotaEn(x,y,excluir){ const el=document.elementsFromPoint(x,y).find(el=>el.classList&&el.classList.contains('pit')&&el.dataset.id!==excluir&&el.id!=='bdraft'); return el?el.dataset.id:null; }
+
+/* escribir adentro de la nota (doble clic) */
+function bInlineWire(ta,el,onH){
+  const auto=()=>{ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; onH&&onH(); };
+  auto(); ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+  ta.addEventListener('input',auto);
+  ta.addEventListener('keydown',ev=>{ if(ev.key==='Enter'&&!ev.shiftKey){ ev.preventDefault(); bInlineFin(true); } else if(ev.key==='Escape'){ ev.preventDefault(); ev.stopPropagation(); bInlineFin(false); } });
+  ta.addEventListener('blur',()=>setTimeout(()=>{ if(bInline&&document.activeElement!==ta) bInlineFin(true); },0)); }
+function bInlineIni(id){ bInlineFin(true); const n=bNota(id), el=bEl(id); if(!n||!el||n._tmp||n.tipo==='final') return; const tx=el.querySelector('.tx'); if(!tx) return;
+  bsel.clear(); bsel.add(id); el.classList.add('sel'); bInline={id}; document.getElementById('bfloat')?.setAttribute('hidden','');
+  tx.innerHTML=`<textarea class="bedit" maxlength="${n.tipo==='cruce'?500:300}" placeholder="${n.tipo==='cruce'?'¿Qué sale de cruzarlas?':'Escribí la idea'}">${esc(n.texto||'')}</textarea>`;
+  bInlineWire(tx.querySelector('textarea'),el,()=>{ n._h=el.offsetHeight; bLines(); }); }
+function bNuevaEn(x,y){ bInlineFin(true); const nb=document.getElementById('bnotes'); if(!nb) return; const autor=isDC()?AUTOR:'';
+  nb.insertAdjacentHTML('beforeend',`<div class="pit idea draft" id="bdraft" style="left:${x}px;top:${y}px;width:200px;--c:${colorPersona(autor)}"><div class="ph-h"><span class="num">Nueva</span><span class="who">${esc(etiquetaPersona(autor))}</span></div><div class="tx"><textarea class="bedit" maxlength="300" placeholder="Escribí la idea y Enter"></textarea></div></div>`);
+  bInline={draft:true,x,y,autor}; bsel.clear(); bSelPaint(); bInlineWire(nb.querySelector('#bdraft textarea'),nb.querySelector('#bdraft')); }
+function bInlineFin(ok){ const s=bInline; if(!s) return; bInline=null; const ta=document.querySelector('#bnotes textarea.bedit'); const v=(ta?.value||'').trim();
+  if(s.draft){ document.getElementById('bdraft')?.remove(); if(ok&&v) bCrear({tipo:'idea',texto:v,autorNombre:s.autor,x:Math.round(s.x),y:Math.round(s.y)}); else bPaint(); return; }
+  const n=bNota(s.id); if(ok&&n&&v!==(n.texto||'')&&!(n.tipo==='idea'&&!v)){ n._w=0; bPatch(n.id,{texto:v}); } else bPaint(); }
+
+/* crear, cambiar, cruzar, borrar */
+async function bCrear(data){ if(!('x' in data)){ const p=bSpot(data.tipo,data.autorNombre); data={...data,...p}; }
+  bMut++; bPend++; try{ const d=await api('POST','board/'+B.camp,{dev:DEV,...data}); B.notes.push(d.note); bPaint(); return d.note; }catch(e){ toast(e.message); } finally{ bPend--; bMut++; } }
+async function bPatch(id,data){ const n=bNota(id); if(n){ Object.assign(n,data); n._w=0; } bPaint(); bMut++; bPend++;
+  try{ await api('PATCH',`board/${B.camp}/${id}`,data); }catch(e){ toast(e.message); } finally{ bPend--; bMut++; } }
+async function bEquipo(v){ try{ await api('POST',`board/${B.camp}/equipo`,{equipo:v}); B.meta.equipo=v; B._j=''; await cargarPizarron(); toast(v?'El equipo ya puede mover y cruzar':'Solo vos editás el pizarrón'); }catch(e){ toast(e.message); } }
+function bLinkMove(e){
+  const d=bdrag; const n=bNota(d.id); if(!n) return; const a=bRect(n);
+  const x1=a.x+a.w, y1=a.y+a.h/2; const [x2,y2]=bWorldPt(e.clientX,e.clientY);
+  let p=document.getElementById('blink'); if(!p){ p=document.createElementNS('http://www.w3.org/2000/svg','path'); p.id='blink'; p.setAttribute('fill','none'); p.setAttribute('stroke','#6E9CC6'); p.setAttribute('stroke-width','4'); p.setAttribute('marker-end','url(#bm0)'); document.getElementById('blines').appendChild(p); }
+  const mx=(x1+x2)/2; p.setAttribute('d',`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+  const t=bNotaEn(e.clientX,e.clientY,d.id); if(t!==d.over){ document.querySelectorAll('.pit.linktarget').forEach(x=>x.classList.remove('linktarget')); if(t) bEl(t)?.classList.add('linktarget'); d.over=t; } }
+async function bUnir(a,b){
+  const A=bNota(a), Bn=bNota(b); if(!A||!Bn) return;
+  if(Bn.tipo==='final'||A.tipo==='final'){ toast('Las finales no se cruzan: se arman desde un cruce'); bPaint(); return; }
+  if(Bn.tipo==='cruce'&&A.tipo==='idea'){ if(!Bn.from.includes(a)) await bPatch(b,{from:[...Bn.from,a]}); toast(`#${A.numero} sumada al cruce #${Bn.numero}`); return; }
+  if(A.tipo==='cruce'&&Bn.tipo==='idea'){ if(!A.from.includes(b)) await bPatch(a,{from:[...A.from,b]}); toast(`#${Bn.numero} sumada al cruce #${A.numero}`); return; }
+  const ya=B.notes.find(x=>x.tipo==='cruce'&&x.from.length===2&&x.from.includes(a)&&x.from.includes(b)); if(ya){ toast(`Ese cruce ya existe: #${ya.numero}`); bsel.clear(); bsel.add(ya.id); bSelPaint(); return; }
+  const nn=await bCrear({tipo:'cruce',texto:'',from:[a,b]}); if(nn){ bsel.clear(); bsel.add(nn.id); bSelPaint(); toast(`Cruce #${nn.numero}: doble clic para escribir qué sale`); }
+}
+function bCruzar(){
+  const ids=[...bsel]; const ns=ids.map(bNota).filter(Boolean);
+  if(ns.some(n=>n.tipo==='final')){ toast('Las finales no se cruzan: se arman desde un cruce'); return; }
+  const cr=ns.filter(n=>n.tipo==='cruce');
+  if(cr.length===1){ const c=cr[0]; const add=ids.filter(id=>id!==c.id&&!c.from.includes(id)); if(add.length){ bsel.clear(); bsel.add(c.id); bPatch(c.id,{from:[...c.from,...add]}); toast(`${add.length===1?'Sumada':'Sumadas'} al cruce #${c.numero}`); } return; }
+  openModal(`<h2 style="margin-top:0">Cruzar ${ns.map(n=>'#'+n.numero).join(' + ')}</h2>
+  <div class="bsale">${ns.map(o=>`<div class="arb"><i style="background:${colorNota(o)}"></i><b>#${o.numero}</b><span>${esc(bTxt(o))}</span></div>`).join('')}</div>
+  <p class="muted small">De una podés agarrar la historia, de otra cómo se filma, de otra el objeto. Las originales no se borran.</p>
+  <label class="f"><span>¿Qué sale de cruzarlas? <span class="dim">(se puede escribir después)</span></span><textarea id="bx-t" maxlength="500"></textarea></label>
+  <div class="row"><button class="btn pri" onclick="bCruzarOk()">Crear cruce</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`);
+  setTimeout(()=>document.getElementById('bx-t')?.focus(),0);
+}
+async function bCruzarOk(){ const t=document.getElementById('bx-t').value.trim(); const from=[...bsel]; modal=null; bsel.clear(); render(); const nn=await bCrear({tipo:'cruce',texto:t,from}); if(nn){ bsel.add(nn.id); bSelPaint(); } }
+function bEditar(id){ const n=bNota(id); if(!n) return; if(n.tipo==='final') return bEditarFinal(id);
+  openModal(`<h2 style="margin-top:0">${n.tipo==='cruce'?'Cruce':'Idea'} #${n.numero}</h2>
+  ${n.tipo==='cruce'?`<div class="f"><span class="small muted">Lo que se cruza</span><div class="bsale">${(n.from||[]).map(fid=>{ const o=bNota(fid); return o?`<div class="arb"><i style="background:${colorNota(o)}"></i><b>#${o.numero}</b><span class="grow">${esc(bTxt(o))}</span>${n.from.length>2?`<button class="btn ghost sm danger" onclick="bQuitar('${n.id}','${fid}')">Quitar</button>`:''}</div>`:''; }).join('')}</div><em class="small dim" style="display:block;margin-top:-8px">Para sumar otra: arrastrala encima de este cruce, o arrastrá su +.</em></div>`:''}
+  <label class="f"><span>${n.tipo==='cruce'?'¿Qué sale de cruzarlas?':'Texto'}</span><textarea id="be-t" maxlength="500">${esc(n.texto)}</textarea></label>
+  ${n.tipo==='idea'&&isDC()?`<label class="f"><span>Columna</span><select id="be-a">${personas().map(k=>`<option value="${esc(k)}" ${k===n.autorNombre?'selected':''}>${esc(etiquetaPersona(k))}</option>`).join('')}<option value="" ${!n.autorNombre?'selected':''}>Suelta</option></select></label>`:''}
+  <div class="row"><button class="btn pri" onclick="bEditarOk('${id}')">Guardar</button><button class="btn" onclick="closeModal();bEditarFinal('${id}')">★ Hacer final</button><button class="btn ghost" onclick="closeModal()">Cancelar</button><span class="grow"></span>${isDC()?`<button class="btn ghost sm danger" onclick="bBorrar(['${id}'])">Borrar</button>`:''}</div>`);
+  setTimeout(()=>{ const t=document.getElementById('be-t'); t?.focus(); t?.setSelectionRange(t.value.length,t.value.length); },0); }
+async function bQuitar(cid,fid){ const c=bNota(cid); modal=null; render(); await bPatch(cid,{from:c.from.filter(x=>x!==fid)}); bEditar(cid); }
+async function bEditarOk(id){ const t=document.getElementById('be-t').value.trim(); const a=document.getElementById('be-a'); const d={texto:t}; if(a) d.autorNombre=a.value.trim(); modal=null; render(); await bPatch(id,d); }
+function bEditarFinal(id){ const n=bNota(id); if(!n) return;
+  const sugerido=n.queSeVe||n.texto||bRaices(n,bById()).map(o=>o.texto).filter(Boolean).join(' + ');
+  openModal(`<h2 style="margin-top:0">${n.tipo==='final'?'Final':'Hacer final'} · #${n.numero}</h2>
+  <p class="muted small" style="margin-bottom:6px">Ronda 3. Si el grupo no puede contestar las cuatro, todavía no es una idea.</p>
+  ${bSaleDe(n)}
+  <label class="f"><span>¿Cómo la llamamos?</span><input type="text" id="bf-n" maxlength="80" value="${esc(n.nombre||'')}" placeholder="Dos o tres palabras"></label>
+  <label class="f"><span>¿Qué se ve?</span><textarea id="bf-v" maxlength="600">${esc(sugerido)}</textarea></label>
+  <label class="f"><span>¿Qué es?</span><input type="text" id="bf-e" maxlength="200" value="${esc(n.queEs||'')}" placeholder="Reel vertical · 15 segundos · una toma fija"></label>
+  <label class="f"><span>¿Qué hace la gente cuando la ve?</span><input type="text" id="bf-h" maxlength="300" value="${esc(n.queHace||'')}" placeholder="Guarda, comenta, comparte, escribe preguntando"></label>
+  <div class="row"><button class="btn pri" onclick="bFinalOk('${id}')">Guardar final</button><button class="btn ghost" onclick="closeModal()">Cancelar</button><span class="grow"></span>${n.tipo==='final'?`<button class="btn ghost sm" onclick="bDesfinal('${id}')">Ya no es final</button>`:''}${n.tipo==='final'&&isDC()?`<button class="btn ghost sm danger" onclick="bBorrar(['${id}'])">Borrar</button>`:''}</div>`);
+  setTimeout(()=>document.getElementById('bf-n')?.focus(),0); }
+async function bFinalOk(id){
+  const g=k=>document.getElementById(k).value.trim(); const d={nombre:g('bf-n'),queSeVe:g('bf-v'),queEs:g('bf-e'),queHace:g('bf-h')};
+  if(!d.nombre||!d.queSeVe||!d.queEs||!d.queHace){ toast('Faltan respuestas: todavía no es una idea'); return; }
+  const n=bNota(id); modal=null; bsel.clear(); render();
+  if(n.tipo==='final') return bPatch(id,d);
+  const nn=await bCrear({tipo:'final',texto:n.texto,from:[id],...d}); if(nn){ bsel.add(nn.id); bSelPaint(); toast('Final creada'); }
+}
+async function bDesfinal(id){ modal=null; render(); await bPatch(id,{tipo:'cruce'}); }
+async function bBorrar(ids){ ids=ids||[...bsel]; const ns=ids.map(bNota).filter(Boolean); if(!ns.length) return; const env=ns.filter(n=>n.enviada).length;
+  if(!confirm((ns.length>1?`¿Borrar ${ns.length} notas?`:`¿Borrar la nota #${ns[0].numero}?`)+(env?' Las que ya pasaron a votación siguen en Finales.':''))) return;
+  if(modal){ modal=null; render(); }
+  const borrar=ns.map(n=>n.id); borrar.forEach(id=>bsel.delete(id)); B.notes=B.notes.filter(n=>!borrar.includes(n.id)); bPaint();
+  bMut++; bPend++;
+  try{ await Promise.all(borrar.filter(id=>!String(id).startsWith('tmp')).map(id=>api('DELETE',`board/${B.camp}/${id}`))); toast(borrar.length>1?`${borrar.length} notas borradas`:'Nota borrada'); }
+  catch(e){ toast('No se pudo borrar: '+e.message); } finally{ bPend--; bMut++; B._j=''; } }
+async function bVaciar(){
+  const n=B.notes.length; if(!confirm(`¿Borrar las ${n} notas del pizarrón (ideas, cruces y finales) y empezar de nuevo?`)) return;
+  if(!confirm('¿Seguro? No se puede deshacer. Las finales que ya pasaste a votación quedan en Finales.')) return;
+  try{ bMut++; await api('DELETE','board/'+B.camp); bsel.clear(); AUTOR=''; B.notes=[]; B.progreso=[]; B.ocultas=0; B._j=''; bPaint(); await cargarPizarron(); toast('Pizarrón vacío'); }catch(e){ toast(e.message); }
+}
+async function bMostrar(v){ try{ await api('POST',`board/${B.camp}/mostrar`,{mostrar:v}); B._j=''; await cargarPizarron(); toast(v?'Ideas destapadas':'Ideas tapadas'); }catch(e){ toast(e.message); } }
+function bOrigen(n,byN,seen=new Set()){ if(seen.has(n.id)) return []; seen.add(n.id); if(n.tipo==='idea'||!n.from?.length) return n.tipo==='idea'?[`#${n.numero} ${n.texto}`]:[]; return n.from.flatMap(id=>byN[id]?bOrigen(byN[id],byN,seen):[]); }
+async function pasarFinales(campId,notes,pend){
+  const byN=Object.fromEntries(notes.map(n=>[n.id,n])); const nuevas=[];
+  for(const n of pend){ if(S.ideas.some(i=>i.notaPizarron===n.id)) continue; const id=uid(); const orig=[...new Set(bOrigen(n,byN))]; S.ideas.push({id,campanaId:campId,estado:'votacion',nombre:n.nombre||(n.texto||'').slice(0,40),origen:orig.length?orig.join(' + '):(n.texto||''),queSeVe:n.queSeVe,queEs:n.queEs,queHace:n.queHace,notaPizarron:n.id}); nuevas.push([n.id,id]); }
+  if(!nuevas.length) return 0;
+  await save();
+  await Promise.all(nuevas.map(([nid,iid])=>api('PATCH',`board/${campId}/${nid}`,{enviada:iid}).catch(()=>{})));
+  nuevas.forEach(([nid,iid])=>{ const n=B.notes.find(x=>x.id===nid); if(n) n.enviada=iid; }); B._j='';
+  return nuevas.length;
+}
+async function bPasarFinales(campId){
+  const pend=B.notes.filter(n=>n.tipo==='final'&&!n.enviada);
+  if(!confirm(`¿Pasar ${pend.length} final${pend.length===1?'':'es'} a la pestaña Finales para votar?`)) return;
+  await pasarFinales(campId,B.notes,pend);
+  toast('Finales en votación'); tab='ideas'; render();
+}
+
+/* mouse, dedo y teclado */
+let pinch=null; const dedos=new Map();
+const bEnCanvas=e=>e.target.closest&&e.target.closest('#bwrap');
+const B_UI='.bzoom,#bley,#bfloat,.bhelp,#baviso';
+document.addEventListener('pointerdown',e=>{
+  const wr=bEnCanvas(e); if(!wr||e.target.closest(B_UI)) return;
+  if(e.target.closest('#bmini')){ bMiniIr(e); e.preventDefault(); return; }
+  if(bInline){ if(e.target.closest('textarea.bedit')) return; bInlineFin(true); }
+  if(e.pointerType==='touch'){ dedos.set(e.pointerId,[e.clientX,e.clientY]);
+    if(dedos.size===2){ const [a,b]=[...dedos.values()]; pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1]),s:BV.s,cx:(a[0]+b[0])/2,cy:(a[1]+b[1])/2,x:BV.x,y:BV.y};
+      if(bdrag&&bdrag.kind==='note'&&bdrag.moved){ bdrag.orig.forEach(o=>{ o.n.x=o.x; o.n.y=o.y; }); bMover(bdrag.orig.map(o=>o.n)); bLines(); }
+      bdrag=null; e.preventDefault(); return; } }
+  const ed=bPuede(); const note=e.target.closest('.pit'); const n=note&&bNota(note.dataset.id);
+  const cap=()=>{ try{ wr.setPointerCapture(e.pointerId); }catch(_){} };
+  if(n&&ed&&!n._tmp&&e.target.closest('.rs')){ const r=bRect(n); bdrag={kind:'resize',id:n.id,sx:e.clientX,sy:e.clientY,ow:r.w,oh:r.h,moved:false,el:note}; cap(); e.preventDefault(); return; }
+  if(n&&ed&&!n._tmp&&e.target.closest('.con')){ bdrag={kind:'link',id:n.id,sx:e.clientX,sy:e.clientY,moved:false,over:null}; cap(); e.preventDefault(); return; }
+  if(n){ const add=e.shiftKey||e.ctrlKey||e.metaKey||e.pointerType==='touch'; const yaSel=bsel.has(n.id);
+    if(ed&&!yaSel){ if(!add) bsel.clear(); bsel.add(n.id); bSelPaint(); }
+    const grupo=ed?[...bsel]:[];
+    bdrag={kind:'note',id:n.id,sx:e.clientX,sy:e.clientY,moved:false,can:ed&&!n._tmp,yaSel,add,orig:grupo.map(id=>{ const x=bNota(id); return x&&!x._tmp&&{n:x,x:x.x,y:x.y}; }).filter(Boolean)};
+    cap(); e.preventDefault(); return; }
+  if(e.shiftKey&&ed&&e.button===0){ const [wx,wy]=bWorldPt(e.clientX,e.clientY); bdrag={kind:'marq',wx,wy,sx:e.clientX,sy:e.clientY,moved:false,base:new Set(bsel)}; cap(); e.preventDefault(); return; }
+  bAnimT++; bdrag={kind:'pan',sx:e.clientX,sy:e.clientY,ox:BV.x,oy:BV.y,moved:false}; cap(); e.preventDefault();
+});
+document.addEventListener('pointermove',e=>{
+  if(pinch&&dedos.has(e.pointerId)){ dedos.set(e.pointerId,[e.clientX,e.clientY]); const [a,b]=[...dedos.values()]; const d=Math.hypot(a[0]-b[0],a[1]-b[1]); const wr=document.getElementById('bwrap'); if(!wr) return; const r=wr.getBoundingClientRect(); const s2=Math.max(.1,Math.min(2.5,pinch.s*d/pinch.d)); const cx=(a[0]+b[0])/2-r.left, cy=(a[1]+b[1])/2-r.top; const pcx=pinch.cx-r.left, pcy=pinch.cy-r.top; BV._manual=true; BV.s=s2; BV.x=cx-(pcx-pinch.x)*(s2/pinch.s); BV.y=cy-(pcy-pinch.y)*(s2/pinch.s); bApplyView(); return; }
+  if(!bdrag) return; const d=bdrag; const dx=e.clientX-d.sx, dy=e.clientY-d.sy;
+  if(!d.moved){ if(Math.abs(dx)+Math.abs(dy)<=4) return; d.moved=true; document.getElementById('bfloat')?.setAttribute('hidden',''); }
+  if(d.kind==='pan'){ BV._manual=true; BV.x=d.ox+dx; BV.y=d.oy+dy; bApplyView(); document.getElementById('bwrap')?.classList.add('panning'); return; }
+  if(d.kind==='link'){ bLinkMove(e); return; }
+  if(d.kind==='resize'){ const n=bNota(d.id); if(!n) return; n.w=Math.max(150,Math.min(1200,Math.round(d.ow+dx/BV.s))); n.h=Math.max(70,Math.min(1200,Math.round(d.oh+dy/BV.s))); d.el.style.width=n.w+'px'; d.el.style.minHeight=n.h+'px'; n._w=d.el.offsetWidth; n._h=d.el.offsetHeight; bLines(); return; }
+  if(d.kind==='marq'){ const [wx,wy]=bWorldPt(e.clientX,e.clientY); const r={x:Math.min(wx,d.wx),y:Math.min(wy,d.wy),w:Math.abs(wx-d.wx),h:Math.abs(wy-d.wy)};
+    let m=document.getElementById('bmarq'); if(!m){ m=document.createElement('div'); m.id='bmarq'; m.className='bmarq'; document.getElementById('bworld').appendChild(m); }
+    Object.assign(m.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});
+    bsel.clear(); d.base.forEach(id=>bsel.add(id)); B.notes.forEach(n=>{ const q=bRect(n); if(q.x<r.x+r.w&&q.x+q.w>r.x&&q.y<r.y+r.h&&q.y+q.h>r.y) bsel.add(n.id); });
+    document.querySelectorAll('#bnotes .pit').forEach(el=>el.classList.toggle('sel',bsel.has(el.dataset.id))); return; }
+  if(d.kind==='note'&&d.can){
+    for(const o of d.orig){ o.n.x=Math.round(o.x+dx/BV.s); o.n.y=Math.round(o.y+dy/BV.s); const el=bEl(o.n.id); if(el){ el.style.left=o.n.x+'px'; el.style.top=o.n.y+'px'; el.classList.add('drag'); } }
+    bLines();
+    if(d.orig.length===1){ const me=bNota(d.id); const t=bNotaEn(e.clientX,e.clientY,d.id); const tn=t&&bNota(t); const ok=tn&&tn.tipo==='cruce'&&me.tipo!=='final'&&!(tn.from||[]).includes(d.id);
+      if((ok?t:null)!==d.over){ document.querySelectorAll('.pit.linktarget').forEach(x=>x.classList.remove('linktarget')); if(ok) bEl(t)?.classList.add('linktarget'); d.over=ok?t:null; } } }
+});
+document.addEventListener('pointerup',e=>{ dedos.delete(e.pointerId); if(pinch&&dedos.size<2){ pinch=null; return; }
+  if(!bdrag) return; const d=bdrag; bdrag=null; document.getElementById('bwrap')?.classList.remove('panning');
+  const limpiar=()=>document.querySelectorAll('.pit.linktarget,.pit.drag').forEach(x=>x.classList.remove('linktarget','drag'));
+  if(d.kind==='pan'){ if(!d.moved&&bsel.size){ bsel.clear(); bSelPaint(); } else bFlotante(); return; }
+  if(d.kind==='link'){ document.getElementById('blink')?.remove(); limpiar(); const t=bNotaEn(e.clientX,e.clientY,d.id); if(t&&t!==d.id) bUnir(d.id,t); else { bLines(); if(!d.moved) bFlotante(); } return; }
+  if(d.kind==='resize'){ if(d.moved) bGuardarPos([bNota(d.id)].filter(Boolean)); bLines(); bFlotante(); bMinimapa(); return; }
+  if(d.kind==='marq'){ document.getElementById('bmarq')?.remove(); bSelPaint(); return; }
+  if(d.kind==='note'){ limpiar();
+    if(d.moved&&d.can){ if(d.over){ d.orig.forEach(o=>{ o.n.x=o.x; o.n.y=o.y; }); bMover(d.orig.map(o=>o.n)); bLines(); bUnir(d.id,d.over); } else bGuardarPos(d.orig.map(o=>o.n)); bFlotante(); bMinimapa(); return; }
+    if(d.moved) return;
+    if(!bPuede()){ bLeer(d.id); return; }
+    if(d.add&&d.yaSel) bsel.delete(d.id); else if(!d.add&&d.yaSel&&bsel.size>1){ bsel.clear(); bsel.add(d.id); }
+    bSelPaint(); }
+});
+document.addEventListener('pointercancel',e=>{ dedos.delete(e.pointerId); if(dedos.size<2) pinch=null; if(bdrag){ document.getElementById('blink')?.remove(); document.getElementById('bmarq')?.remove(); bdrag=null; bPaint(); } });
+document.addEventListener('pointerover',e=>{ if(bdrag||!e.target.closest) return; const n=e.target.closest('#bnotes .pit'); const id=n?n.dataset.id:null; if(id!==bHover){ bHover=id; bLines(); } });
+document.addEventListener('dblclick',e=>{ const wr=bEnCanvas(e); if(!wr||e.target.closest(B_UI+',#bmini')) return; const note=e.target.closest('.pit');
+  if(note){ const n=bNota(note.dataset.id); if(!n) return; if(!bPuede()){ bLeer(n.id); return; } if(n.tipo==='final') bEditarFinal(n.id); else bInlineIni(n.id); return; }
+  if(bPuede()){ const [wx,wy]=bWorldPt(e.clientX,e.clientY); bNuevaEn(Math.round(wx-100),Math.round(wy-30)); } });
+document.addEventListener('keydown',e=>{
+  if(tab!=='pizarron'||(!document.getElementById('bwrap')&&!document.getElementById('blista'))) return;
+  const pop=document.getElementById('bpop'); if(pop){ if(e.key==='Escape') pop.remove(); return; }
+  if(modal||escribiendo()) return;
+  const mapa=!!document.getElementById('bwrap');
+  if((e.key==='Delete'||e.key==='Backspace')&&bsel.size&&isDC()){ e.preventDefault(); bBorrar(); }
+  else if(e.key==='Escape'){ if(bsel.size){ bsel.clear(); bSelPaint(); } else if(bFoco) bFocoPersona(''); else if(bFull) bPantalla(false); }
+  else if(mapa&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){ e.preventDefault(); B.notes.forEach(n=>bsel.add(n.id)); bSelPaint(); }
+  else if(mapa&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    if(e.key==='+'||e.key==='=') bZoom(1.25); else if(e.key==='-') bZoom(1/1.25); else if(e.key==="0") bVerTodo(); else if(e.key==="1") bFit(true);
+    else if(e.key.toLowerCase()==='f') bPantalla();
+    else if(e.key==='Enter'&&bsel.size===1&&bPuede()){ e.preventDefault(); const n=bNota([...bsel][0]); if(n) n.tipo==='final'?bEditarFinal(n.id):bInlineIni(n.id); } }
+});
+// rueda del mouse: zoom (como Miro). Trackpad: dos dedos mueven, pellizco hace zoom.
+document.addEventListener('wheel',e=>{ const wr=bEnCanvas(e); if(!wr) return; e.preventDefault(); const r=wr.getBoundingClientRect();
+  const mouse=e.deltaMode!==0||(e.deltaX===0&&Math.abs(e.deltaY)>=50&&Number.isInteger(e.deltaY));
+  if(e.ctrlKey||e.metaKey||mouse){ const dy=e.deltaMode===1?e.deltaY*33:e.deltaY; bZoom(Math.exp(-dy*(mouse?0.0015:0.01)),e.clientX-r.left,e.clientY-r.top); }
+  else { bAnimT++; BV._manual=true; BV.x-=e.deltaX; BV.y-=e.deltaY; bApplyView(); } },{passive:false});
+window.addEventListener('resize',()=>{ if(document.getElementById('bwrap')) bApplyView(); });
+function bIntro(){ return isDC()?'Cargás las ideas de cada persona (cada una tiene su color y su columna). Después movés, agrandás y cruzás como en Miro: arrastrá el <b style="color:#6E9CC6">+</b> de una nota hasta otra y nace el cruce. Con “El equipo también edita” prendido, todos pueden mover y cruzar desde su celular.'
+  :bPuede()?'El pizarrón está abierto: podés mover notas, agrandarlas, cruzarlas (arrastrá el <b style="color:#6E9CC6">+</b> de una hasta otra) y proponer nombres. Tocá una nota para elegirla.'
+  :'El director creativo arma el pizarrón y lo ves en vivo. Tocá una nota para leerla grande; pellizcá o usá la rueda para acercarte.'; }
+function bAyuda(){ return bPuede()?'Arrastrá el fondo para moverte · rueda o pellizco: zoom · <b>doble clic</b> en el fondo: nota nueva · <b class="mas">+</b> hasta otra nota: cruzar · <b>Shift</b> + arrastrar: elegir varias':'Arrastrá para moverte · rueda o pellizco: zoom · tocá una nota para leerla'; }
+
+/* ---------------- ideas ---------------- */
+function tabIdeas(c){
+  const ideas=ideasDe(c.id); const edit=isDC()&&c.estado!=='cerrada'&&!c.revelado;
+  if(!isDC()&&!c.votacionAbierta&&!c.revelado) return `<div class="empty">Las ideas aparecen cuando el DC activa la votación, después de mezclar en la mesa.</div>`;
+  return `<p class="muted">${isDC()?'Las finales que salieron del pizarrón (se pasan desde ahí) o que cargás a mano. Si el grupo no puede contestar las cuatro preguntas de una mezcla, todavía no es una idea.':'Las ideas que salieron de mezclar, tal como las cargó el DC. Leelas antes de votar.'}</p>
+  ${edit?`<div class="row" style="margin:14px 0 20px"><button class="btn pri" onclick="editarIdea('${c.id}')">Agregar idea</button>${ideas.length>3?`<span class="tag warn">Quedaron ${ideas.length}. Si son más de tres, no se mezcló nada: se eligieron favoritas.</span>`:''}</div>`:'<div style="height:10px"></div>'}
+  ${ideas.length===0?`<div class="empty">${isDC()?'Sin ideas todavía. Cuando terminen la Fase 2, cargá las que salieron de mezclar.':'El DC todavía no cargó las ideas.'}</div>`:
+  `<div class="grid g2">${ideas.map((i,ix)=>ideaCard(i,ix,c,edit)).join('')}</div>`}`;
+}
+function ideaCard(i,ix,c,edit){
+  const st=i.estado&&i.estado!=='votacion'?`<span class="tag ${i.estado==='va'?'ban':'cem'}">${i.estado==='va'?'La elegida':'Al cementerio'}</span>`:'';
+  return `<div class="card idea ${i.estado||''}">
+    <div class="row" style="margin-bottom:4px"><span class="dim">Idea ${String.fromCharCode(65+ix)}</span>${st}<span class="grow"></span>${edit?`<button class="btn ghost sm" onclick="editarIdea('${c.id}','${i.id}')">Editar</button><button class="btn ghost sm danger" onclick="borrarIdea('${i.id}')">Borrar</button>`:''}</div>
+    <h3>${esc(i.nombre)}</h3>
+    ${i.origen?`<p class="small muted">Salió de mezclar: ${esc(i.origen)}</p>`:''}
+    <dl><dt>Qué se ve</dt><dd>${esc(i.queSeVe)}</dd><dt>Qué es</dt><dd>${esc(i.queEs)}</dd><dt>Qué hace la gente</dt><dd>${esc(i.queHace)}</dd></dl>
+  </div>`;
+}
+function editarIdea(campId,ideaId){
+  const i=ideaId?byId(S.ideas,ideaId):{nombre:'',origen:'',queSeVe:'',queEs:'',queHace:''};
+  openModal(`<h2 style="margin-top:0">${ideaId?'Editar idea':'Nueva idea'}</h2>
+  <label class="f"><span>¿Cómo la llamamos?</span><input type="text" id="i-nombre" value="${esc(i.nombre)}" placeholder="La manta"><em>Dos o tres palabras.</em></label>
+  <label class="f"><span>Salió de mezclar</span><input type="text" id="i-origen" value="${esc(i.origen)}" placeholder="la manta desde arriba + la caja-mantel + repostear las mantas"></label>
+  <label class="f"><span>¿Qué se ve?</span><textarea id="i-ve">${esc(i.queSeVe)}</textarea><em>Una frase. Si necesitás un párrafo, todavía no está cerrada.</em></label>
+  <label class="f"><span>¿Qué es?</span><input type="text" id="i-es" value="${esc(i.queEs)}" placeholder="Reel vertical · 15 a 20 segundos · una sola toma fija"></label>
+  <label class="f"><span>¿Qué hace la gente cuando la ve?</span><input type="text" id="i-hace" value="${esc(i.queHace)}"></label>
+  <div class="row"><button class="btn pri" onclick="guardarIdea('${campId}','${ideaId||''}')">${ideaId?'Guardar cambios':'Agregar idea'}</button><button class="btn ghost" onclick="closeModal()">Cancelar</button>${ideaId?`<span class="grow"></span><button class="btn ghost sm danger" onclick="borrarIdea('${ideaId}')">Borrar idea</button>`:''}</div>`);
+  setTimeout(()=>document.getElementById('i-nombre')?.focus(),0);
+}
+function guardarIdea(campId,ideaId){
+  const g=id=>document.getElementById(id).value.trim(); const nombre=g('i-nombre'); if(!nombre){ toast('Falta el nombre'); return; }
+  const data={nombre,origen:g('i-origen'),queSeVe:g('i-ve'),queEs:g('i-es'),queHace:g('i-hace')};
+  if(ideaId) Object.assign(byId(S.ideas,ideaId),data); else S.ideas.push({id:uid(),campanaId:campId,estado:'votacion',...data});
+  save(); closeModal(); toast(ideaId?'Idea guardada':'Idea agregada');
+}
+function borrarIdea(id){ if(!confirm('¿Borrar la idea?')) return; S.ideas=S.ideas.filter(i=>i.id!==id); save(); modal=null; render(); toast('Idea borrada'); }
+
+/* ---------------- votar ---------------- */
+function linkVotar(c){ return location.origin+location.pathname+'#/votar/'+c.id; }
+function copiarLink(c){ const u=linkVotar(byId(S.campanas,c)); navigator.clipboard?.writeText(u).then(()=>toast('Enlace copiado')).catch(()=>prompt('Copiá el enlace:',u)); }
+function waLink(c){ const m=byId(S.marcas,c.marcaId); return 'https://wa.me/?text='+encodeURIComponent(`Votación ${m?.nombre||''} · ${c.nombre}\nEntrá, elegí tu rol y votá: ${linkVotar(c)}`); }
+async function borrarVotos(id){ if(!confirm('¿Borrar todos los votos de esta campaña? Las ideas quedan; se vuelve a votar desde cero.')) return; try{ await api('DELETE','votos/'+id); const c=byId(S.campanas,id); if(c.revelado){ c.revelado=false; await save(); } V=[]; ultimoJSON=''; render(); await cargar(); toast('Votos borrados'); }catch(e){ toast(e.message); } }
+function toggleVotacion(id){ const c=byId(S.campanas,id); c.votacionAbierta=!c.votacionAbierta; save(); render(); toast(c.votacionAbierta?'Votación activada':'Votación pausada'); }
+function tabVotar(c){
+  const ideas=ideasDe(c.id); const ps=c.participantes||[];
+  if(ideas.length===0) return `<div class="empty">${isDC()?'Primero cargá las ideas que salieron de mezclar.':'El DC todavía no activó la votación.'}</div>`;
+  if(!c.votacionAbierta&&!c.revelado&&!isDC()) return `<div class="empty">${V.length?'La votación está pausada. El DC la vuelve a abrir.':'El DC todavía no activó la votación.'}</div>`;
+  if(c.revelado) return `<div class="empty">Los papeles ya se dieron vuelta. Las notas están en Resultados.${isDC()&&c.estado!=='cerrada'?`<div class="row" style="margin-top:14px;justify-content:center"><button class="btn sm" onclick="reabrir('${c.id}')">Volver a tapar para corregir una fila</button><button class="btn ghost sm danger" onclick="borrarVotos('${c.id}')">Borrar votos y votar de nuevo</button></div>`:''}</div>`;
+  syncQuien();
+  const yo=isDC()?votante:(ps.includes(QUIEN)&&NOMBRE?QUIEN:null);
+  // entrar a votar: nombre + rol
+  if(!isDC() && !yo) return `<div class="card" style="max-width:560px">
+    <h3 style="margin-top:0">¿Quién vota?</h3>
+    <label class="f"><span>Tu nombre</span><input type="text" id="v-nombre" maxlength="40" value="${esc(NOMBRE)}" placeholder="Martina" autocomplete="given-name"></label>
+    <div class="small muted" style="margin:4px 0 8px">Tu rol en esta reunión</div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">${ps.map(p=>{ const pv=papel(p); const ocupado=pv&&pv.nombre&&pv.nombre.toLowerCase()!==NOMBRE.toLowerCase(); return `<button class="btn" style="text-align:left;padding:12px" onclick="elegirRol('${c.id}','${esc(p)}')"><div style="font-weight:600;font-size:16px">${esc(p)}</div><div class="small ${ocupado?'':'muted'}" style="${ocupado?'color:var(--warn)':''}">${pv?.nombre?`${pv.completo?'Ya votó':'Votando'}: ${esc(pv.nombre)}`:'Libre'}</div></button>`; }).join('')}</div>
+    <p class="small dim" style="margin:12px 0 0">Tocá tu rol para entrar. Tus notas no las ve nadie hasta que el DC dé vuelta todos los papeles.</p>
+  </div>`;
+  // formulario propio
+  if(yo && (!isDC() || votante)){
+    const p=yo;
+    return `<div class="row" style="margin-bottom:6px">${isDC()?`<button class="btn ghost sm" onclick="votante=null;render()">← Volver</button>`:`<button class="btn sm" onclick="cambiarRol('${c.id}')">Cambiar nombre o rol</button>`}<span class="grow"></span><span class="tag ban">${esc(p)}${isDC()?(papel(p)?.nombre?' · '+esc(papel(p).nombre):''):' · '+esc(NOMBRE)}</span></div>
+    <p class="muted">Anotá solo. Nadie dice nada en voz alta todavía. Se guarda con cada toque; cuando esté completo, tu papel queda boca abajo hasta que el DC los dé vuelta todos a la vez.</p>
+    ${ideas.map((i,ix)=>`<div class="paper" style="margin:14px 0">
+      <div class="row"><span class="dim">Idea ${String.fromCharCode(65+ix)}</span><h3 style="margin:0">${esc(i.nombre)}</h3></div>
+      <p class="small" style="margin:4px 0 0">${esc(i.queSeVe)}</p>
+      <p class="small muted" style="margin:2px 0 0">${esc(i.queEs)}${i.queHace?` · ${esc(i.queHace)}`:''}</p>
+      ${Q.map(q=>{ const v=nota(i.id,p)[q.k]; const d=(c.dobles||[]).includes(q.k); return `<div class="q"><b>${q.full}</b>${d?'<span class="x2">×2</span>':''}</div>
+        <div class="scale">${[[1,q.r1],[3,q.r3],[5,q.r5]].map(([n,t])=>`<button class="${+v===n?'on':''}" onclick="setNota('${c.id}','${i.id}','${esc(p)}','${q.k}',${n})"><b>${n}</b><span>${t}</span></button>`).join('')}</div>`; }).join('')}
+    </div>`).join('')}
+    ${(()=>{ const tot=ideas.length*Q.length, hechas=ideas.reduce((a,i)=>a+Q.filter(q=>nota(i.id,p)[q.k]).length,0); return `<div class="progvoto ${hechas===tot?'ok':''}"><b>${hechas}/${tot}</b><div class="b"><i style="width:${tot?hechas/tot*100:0}%"></i></div><span>${hechas===tot?'Listo, papel boca abajo':'Faltan '+(tot-hechas)}</span></div>`; })()}
+    <div class="card" style="margin-top:18px;text-align:center">${completo(p)?`<div style="font-weight:600">Tu papel está boca abajo.</div><div class="small muted">Esperá a que el DC dé vuelta todos. Podés corregir hasta ese momento.</div>`:`<div class="muted">Faltan casilleros: ${ideas.reduce((a,i)=>a+Q.filter(q=>!nota(i.id,p)[q.k]).length,0)}</div>`}</div>`;
+  }
+  // panel del DC
+  const todos=ps.every(p=>completo(p));
+  const estado=c.votacionAbierta
+    ?`<div class="card" style="border-color:var(--ok);display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="tag ok">Votación abierta</span><span class="grow small muted">El equipo puede votar desde el celular.</span><button class="btn ghost sm" onclick="toggleVotacion('${c.id}')">Pausar</button></div>`
+    :`<div class="card" style="border-color:var(--warn);display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="tag warn">${V.length?'Votación pausada':'Votación sin abrir'}</span><span class="grow small muted">El equipo todavía no puede votar. Vos sí podés cargar papeles con “Votar por él”.</span><button class="btn pri sm" onclick="toggleVotacion('${c.id}')">${V.length?'Reabrir votación':'Abrir votación'}</button></div>`;
+  return `${estado}
+  <p class="muted" style="margin-top:14px">Cada uno vota desde su celular; acá ves los papeles llegando. Si alguien vota en papel o querés simular, tocá “Votar por él”. Cuando estén, dalos vuelta todos juntos.</p>
+  <div class="share" style="margin-top:14px"><code>${esc(linkVotar(c))}</code><button class="btn sm" onclick="copiarLink('${c.id}')">Copiar enlace</button><a class="btn sm" target="_blank" rel="noopener" href="${waLink(c)}">Mandar por WhatsApp</a><button class="btn ghost sm danger" onclick="borrarVotos('${c.id}')">Borrar votos</button></div>
+  <div class="grid g3" style="margin:18px 0">${ps.map(p=>{ const ok=completo(p); const alguno=!!papel(p); return `<div class="paper ${ok?'down':''}"><div style="font-weight:600;font-size:17px;${ok?'color:var(--tx2)':''}">${esc(p)}</div>${papel(p)?.nombre?`<div class="small" style="color:var(--tx2)">${esc(papel(p).nombre)}</div>`:''}<div class="small ${ok?'':'muted'}">${ok?'Papel boca abajo':alguno?'Está anotando…':'Todavía no votó'}</div><button class="btn ghost sm" style="margin-top:10px" onclick="votante='${esc(p)}';render()">${ok?'Ver / corregir':'Votar por él'}</button></div>`; }).join('')}</div>
+  <hr>
+  <div class="row"><button class="btn pri" ${ps.some(p=>completo(p))?'':'disabled'} onclick="revelarSeguro('${c.id}')">Dar vuelta todos los papeles</button>${!todos?`<span class="muted small">Votaron ${ps.filter(p=>completo(p)).length} de ${ps.length}. Podés darlos vuelta igual: cuentan solo los papeles completos.</span>`:''}</div>`;
+}
+function elegirRol(campId,p){
+  const n=(document.getElementById('v-nombre')?.value||'').trim(); if(!n){ toast('Poné tu nombre primero'); document.getElementById('v-nombre')?.focus(); return; }
+  const pv=papel(p); if(pv?.nombre&&pv.nombre.toLowerCase()!==n.toLowerCase()&&!confirm(`${p} ya lo tomó ${pv.nombre}. ¿Seguro que sos vos? Si entrás, pisás su papel.`)) return;
+  NOMBRE=n; localStorage.setItem('ideamia_nombre',n); localStorage.setItem('ideamia_quien_'+campId,p); QUIEN=p; ultimoJSON='';
+  // se registra el nombre enseguida, así el DC y los demás ven el rol tomado
+  let v=papel(p); if(!v){ v={campanaId:campId,participante:p,notas:{},completo:false}; V.push(v); } v.nombre=n;
+  api('POST','voto',{campanaId:campId,participante:p,nombre:n,dev:DEV,notas:v.notas||{}}).catch(e=>toast(e.message));
+  render(); }
+function cambiarRol(campId){ localStorage.setItem('ideamia_quien_'+campId,'-'); QUIEN=''; render(); }
+function revelarSeguro(id){ const c=byId(S.campanas,id); const ps=c.participantes||[]; const f=ps.filter(p=>!completo(p)); if(f.length&&!confirm(`Faltan ${f.join(', ')}. ¿Dar vuelta igual? Cuentan solo los papeles completos.`)) return; revelar(id); }
+async function revelar(id){ const c=byId(S.campanas,id); c.revelado=true; c.reveladoEn=new Date().toISOString(); tab='resultados'; render(); await save(); ultimoJSON=''; await cargar(); }
+function reabrir(id){ const c=byId(S.campanas,id); c.revelado=false; save(); render(); }
+
+/* ---------------- resultados ---------------- */
+function tabResultados(c){
+  if(!c.revelado) return `<div class="empty">Las notas aparecen cuando el DC da vuelta todos los papeles a la vez.</div>`;
+  const res=calc(c); const dobles=c.dobles||[]; const maxP=Q.reduce((a,q)=>a+5*(dobles.includes(q.k)?2:1),0);
+  const obs=observaciones(c,res); const ideas=ideasDe(c.id);
+  const podio=res.length?`<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px">${res.map((r,i)=>`<div class="card idea ${i===0?'va':''}" style="padding:14px"><div class="row"><span class="dim small">${i+1}º</span><span class="grow"></span><b style="font-size:26px;letter-spacing:-.02em">${r.total}</b><span class="dim small">/ ${maxP}</span></div><div style="font-weight:700;font-size:17px;margin-top:2px">${esc(r.idea.nombre)}</div><div class="small muted">${r.n} papel${r.n===1?'':'es'}</div></div>`).join('')}</div>`:'';
+  return `${podio}<p class="muted" style="margin-top:18px">Promedio de cada casillero. Las dos que cuentan doble, por 2. Se suma para abajo. Máximo posible: ${maxP}.</p>
+  <div style="overflow-x:auto;margin-top:16px"><table class="tbl">
+    <thead><tr><th></th>${res.map((r,i)=>`<th class="${i===0?'win':''}">${String.fromCharCode(65+ideas.indexOf(r.idea))} · ${esc(r.idea.nombre)}<span class="w">${r.n} papel${r.n===1?'':'es'}</span></th>`).join('')}</tr></thead>
+    <tbody>${Q.map(q=>`<tr><td class="qn">${q.short}${dobles.includes(q.k)?'<span class="x2">×2</span>':''}<span class="w">${q.planilla}</span></td>${res.map((r,i)=>{ const cl=r.cells[q.k]; return `<td class="${i===0?'win':''}"><span class="avg">${r1(cl.avg)}</span>${cl.mult===2?`<span class="w">→ ${r1(cl.w)}</span>`:''}${cl.spread>=3?`<span class="spread">notas de ${Math.min(...cl.vals)} a ${Math.max(...cl.vals)}</span>`:''}</td>`; }).join('')}</tr>`).join('')}</tbody>
+    <tfoot><tr><td class="qn">Total</td>${res.map((r,i)=>`<td class="${i===0?'win':''}"><span class="tot">${r.total}</span></td>`).join('')}</tr></tfoot>
+  </table></div>
+  <h2>Qué nos dicen esos números</h2>
+  ${obs.length?`<ul class="obs">${obs.map(o=>`<li class="${o.c}">${o.t}</li>`).join('')}</ul>`:'<p class="muted">Sin observaciones.</p>'}
+  <details style="margin-top:22px"><summary class="muted" style="cursor:pointer">Ver nota por nota (quién puso qué)</summary>
+    <div style="overflow-x:auto;margin-top:10px"><table class="tbl small"><thead><tr><th>Idea</th><th style="text-align:left">Pregunta</th>${(c.participantes||[]).map(p=>`<th>${esc(etq(p))}</th>`).join('')}</tr></thead>
+    <tbody>${ideas.map(i=>Q.map((q,qi)=>`<tr>${qi===0?`<td class="qn" rowspan="5" style="vertical-align:top"><b>${esc(i.nombre)}</b></td>`:''}<td class="dim" style="text-align:left">${q.short}</td>${(c.participantes||[]).map(p=>`<td>${nota(i.id,p)[q.k]??'–'}</td>`).join('')}</tr>`).join('')).join('')}</tbody></table></div>
+  </details>
+  ${isDC()&&c.estado!=='cerrada'?`<div class="row" style="margin-top:26px"><button class="btn pri" onclick="tab='decision';render()">Pasar a elegir</button></div>`:''}`;
+}
+
+/* ---------------- decisión ---------------- */
+function tabDecision(c){
+  const ideas=ideasDe(c.id);
+  if(!c.revelado){ const ps=c.participantes||[]; const ok=ps.filter(p=>completo(p));
+    return isDC()?`<div class="empty">Primero se dan vuelta los papeles. Votaron ${ok.length} de ${ps.length}.<div style="margin-top:14px"><button class="btn pri" ${ok.length?'':'disabled'} onclick="revelarSeguro('${c.id}')">Dar vuelta los papeles ahora</button></div></div>`:`<div class="empty">Primero el DC da vuelta los papeles.</div>`; }
+  if(c.estado==='cerrada'){ const d=c.decision; const vas=(d.vas||[d.va]).map(id=>byId(S.ideas,id)).filter(Boolean), gs=ideas.filter(i=>i.estado!=='va');
+    return `<p class="muted">Decidido el ${fmtDate(d.fecha.slice(0,10))}.${d.porqueVa?` ${esc(d.porqueVa)}`:''}</p>
+    <div class="dec" style="margin-top:14px">
+      ${vas.map(va=>`<div class="card idea va"><h4>${vas.length>1?'Va':'La elegida'}</h4><div class="who">${esc(va.nombre)}</div><p class="small">${esc(va.queSeVe||'')}</p><p class="small muted">${esc(va.queEs||'')}</p></div>`).join('')}
+      ${gs.length?`<div class="card idea guardada"><h4>${gs.length===1?'Va al cementerio':'Van al cementerio'}</h4>${gs.map(g=>`<div class="who" style="font-size:17px">${esc(g.nombre)}</div><p class="small muted">${esc(g.porqueGuardada||'')}</p>`).join('')}<a class="small" href="#/cementerio">Ver en el cementerio: se pueden usar en otra campaña</a></div>`:''}
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn" onclick="copiarResumen('${c.id}')">Copiar resumen para el equipo</button><span class="small muted">Para pegar en WhatsApp, Discord o Trello.</span></div>
+    <h2>Antes de levantarse de la mesa</h2>
+    <ul class="obs">${['La idea elegida tiene nombre y una frase que todos repetirían igual.','Alguien tiene el guion asignado, con día de entrega.','El día de rodaje está confirmado y anotado.','Las ideas que no entraron ya están en el cementerio, con la fecha. ✓','Las notas quedaron guardadas, para poder mirarlas cuando la pieza se publique. ✓'].map(t=>`<li>${t}</li>`).join('')}</ul>
+    ${isDC()?`<div class="row" style="margin-top:20px"><button class="btn ghost sm" onclick="reabrirDecision('${c.id}')">Deshacer la decisión</button></div>`:''}`;
+  }
+  if(!isDC()) return `<div class="empty">La decisión la toma el DC. Cuando la confirme, aparece acá.</div>`;
+  const res=calc(c); const top=res[0];
+  const sel=decDe(c); const ch=decChequeo(c,res,sel);
+  return `<p class="muted">Gana el número más alto salvo argumento fuerte y agarrado del brief; nadie toca el doble ahora. Pueden ir varias: marcá todas las que van. Las demás van al cementerio y quedan disponibles para otra campaña.</p>
+  ${ch.empate?`<p class="tag warn" style="margin-top:12px">Empate en ${ch.empate}. Desempata el DC y dice en voz alta qué parte del brief resuelve mejor la que elige.</p>`:''}
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">¿Cuáles van? <span class="dim" style="font-weight:500">${sel.vas.length} elegida${sel.vas.length===1?'':'s'}</span></h3>
+    <div class="grid" style="gap:8px;margin-bottom:16px">${res.map((r,i)=>{ const on=sel.vas.includes(r.idea.id); return `<button class="decop ${on?'on':''}" onclick="decToggle('${c.id}','${r.idea.id}')" aria-pressed="${on}"><span class="ck">${on?'✓':''}</span><span class="grow"><b>${esc(r.idea.nombre)}</b> <span class="small muted">${i+1}º lugar</span></span><b class="pts">${r.total}</b></button>`; }).join('')}</div>
+    <label class="f"><span>Por qué ${ch.pide?`<span style="color:var(--warn)">(${ch.empate?'hay empate':'no son las de mayor puntaje'}: decí qué parte del brief resuelven mejor)</span>`:''}</span><textarea id="dec-porque" oninput="decSet('${c.id}','porqueVa',this.value,true)" placeholder="Sacó el número más alto y la mejor nota en “¿sirve?”, que acá contaba doble.">${esc(sel.porqueVa)}</textarea></label>
+  </div>
+  <div class="card" style="margin-top:14px"><h3 style="margin-top:0">Van al cementerio</h3>
+    <p class="small muted">Quedan guardadas con sus notas y se pueden revivir en cualquier campaña.</p>
+    ${res.filter(r=>!sel.vas.includes(r.idea.id)).map(r=>{ const cinco=Q.filter(q=>r.cells[q.k].avg>=4.5).map(q=>q.short); return `<label class="f"><span>${esc(r.idea.nombre)} — ${r.total}${cinco.length?` · <b style="color:var(--ok)">5 en ${cinco.join(', ')}</b>`:''}</span><input type="text" placeholder="Por qué queda afuera de esta campaña, y para qué podría servir" value="${esc(sel['g_'+r.idea.id]||'')}" oninput="decSet('${c.id}','g_${r.idea.id}',this.value,true)"></label>`; }).join('')||'<p class="muted small">Ninguna queda afuera.</p>'}
+  </div>
+  <div class="row" style="margin-top:22px"><button class="btn pri" onclick="confirmarDecision('${c.id}')" ${sel.vas.length?'':'disabled'}>Confirmar ${sel.vas.length>1?`las ${sel.vas.length} elegidas`:'la elegida'}</button><span class="muted small">Cierra la campaña y manda las otras al cementerio.</span></div>`;
+}
+const DEC={};   // borrador de la decisión por campaña (no se guarda hasta confirmar)
+function decDe(c){ if(!DEC[c.id]){ const top=calc(c)[0]; DEC[c.id]={vas:top?[top.idea.id]:[],porqueVa:''}; } return DEC[c.id]; }
+function decSet(id,k,v,noRender){ const c=byId(S.campanas,id); decDe(c)[k]=v; if(!noRender) render(); }
+function decToggle(id,ideaId){ const d=decDe(byId(S.campanas,id)); d.vas=d.vas.includes(ideaId)?d.vas.filter(x=>x!==ideaId):[...d.vas,ideaId]; render(); }
+// pide el porqué si las elegidas no son las de más puntaje, o si hay empate justo en el corte
+function decChequeo(c,res,d){ const k=d.vas.length; const topK=res.slice(0,k).map(r=>r.idea.id);
+  const distinto=k>0&&d.vas.some(id=>!topK.includes(id));
+  const corte=k>0&&res[k]&&Math.abs(res[k-1].total-res[k].total)<0.05?res[k].total:0;
+  const empate=corte||(k===0&&res[1]&&Math.abs(res[0].total-res[1].total)<0.05?res[0].total:0);
+  return {distinto,empate,pide:distinto||!!corte}; }
+function confirmarDecision(id){
+  const c=byId(S.campanas,id); const res=calc(c); const d=decDe(c);
+  if(!d.vas.length){ toast('Elegí al menos una'); return; }
+  const ch=decChequeo(c,res,d);
+  if(ch.pide&&!(d.porqueVa||'').trim()){ toast(ch.empate?'Hay empate: escribí en “Por qué” qué parte del brief resuelve mejor':'No son las de mayor puntaje: escribí en “Por qué” qué parte del brief resuelven mejor'); document.getElementById('dec-porque')?.focus(); return; }
+  const vas=res.map(r=>r.idea.id).filter(x=>d.vas.includes(x));   // en orden de puntaje
+  const resumen=Object.fromEntries(res.map(r=>[r.idea.id,{total:r.total,avg:Object.fromEntries(Q.map(q=>[q.k,r1(r.cells[q.k].avg)]))}]));
+  ideasDe(id).forEach(i=>{ if(vas.includes(i.id)) i.estado='va'; else { i.estado='guardada'; i.porqueGuardada=(d['g_'+i.id]||'').trim(); i.guardadaEn=new Date().toISOString(); } });
+  c.decision={va:vas[0],vas,acompana:null,porqueVa:(d.porqueVa||'').trim(),fecha:new Date().toISOString(),resumen};
+  c.estado='cerrada'; delete DEC[c.id]; save(); render(); toast(vas.length>1?`Van ${vas.length} ideas`:'Decisión guardada');
+}
+function copiarResumen(id){
+  const c=byId(S.campanas,id), m=byId(S.marcas,c.marcaId), d=c.decision; const vasIds=d.vas||[d.va];
+  const res=d.resumen||{}; const otras=ideasDe(id).filter(i=>!vasIds.includes(i.id));
+  const t=[`${m?.nombre||''} · ${c.nombre}`, c.fecha?`Se publica el ${fmtDate(c.fecha)}`:'', '',
+    ...vasIds.map(x=>byId(S.ideas,x)).filter(Boolean).flatMap(va=>[`VA: ${va.nombre} (${res[va.id]?.total??''} pts)`, `Qué se ve: ${va.queSeVe||''}`, `Qué es: ${va.queEs||''}`, va.queHace?`Qué hace la gente: ${va.queHace}`:'', '']), d.porqueVa?`Por qué: ${d.porqueVa}`:'', '',
+    otras.length?`Al cementerio: ${otras.map(i=>`${i.nombre} (${res[i.id]?.total??''})`).join(', ')}`:'' ].filter((x,i,a)=>x!==''||a[i-1]!=='').join('\n').trim();
+  navigator.clipboard?.writeText(t).then(()=>toast('Resumen copiado')).catch(()=>prompt('Copialo:',t));
+}
+function reabrirDecision(id){ if(!confirm('¿Deshacer la decisión? Las ideas vuelven a votación y salen del cementerio.')) return; const c=byId(S.campanas,id); ideasDe(id).forEach(i=>{ i.estado='votacion'; delete i.porqueGuardada; delete i.guardadaEn; }); c.estado='abierta'; c.decision=null; save(); render(); }
+
+/* ---------------- cementerio ---------------- */
+let cemFiltro={marca:'',q:''};
+function viewCementerio(){
+  const items=S.ideas.filter(i=>i.estado==='guardada'||i.estado==='acompana');
+  const rows=items.map(i=>{ const c=byId(S.campanas,i.campanaId); const m=c?byId(S.marcas,c.marcaId):null; return {i,c,m}; }).filter(r=>r.c&&r.m);
+  const filt=rows.filter(r=>(!cemFiltro.marca||r.m.id===cemFiltro.marca)&&(!cemFiltro.q||(r.i.nombre+' '+r.i.queSeVe+' '+r.i.queEs+' '+(r.i.origen||'')).toLowerCase().includes(cemFiltro.q.toLowerCase())));
+  filt.sort((a,b)=>(b.i.guardadaEn||'').localeCompare(a.i.guardadaEn||''));
+  const abiertas=S.campanas.filter(c=>c.estado!=='cerrada'&&!c.revelado);
+  return `<div class="cem-head"><div class="grow"><h1>Cementerio de ideas</h1><p class="muted">Las que no ganaron, con la fecha y de qué campaña salieron. Cuando falte una idea, se abre esto antes de inventar de cero.</p></div><div class="kpi">${rows.length}</div></div>
+  <div class="row" style="margin:18px 0 22px">
+    <select style="width:auto" onchange="cemFiltro.marca=this.value;render()"><option value="">Todas las marcas</option>${S.marcas.map(m=>`<option value="${m.id}" ${cemFiltro.marca===m.id?'selected':''}>${esc(m.nombre)}</option>`).join('')}</select>
+    <input type="text" style="width:auto;flex:1;min-width:180px" placeholder="Buscar en nombre, qué se ve, qué es…" value="${esc(cemFiltro.q)}" oninput="cemFiltro.q=this.value;render()">
+  </div>
+  ${filt.length===0?`<div class="empty">${rows.length?'Nada con ese filtro.':'Todavía no hay ideas guardadas. Aparecen solas cuando se confirma la decisión de una campaña.'}</div>`:
+  `<div class="grid g2">${filt.map(({i,c,m})=>{ const rs=c.decision?.resumen?.[i.id]; return `<div class="card cem-item">
+    <div class="row small" style="margin-bottom:6px"><span class="tag cem">Guardada</span>${rs&&Q.some(q=>rs.avg[q.k]>=4.5)?`<span class="tag ok">5 en ${Q.filter(q=>rs.avg[q.k]>=4.5).map(q=>q.short).join(', ')}</span>`:''}${i.revivida?`<span class="tag">Usada ${i.revivida} ${i.revivida===1?'vez':'veces'}</span>`:''}<span class="muted">${esc(m.nombre)} · ${esc(c.nombre)}</span><span class="grow"></span><span class="dim">${fmtDate((i.guardadaEn||c.decision?.fecha||'').slice(0,10))}</span></div>
+    <h3 style="margin:0 0 4px;font-size:19px">${esc(i.nombre)}</h3>
+    <p class="small">${esc(i.queSeVe)}</p>
+    <p class="small muted">${esc(i.queEs)}${i.queHace?` · ${esc(i.queHace)}`:''}</p>
+    ${i.porqueGuardada?`<p class="small" style="color:var(--tx2)"><span class="dim">Por qué quedó afuera:</span> ${esc(i.porqueGuardada)}</p>`:''}
+    ${rs?`<div class="sc"><span>Total <b>${rs.total}</b></span>${Q.map(q=>`<span>${q.short.replace('¿','').replace('?','')} <b>${rs.avg[q.k]}</b></span>`).join('')}</div>`:''}
+    <div class="row" style="margin-top:12px"><a class="btn ghost sm" href="#/campana/${c.id}">Ver campaña</a><button class="btn ghost sm" onclick="copiarIdea('${i.id}')">Copiar</button>${isDC()&&abiertas.length?`<button class="btn sm" onclick="revivir('${i.id}')">Usar en otra campaña</button>`:''}${isDC()?`<span class="grow"></span><button class="btn ghost sm danger" onclick="borrarIdea('${i.id}')">Borrar del cementerio</button>`:''}</div>
+  </div>`; }).join('')}</div>`}`;
+}
+function copiarIdea(id){ const i=byId(S.ideas,id); const t=`${i.nombre}\nQué se ve: ${i.queSeVe}\nQué es: ${i.queEs}${i.queHace?`\nQué hace la gente: ${i.queHace}`:''}`; navigator.clipboard?.writeText(t).then(()=>toast('Idea copiada')).catch(()=>prompt('Copiala:',t)); }
+function revivir(ideaId){
+  const i=byId(S.ideas,ideaId); const abiertas=S.campanas.filter(c=>c.estado!=='cerrada'&&!c.revelado);
+  openModal(`<h2 style="margin-top:0">Usar “${esc(i.nombre)}”</h2><p class="muted">Se copia como idea final en la campaña que elijas, lista para votar. La original queda en el cementerio con su historia.</p>
+  <label class="f"><span>Campaña destino</span><select id="rv-dest">${abiertas.map(c=>`<option value="${c.id}">${esc(byId(S.marcas,c.marcaId)?.nombre)} · ${esc(c.nombre)||'sin nombre'}</option>`).join('')}</select></label>
+  <div class="row"><button class="btn pri" onclick="confirmarRevivir('${ideaId}')">Usar en esa campaña</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`);
+}
+function confirmarRevivir(ideaId){ const i=byId(S.ideas,ideaId); const dest=document.getElementById('rv-dest').value; const c=byId(S.campanas,i.campanaId); S.ideas.push({id:uid(),campanaId:dest,estado:'votacion',nombre:i.nombre,origen:`Revivida del cementerio: ${c?.nombre||''} (${fmtDate((i.guardadaEn||'').slice(0,10))})${i.origen?` · antes: ${i.origen}`:''}`,queSeVe:i.queSeVe,queEs:i.queEs,queHace:i.queHace}); i.revivida=(i.revivida||0)+1; save(); modal=null; tab='ideas'; go('#/campana/'+dest); toast('Idea sumada a la campaña'); }
+
+/* ---------------- datos ---------------- */
+function viewDatos(){
+  return `<h1>Datos</h1><p class="muted">Todo vive en el servidor (${API_URL?'Google: una planilla de Drive':'Netlify'}): todos ven lo mismo desde cualquier dispositivo. ${isDC()?'Exportá un respaldo después de cada reunión y guardalo en Drive.':'El respaldo lo maneja el DC.'}</p>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><div class="kpi">${S.marcas.length}</div><div class="muted">marcas</div></div>
+    <div class="card"><div class="kpi">${S.campanas.length}</div><div class="muted">campañas</div></div>
+    <div class="card"><div class="kpi">${S.ideas.length}</div><div class="muted">ideas · ${S.ideas.filter(i=>i.estado==='guardada').length} en el cementerio</div></div>
+  </div>
+  ${isDC()?`<div class="row" style="margin-top:22px">
+    <button class="btn pri" onclick="exportar()">Exportar respaldo (.json)</button>
+    <label class="btn">Importar respaldo <input type="file" accept="application/json" style="display:none" onchange="importar(this.files[0])"></label>
+    <span class="grow"></span>
+    <button class="btn ghost sm danger" onclick="borrarTodo()">Borrar todo</button>
+  </div>`:''}`;
+}
+async function exportar(){ try{ const d=await api('GET','export'); const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`ideamia-votacion-${new Date().toISOString().slice(0,10)}.json`; a.click(); toast('Respaldo exportado'); }catch(e){ toast(e.message); } }
+function importar(f){ if(!f) return; const r=new FileReader(); r.onload=async()=>{ try{ const s=JSON.parse(r.result); if(!s.state||!s.state.marcas) throw new Error('El archivo no es un respaldo válido'); if(!confirm('Esto reemplaza todo lo que hay en el servidor. ¿Seguir?')) return; await api('PUT','import',s); ultimoJSON=''; await cargar(); toast('Respaldo importado'); }catch(e){ toast(e.message); } }; r.readAsText(f); }
+async function borrarTodo(){ if(!confirm('¿Borrar TODO en el servidor? Marcas, campañas, ideas y votos.')) return; if(!confirm('¿Seguro? No se puede deshacer.')) return; await api('DELETE','todo'); ultimoJSON=''; await cargar(); go('#/'); }
+
+/* ---------------- ejemplo Tritato ---------------- */
+async function cargarEjemplo(){
+  let m=S.marcas.find(x=>x.nombre.toLowerCase()==='tritato'); if(!m){ m={id:uid(),nombre:'Tritato'}; S.marcas.push(m); }
+  const c={id:uid(),marcaId:m.id,nombre:'Día del Estudiante y de la Primavera',fecha:'2026-09-21',publica:'2026-09-17',reunion:'2026-09-14T10:00',votacionAbierta:true,tipo:'fecha_fija',dobles:['sirve','podemos'],
+    problema:'Que Tritato sea lo que se lleva al parque el 21.',numero:'70 consultas por DM y WhatsApp, del jueves 17 al domingo 21',numeroHoy:'25 en una semana normal',
+    porque:'El 21 todo el mundo termina en el parque y come mal: chizitos, gaseosa tibia, algo armado a las apuradas. El sándwich es la única comida en serio que se banca el pasto.',
+    contamos:'Un solo día de rodaje: viernes 18. Formato vertical. Sin locación cerrada. Plata extra: cero. El local abre a las 10.',
+    noQueremos:'“Feliz día, estudiantes” sobre una foto del sándwich. Guardapolvos, pizarrones, mochilas. La palabra “primavera” para tapar que no hay idea.',
+    participantes:ROLES_DEFAULT.slice(),estado:'abierta',revelado:false,decision:null,creada:new Date().toISOString()};
+  const ideas=[
+    {nombre:'El árbol grande',origen:'la dirección “la manta a cuadros” + seguir al repartidor sin cortar + la banderita para clavar en el pasto',queSeVe:'Un repartidor entra al parque con la única dirección “manta a cuadros, al lado del árbol grande”. Se equivoca de manta dos veces y termina encontrando la banderita amarilla. Una sola toma.',queEs:'Reel vertical · 45 a 60 segundos · sin cortes',queHace:'Comenta con su propia dirección imposible. La banderita queda como objeto de la campaña.',n:{sirve:4,podemos:3,solo:5,marca:4,comparte:4}},
+    {nombre:'La manta',origen:'la manta que se llena vista desde arriba + la caja que se abre como mantel + repostear las mantas de la gente',queSeVe:'Cámara fija desde arriba de una manta vacía. Entran manos que dejan gaseosa tibia, chizitos, un celular. La última es la caja de Tritato, que se abre y ocupa el centro.',queEs:'Reel vertical · 15 a 20 segundos · una sola toma fija · más la caja-mantel como packaging real',queHace:'Lo guarda. El domingo sube su propia manta con la caja abierta y Tritato la repostea.',n:{sirve:5,podemos:4,solo:3,marca:4,comparte:5}},
+    {nombre:'Reglamento del parque',origen:'el instructivo serio para comer parado + las letras de cartel de parque',queSeVe:'Carteles con pinta de señalización municipal con reglas absurdas dichas muy en serio: “Prohibido comer con plato”, “Prohibido el tenedor”, “Prohibida la gaseosa tibia”. Abajo, chiquito, firma Tritato.',queEs:'Carrusel de piezas gráficas + stories · sin rodaje',queHace:'Comparte la que más le representa. Se le saca captura y se manda por privado.',n:{sirve:2,podemos:5,solo:4,marca:5,comparte:3}},
+  ];
+  S.campanas.push(c);
+  const ids=ideas.map(i=>{ const id=uid(); S.ideas.push({id,campanaId:c.id,estado:'votacion',nombre:i.nombre,origen:i.origen,queSeVe:i.queSeVe,queEs:i.queEs,queHace:i.queHace}); return id; });
+  await save();
+  // los cuatro papeles del deck, ya boca abajo
+  const a135=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v<=2?1:v>=4?5:3]));
+  for(const p of ROLES_DEFAULT){ const notas=Object.fromEntries(ids.map((id,ix)=>[id,a135(ideas[ix].n)])); await api('POST','voto',{campanaId:c.id,participante:p,notas}).catch(()=>{}); }
+  tab='votar'; ultimoJSON=''; go('#/campana/'+c.id); toast('Ejemplo cargado: los cuatro papeles ya están boca abajo');
+}
+
+/* ---------------- arranque ---------------- */
+addEventListener("scroll",()=>{ const b=document.getElementById("progreso"); if(!b) return; const h=document.documentElement, m=h.scrollHeight-h.clientHeight; b.style.width=(m>0?Math.min(100,h.scrollTop/m*100):0)+"%"; },{passive:true});
+if((location.hash||'').startsWith('#/votar/')) tab='votar';
+if(!ROLE && (location.hash||'').startsWith('#/votar/')){ ROLE='votante'; sessionStorage.setItem('ideamia_role','votante'); }
+render(); if(ROLE){ cargar(); poll(); } pollPizarron();
+</script>
+</body>
+</html>
