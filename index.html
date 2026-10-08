@@ -740,6 +740,9 @@ const TIPOS = {
   personalizado:{label:'Personalizado', dobles:null, why:'Elegí vos cuáles dos cuentan doble. Igual: se decide antes de tener ideas.'},
 };
 const ROLES_DEFAULT = ['Guionista','Filmmaker','Diseñador','Community'];
+// roles que aportan ideas pero no votan (el SMM, que entra con contraseña, tampoco vota)
+const ROLES_SOLO_IDEAS = ['Social media'];
+const noVota=()=>ROLE==='smm'||(ROLE==='votante'&&ROLES_SOLO_IDEAS.includes(ROL_PREF));
 const FASES = [
   {n:'Fase 1', t:'Cada uno solo', min:15, tab:'pizarron', hint:'En silencio, sin espiar, en papel o en el celular. Cinco ideas mínimo, un renglón cada una. Nadie muestra nada.'},
   {n:'Fase 2 · Ronda 1', t:'Leer', min:10, tab:'pizarron', hint:'Cada uno lee sus cinco de corrido y el DC las carga en el pizarrón. Nadie comenta.'},
@@ -830,7 +833,7 @@ function seguirReunion(camp){
   const ahora={a:!!c.votacionAbierta,r:!!c.revelado,e:c.estado}, antes=PREV[camp]; PREV[camp]=ahora;
   if(!antes||puedeBrief()) return;
   const vib=()=>{ try{ navigator.vibrate&&navigator.vibrate(120); }catch(e){} };
-  if(!antes.a&&ahora.a&&!ahora.r){ tab='votar'; toast('Se abrió la votación'); vib(); ultimoJSON=''; }
+  if(!antes.a&&ahora.a&&!ahora.r){ if(!noVota()){ tab='votar'; toast('Se abrió la votación'); vib(); } ultimoJSON=''; }
   else if(!antes.r&&ahora.r){ tab='resultados'; toast('Se dieron vuelta los papeles'); vib(); confeti(); ultimoJSON=''; }
   else if(antes.e!=='cerrada'&&ahora.e==='cerrada'){ tab='decision'; toast('Ya hay idea elegida'); vib(); confeti(); ultimoJSON=''; }
 }
@@ -951,7 +954,7 @@ function viewGate(){
       <p class="small muted">Ver los próximos brainstormings, leer los briefs y votar. Sin contraseña.</p>
       <label class="f"><span>Tu nombre</span><input type="text" id="g-nombre" maxlength="40" value="${esc(NOMBRE)}" placeholder="Zaira" autocomplete="given-name"></label>
       <div class="small muted" style="margin:2px 0 6px">Tu rol</div>
-      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">${ROLES_DEFAULT.map(r=>`<button type="button" class="btn ${ROL_PREF===r?'pri':''}" data-rol="${esc(r)}" style="padding:11px" onclick="document.querySelectorAll('[data-rol]').forEach(b=>b.classList.toggle('pri',b===this))">${esc(r)}</button>`).join('')}</div>
+      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">${[...ROLES_DEFAULT,...ROLES_SOLO_IDEAS].map(r=>`<button type="button" class="btn ${ROL_PREF===r?'pri':''}" data-rol="${esc(r)}" style="padding:11px" onclick="document.querySelectorAll('[data-rol]').forEach(b=>b.classList.toggle('pri',b===this))">${esc(r)}</button>`).join('')}</div>
       <button class="btn pri" onclick="entrar('votante')">Entrar</button>
     </div>
     <div class="card">
@@ -1006,7 +1009,7 @@ function viewHome(){
       <div class="fecha">${d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}${c.reunion.length>10?' · '+c.reunion.slice(11,16):''}</span>`:`<b>?</b><span>sin fecha</span>`}</div>
       <div><div class="small muted">${esc(m?.nombre||'')} ${falta(c.reunion)}</div><h3 style="margin:0 0 4px;font-size:22px">${esc(c.nombre)||'<span class="dim">Sin nombre</span>'}</h3>
         <div class="row small muted"><span class="tag ${estadoCamp(c)[1]}">${estadoCamp(c)[0]}</span>${c.fecha?`<span>Se publica el ${fmtDate(c.fecha)}</span>`:''}<span>Doble: ${(c.dobles||[]).map(k=>QK[k].short).join(' y ')}</span></div></div>
-      <div class="row acc">${puedeBrief()&&(isDC()||!c.revelado)?`<button class="btn ghost sm danger" onclick="borrarCampana('${c.id}')">Borrar</button>`:''}<a class="btn sm ${c.votacionAbierta&&!c.revelado?'':'pri'}" href="#/brief/${c.id}">Ver brief</a>${c.votacionAbierta&&!c.revelado?`<a class="btn sm pri" href="#/votar/${c.id}">Votar</a>`:c.revelado?`<a class="btn ghost sm" href="#/campana/${c.id}">Ver resultados</a>`:puedeBrief()?`<a class="btn ghost sm" href="#/campana/${c.id}">Abrir campaña</a>`:''}</div>
+      <div class="row acc">${puedeBrief()&&(isDC()||!c.revelado)?`<button class="btn ghost sm danger" onclick="borrarCampana('${c.id}')">Borrar</button>`:''}<a class="btn sm ${c.votacionAbierta&&!c.revelado?'':'pri'}" href="#/brief/${c.id}">Ver brief</a>${c.votacionAbierta&&!c.revelado&&!noVota()?`<a class="btn sm pri" href="#/votar/${c.id}">Votar</a>`:c.votacionAbierta&&!c.revelado?`<a class="btn ghost sm" href="#/campana/${c.id}">Ver campaña</a>`:c.revelado?`<a class="btn ghost sm" href="#/campana/${c.id}">Ver resultados</a>`:puedeBrief()?`<a class="btn ghost sm" href="#/campana/${c.id}">Abrir campaña</a>`:''}</div>
     </div>`; }).join('')}</div>`}
   </section>
   <section class="sec"><div class="sec-h"><span class="sec-n">02</span><div><div class="kicker">— Para quién pensamos</div><h2>Marcas</h2></div></div>
@@ -1053,7 +1056,7 @@ function viewCampana(id){
     <div class="row small muted">${c.reunion?`<span>Reunión ${fmtReunion(c.reunion)}</span>`:''}${c.fecha?`<span>Se publica el ${fmtDate(c.fecha)}</span>`:''}<span class="tag">${TIPOS[c.tipo]?.label}</span><span class="tag">Doble: ${(c.dobles||[]).map(k=>QK[k].short).join(' y ')||'sin definir'}</span>${c.estado==='cerrada'?'<span class="tag ban">Decidida</span>':''}</div></div>
     ${puedeBrief()&&!(c.revelado&&!isDC())?`<button class="btn ghost sm danger" onclick="borrarCampana('${c.id}')">Borrar</button>`:''}</div></div>
   ${c.estado!=='cerrada'?relojHTML(c):''}
-  <div class="tabs">${tabs.filter(([k])=>isDC()||k==='brief'||k==='ideas'||k==='pizarron'||(k==='votar'&&c.votacionAbierta&&!c.revelado)||((k==='resultados'||k==='decision')&&c.revelado)).map(([k,l,f])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';votante=null;render();if(tab==='pizarron')cargarPizarron()"><span class="n">Fase ${f}</span>${l}${k==='ideas'?` <span class="dim">${ideas.length}</span>`:k==='votar'?` <span class="dim">${votaron}/${(c.participantes||[]).length}</span>`:''}</button>`).join('')}</div>
+  <div class="tabs">${tabs.filter(([k])=>isDC()||k==='brief'||k==='ideas'||k==='pizarron'||(k==='votar'&&c.votacionAbierta&&!c.revelado&&!noVota())||((k==='resultados'||k==='decision')&&c.revelado)).map(([k,l,f])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';votante=null;render();if(tab==='pizarron')cargarPizarron()"><span class="n">Fase ${f}</span>${l}${k==='ideas'?` <span class="dim">${ideas.length}</span>`:k==='votar'?` <span class="dim">${votaron}/${(c.participantes||[]).length}</span>`:''}</button>`).join('')}</div>
   ${tab==='brief'?tabBrief(c):tab==='pizarron'?tabPizarron(c):tab==='ideas'?tabIdeas(c):tab==='votar'?tabVotar(c):tab==='resultados'?tabResultados(c):tabDecision(c)}`;
 }
 async function borrarCampana(id){ if(!confirm('¿Borrar la campaña con sus ideas y votos?')) return; const c=byId(S.campanas,id); await api('DELETE','extras/'+id).catch(()=>{}); S.ideas=S.ideas.filter(i=>i.campanaId!==id); S.campanas=S.campanas.filter(x=>x.id!==id); await save(); if(campActual()===id) go('#/marca/'+c.marcaId); else render(); toast('Campaña borrada'); }
@@ -1147,7 +1150,7 @@ function relojHTML(c){
         <button class="btn sm" onclick="reloj('${c.id}','sumar',1)" title="Sumar un minuto">+1</button>
         <button class="btn sm" onclick="reloj('${c.id}','sumar',-1)" title="Restar un minuto">−1</button>
         <button class="btn sm" onclick="reloj('${c.id}','siguiente')" ${r.t.fase===FASES.length-1?'disabled':''}>Siguiente fase ⏭</button>
-      </div>`:(r.f.tab&&tab!==r.f.tab&&(r.f.tab==='pizarron'||(r.f.tab==='votar'&&c.votacionAbierta&&!c.revelado)||(r.f.tab==='decision'&&c.revelado))?`<button class="btn pri sm" onclick="tab='${r.f.tab}';render();if(tab==='pizarron')cargarPizarron()">Ir ${r.f.tab==='pizarron'?'al pizarrón':r.f.tab==='votar'?'a votar':'a la decisión'}</button>`:'')}
+      </div>`:(r.f.tab&&tab!==r.f.tab&&(r.f.tab==='pizarron'||(r.f.tab==='votar'&&c.votacionAbierta&&!c.revelado&&!noVota())||(r.f.tab==='decision'&&c.revelado))?`<button class="btn pri sm" onclick="tab='${r.f.tab}';render();if(tab==='pizarron')cargarPizarron()">Ir ${r.f.tab==='pizarron'?'al pizarrón':r.f.tab==='votar'?'a votar':'a la decisión'}</button>`:'')}
     </div>
     <div class="barra"><i id="rj-b" class="${r.resta<0?'over':''}" style="width:${Math.min(100,Math.max(0,r.el/r.dur*100))}%"></i></div>
     <div class="chips">${FASES.map((f,i)=>`<button class="${i===r.t.fase?'on':i<r.t.fase?'hecha':''}" ${dc?`onclick="reloj('${c.id}','ir',${i})"`:'disabled'}>${f.t} · ${f.min}’</button>`).join('')}
@@ -1310,14 +1313,53 @@ function bLeer(id){ const n=bNota(id); if(!n) return;
 
 /* cargar las cinco de cada persona (DC) */
 function ideasDe_(nombre){ return B.notes.filter(n=>n.tipo==='idea'&&(n.autorNombre||'')===nombre).sort((a,b)=>a.creado-b.creado); }
+/* cada uno del equipo propone sus ideas desde el celular (también los social media, que no votan).
+   Nadie las ve hasta que el DC las destapa; ahí aparecen en el pizarrón, una columna por persona y sin nombres. */
+const autorPropio=()=>(ROLE==='smm'?'SMM':NOMBRE)||'Sin nombre';
+function propuestaHTML(){
+  const mias=B.notes.filter(n=>n.tipo==='idea'&&n.mia).sort((a,b)=>a.creado-b.creado);
+  const prog=B.progreso||[], tot=prog.reduce((a,p)=>a+p.n,0);
+  const otros=tot?`<p class="small muted" style="margin:10px 0 0">En total van ${tot} idea${tot===1?'':'s'} de ${prog.length} persona${prog.length===1?'':'s'}.</p>`:'';
+  if(B.meta.mostrar) return mias.length?`<p class="small muted" style="margin:0 0 10px">Tus ${mias.length} idea${mias.length===1?'':'s'} ya están en el pizarrón, en tu columna.</p>`:'';
+  const slots=Math.min(10,Math.max(5,mias.length+(mias.length>=5?1:0)));
+  return `<div class="card mis"><h3 style="margin:0">Tus ideas <span class="dim" style="font-weight:500">${Math.min(mias.length,5)} de 5</span></h3>
+    <p class="small muted" style="margin:6px 0 12px">Escribilas solo, sin mirar las de los demás: nadie las ve hasta que el DC las destape. Un renglón cada una; Enter guarda y pasa a la siguiente.${noVota()?' Aportás ideas pero no votás.':''}</p>
+    ${Array.from({length:slots},(_,i)=>{ const n=mias[i]; return `<div class="slot ${n?'ok':''}"><b>${i+1}</b><input type="text" maxlength="300" data-slot="${i}" value="${esc(n?.texto||'')}" placeholder="${i<5?`Idea ${i+1}`:'Otra idea (opcional)'}" onkeydown="if(event.key==='Enter'){event.preventDefault();proponerSlot(${i},this.value,this)}" onblur="proponerSlot(${i},this.value,this)">${n&&!n._tmp?`<button class="btn ghost sm" onclick="quitarPropuesta('${n.id}')" title="Borrar esta idea" aria-label="Borrar idea ${i+1}">✕</button>`:'<span></span>'}</div>`; }).join('')}
+    ${otros}</div>`;
+}
+let pCola=Promise.resolve();
+function proponerSlot(i,v,el){
+  v=(v||'').trim(); const mias=B.notes.filter(n=>n.tipo==='idea'&&n.mia).sort((a,b)=>a.creado-b.creado); const n=mias[i];
+  if(n){ if(n._tmp){ if(v) n.texto=v; return; } if(v&&v!==n.texto) bPatch(n.id,{texto:v,dev:DEV}); return; }
+  if(!v) return;
+  const campId=B.camp, autor=autorPropio();
+  const tmp={id:'tmp'+uid(),campanaId:campId,numero:'…',tipo:'idea',texto:v,autorNombre:autor,from:[],creado:Date.now(),mia:true,_tmp:true};
+  B.notes.push(tmp); el.closest('.slot')?.classList.add('ok');
+  const bm=document.getElementById('bmis'); let next=document.querySelector(`#bmis input[data-slot="${i+1}"]`);
+  if(!next&&bm){ bm._forzar=true; bMis(); next=document.querySelector(`#bmis input[data-slot="${i+1}"]`); }
+  next?.focus();
+  if(i===4) toast('¡Listo, tus cinco! Si querés, podés sumar más.');
+  bPend++; bMut++;
+  pCola=pCola.then(async()=>{
+    try{ const enviado=tmp.texto; const d=await api('POST','board/'+campId,{dev:DEV,tipo:'idea',texto:enviado,autorNombre:autor}); const ultimo=tmp.texto; Object.assign(tmp,d.note); delete tmp._tmp;
+      if(ultimo!==enviado){ tmp.texto=ultimo; await api('PATCH',`board/${campId}/${tmp.id}`,{texto:ultimo,dev:DEV}).catch(()=>{}); } }
+    catch(e){ B.notes=B.notes.filter(x=>x!==tmp); toast('No se guardó: '+e.message); }
+    finally{ bPend--; bMut++; B._j=''; if(!bPend){ const m=document.getElementById('bmis'); if(m&&!m.contains(document.activeElement)){ m._forzar=true; bMis(); } } }
+  });
+}
+async function quitarPropuesta(id){ if(!confirm('¿Borrar esta idea?')) return; B.notes=B.notes.filter(n=>n.id!==id); const m=document.getElementById('bmis'); if(m){ m._forzar=true; bMis(); }
+  bMut++; bPend++; try{ await api('DELETE',`board/${B.camp}/${id}`,{dev:DEV}); }catch(e){ toast(e.message); } finally{ bPend--; bMut++; B._j=''; } }
 function misIdeasHTML(){
   const ps=personas(); const cnt=k=>B.notes.filter(n=>n.tipo==='idea'&&n.autorNombre===k).length;
   const prog=B.progreso||[];
-  if(!isDC()){ const tot=prog.reduce((a,p)=>a+p.n,0); return tot?`<p class="small muted" style="margin:0 0 10px">${tot} idea${tot===1?'':'s'} cargada${tot===1?'':'s'} de ${prog.length} persona${prog.length===1?'':'s'}.</p>`:''; }
+  if(!isDC()) return propuestaHTML();
   const mis=AUTOR?ideasDe_(AUTOR):[]; const slots=Math.max(5,mis.length+(mis.length>=5?1:0));
   const abierto=!T||T.fase<=1;
   const botones=`<div class="prog">${ps.map(k=>`<button class="tag ${k===AUTOR?'ban':''}" style="cursor:pointer;padding:6px 12px;font-size:13px;--c:${colorPersona(k)}" onclick="bSetAutor(${esc(JSON.stringify(k))})"><i></i>${esc(etiquetaPersona(k))} · ${cnt(k)}/5</button>`).join('')}<button class="tag" style="cursor:pointer;padding:6px 12px;font-size:13px" onclick="bNuevaPersona()">+ Persona</button></div>`;
-  const cuerpo=`${botones}
+  // los que propusieron desde su celular (sus ideas siguen tapadas hasta destapar)
+  const delCel=prog.filter(p=>p.nombre&&!ps.includes(p.nombre)&&!/^Persona [0-9]+$/.test(p.nombre));
+  const avisoCel=delCel.length&&!B.meta.mostrar?`<p class="small" style="margin:10px 0 0;color:var(--ok)">Ya propusieron desde el celular: ${delCel.map(p=>`${esc(p.nombre)} (${p.n})`).join(", ")}. Se suman al pizarrón cuando destapes.</p>`:"";
+  const cuerpo=`${botones}${avisoCel}
     ${AUTOR?`<div style="margin-top:12px">${Array.from({length:slots},(_,i)=>{ const n=mis[i]; return `<div class="slot ${n?'ok':''}"><b>${i+1}</b><input type="text" maxlength="300" data-slot="${i}" value="${esc(n?.texto||'')}" placeholder="${i<5?`Idea ${i+1} de ${etiquetaPersona(AUTOR)}`:'Otra idea'}" onkeydown="if(event.key==='Enter'){event.preventDefault();bSlot(${i},this.value,this)}" onblur="bSlot(${i},this.value,this)">${n?`<span class="small dim">#${n.numero}</span>`:'<span></span>'}</div>`; }).join('')}</div>`:`<p class="small dim" style="margin:10px 0 0">Tocá “+ Persona” para empezar con quien lee primero.</p>`}`;
   if(!abierto) return `<details class="card mis" style="padding:12px 16px"><summary style="cursor:pointer"><b>Cargar ideas</b> <span class="dim">${B.notes.filter(n=>n.tipo==='idea').length} cargadas · tocá para sumar</span></summary><div style="margin-top:10px">${cuerpo}</div></details>`;
   return `<div class="card mis"><h3 style="margin:0">Cargar ideas <span class="dim" style="font-weight:500">${AUTOR?`${etiquetaPersona(AUTOR)} · ${Math.min(mis.length,5)} de 5`:''}</span></h3>
@@ -1410,7 +1452,7 @@ function bLeyenda(){ const l=document.getElementById('bley'); if(!l) return; con
     +`<button onclick="bVerTipo('cruce')"><i class="cr"></i>Cruces <b>${n('cruce')}</b></button><button onclick="bVerTipo('final')"><i class="fi"></i>Finales <b>${n('final')}</b></button>`
     +(bFoco?`<button onclick="bFocoPersona('')">✕ Ver todas</button>`:''); }
 function bAviso(){ const av=document.getElementById('baviso'); if(!av) return;
-  av.innerHTML=!B.meta.mostrar?`<div class="baviso">${isDC()?'<b>Tapadas:</b> el equipo todavía no las ve. Se destapan al pasar a la Ronda 1 o con “Destapar las ideas”.':`<b>Fase 1: cada uno solo, en papel.</b> ${B.ocultas?`El DC ya cargó ${B.ocultas} idea${B.ocultas===1?'':'s'}. `:''}Se ven cuando las destape.`}</div>`:(!B.notes.length&&bPuede()?`<div class="baviso">Hacé <b>doble clic</b> en cualquier lugar para crear una nota.</div>`:''); }
+  av.innerHTML=!B.meta.mostrar?`<div class="baviso">${isDC()?'<b>Tapadas:</b> el equipo todavía no las ve. Se destapan al pasar a la Ronda 1 o con “Destapar las ideas”.':`<b>Fase 1: cada uno solo.</b> Escribí tus ideas arriba${B.ocultas?` · ya hay ${B.ocultas} idea${B.ocultas===1?'':'s'} de otros, tapadas`:''}. Se ven todas cuando el DC las destape.`}</div>`:(!B.notes.length&&bPuede()?`<div class="baviso">Hacé <b>doble clic</b> en cualquier lugar para crear una nota.</div>`:''); }
 function bLines(){
   const svg=document.getElementById('blines'); if(!svg) return; const byN=bById(); const act=new Set([...bsel,bHover].filter(Boolean));
   let h='<defs>'+['#6E9CC6','#D9CC00'].map((c,i)=>`<marker id="bm${i}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('')+'</defs>';
@@ -1697,6 +1739,7 @@ async function borrarVotos(id){ if(!confirm('¿Borrar todos los votos de esta ca
 function toggleVotacion(id){ const c=byId(S.campanas,id); c.votacionAbierta=!c.votacionAbierta; save(); render(); toast(c.votacionAbierta?'Votación activada':'Votación pausada'); }
 function tabVotar(c){
   const ideas=ideasDe(c.id); const ps=c.participantes||[];
+  if(noVota()) return `<div class="empty">${ROLE==='smm'?'El SMM':'Los social media'} aportan ideas pero no votan. Las finales están en la pestaña Finales.</div>`;
   if(ideas.length===0) return `<div class="empty">${isDC()?'Primero cargá las ideas que salieron de mezclar.':'El DC todavía no activó la votación.'}</div>`;
   if(!c.votacionAbierta&&!c.revelado&&!isDC()) return `<div class="empty">${V.length?'La votación está pausada. El DC la vuelve a abrir.':'El DC todavía no activó la votación.'}</div>`;
   if(c.revelado) return `<div class="empty">Los papeles ya se dieron vuelta. Las notas están en Resultados.${isDC()&&c.estado!=='cerrada'?`<div class="row" style="margin-top:14px;justify-content:center"><button class="btn sm" onclick="reabrir('${c.id}')">Volver a tapar para corregir una fila</button><button class="btn ghost sm danger" onclick="borrarVotos('${c.id}')">Borrar votos y votar de nuevo</button></div>`:''}</div>`;
