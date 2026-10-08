@@ -696,6 +696,11 @@ body.en-cem .wrap{padding-bottom:96px}
   .zombi{width:calc(var(--w)*.62)}
 }
 .tumba .lapidita{display:none;flex:none;width:42px;height:52px;border-radius:21px 21px 4px 4px;background:linear-gradient(180deg,#333,#1E1E1E);border:1px solid #3C3C3C;align-items:center;justify-content:center;font-family:var(--f-display);font-size:12px;letter-spacing:.12em;color:#777}
+/* mostrar u ocultar la contraseña */
+.clave{position:relative;display:block}
+.clave input{padding-right:92px}
+.ver-clave{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:transparent;border:0;border-radius:2px;padding:7px 10px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2)}
+.ver-clave:hover,.ver-clave[aria-pressed="true"]{color:var(--ban)}
 @media print{
   :root{--bg:#fff;--bg2:#fff;--sur:#fff;--sur2:#f3f0ea;--line:#ddd;--line2:#bbb;--tx:#111;--tx2:#444;--tx3:#777;--ban:#111;--ban-ink:#fff}
   body{background:#fff;color:#111} .top,.no-print,.toast{display:none!important} .wrap{padding:0;max-width:none}
@@ -961,7 +966,7 @@ function viewGate(){
     <div class="card">
       <div class="who" style="margin-bottom:6px">Soy el SMM o el director creativo</div>
       <p class="small muted">Cada uno tiene su contraseña; según cuál pongas, entrás con ese rol.</p>
-      <label class="f"><span>Contraseña</span><input type="password" id="g-pass" onkeydown="if(event.key==='Enter')entrar('dc')"></label>
+      <label class="f"><span>Contraseña</span><div class="clave"><input type="password" id="g-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar('dc')"><button type="button" class="ver-clave" aria-label="Mostrar contraseña" aria-pressed="false" onclick="verClave(this)">Mostrar</button></div></label>
       <button class="btn" id="g-entrar" onclick="entrar('dc')">Entrar con contraseña</button>
     </div>
   </div>`;
@@ -979,6 +984,7 @@ async function entrar(role){
     ROLE='votante'; PASS=''; sessionStorage.setItem('ideamia_role','votante'); sessionStorage.removeItem('ideamia_pass'); }
   render(); await cargar(); poll();
 }
+function verClave(b){ const i=b.previousElementSibling; const ver=i.type==='password'; i.type=ver?'text':'password'; b.textContent=ver?'Ocultar':'Mostrar'; b.setAttribute('aria-pressed',ver); b.setAttribute('aria-label',ver?'Ocultar contraseña':'Mostrar contraseña'); i.focus(); }
 function salir(){ ROLE=null; PASS=''; sessionStorage.removeItem('ideamia_role'); sessionStorage.removeItem('ideamia_pass'); votante=null; render(); }
 
 /* ---------------- home / marca ---------------- */
