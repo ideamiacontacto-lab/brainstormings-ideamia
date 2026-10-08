@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ideamia · Votación de ideas</title>
+<script src="https://ideamiacontacto-lab.github.io/panel-ideamia/ideamia-nav.js?v=1" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -759,7 +760,7 @@ let V = [];                                       // papeles de la campaña abie
 let ROLE = sessionStorage.getItem('ideamia_role') || null;   // 'dc' | 'smm' | 'votante'
 let PASS = sessionStorage.getItem('ideamia_pass') || '';
 let QUIEN = '';     // rol con el que vota este dispositivo en la campaña abierta
-let NOMBRE = localStorage.getItem('ideamia_nombre') || '';
+let NOMBRE = localStorage.getItem('ideamia_nombre') || localStorage.getItem('ideamia:nombre') || '';   // el nombre lo comparte con el Panel diario
 const etq=p=>{ const n=papel(p)?.nombre; return n?`${p} · ${n}`:p; };
 let ROL_PREF=localStorage.getItem('ideamia_rol')||'';
 const quienDe=c=>{ const v=localStorage.getItem('ideamia_quien_'+c); if(v==='-') return ''; if(v) return v;
@@ -968,7 +969,7 @@ function viewGate(){
 async function entrar(role){
   if(role==='dc'){
     const p=document.getElementById('g-pass').value; if(!p){ toast('Escribí la contraseña'); return; } const bt=document.getElementById('g-entrar'); if(bt){ if(bt.disabled) return; bt.disabled=true; bt.textContent='Entrando…'; } const listo=()=>{ if(bt){ bt.disabled=false; bt.textContent='Entrar con contraseña'; } };
-    try{ PASS=p; const d=await api('POST','login'); ROLE=d.rol; sessionStorage.setItem('ideamia_role',d.rol); sessionStorage.setItem('ideamia_pass',p); }
+    try{ PASS=p; const d=await api('POST','login'); ROLE=d.rol; sessionStorage.setItem('ideamia_role',d.rol); sessionStorage.setItem('ideamia_pass',p); if(d.rol==='smm') try{ localStorage.setItem('ideamia:clave',p); }catch(x){} }  // la clave del equipo queda compartida con el Panel diario
     catch(e){ PASS=''; listo(); toast(e.status===401?'Contraseña incorrecta':e.status===0?'No hay conexión con el servidor. Probá de nuevo.':e.message); return; }
   } else {
     const n=(document.getElementById('g-nombre')?.value||'').trim(); const r=document.querySelector('[data-rol].pri')?.dataset.rol||'';
@@ -2291,6 +2292,8 @@ if((location.hash||'').startsWith('#/votar/')) tab='votar';
 if(!ROLE && (location.hash||'').startsWith('#/votar/')){ ROLE='votante'; sessionStorage.setItem('ideamia_role','votante'); }
 // arranque instantáneo: se muestra lo último que se vio en este dispositivo y se actualiza por detrás
 try{ const u=JSON.parse(localStorage.getItem('ideamia_ultimo')||'null'); if(ROLE&&u&&Array.isArray(u.marcas)){ S=u; BASE=clon(u); cargado=true; sync('Actualizando…'); } }catch(e){}
+// sesión compartida: si ya entró al Panel diario con la clave del equipo, acá entra solo (si la clave no coincide, pide la suya como siempre)
+if(!ROLE && !(location.hash||'').startsWith('#/votar/')){ const sc=localStorage.getItem('ideamia:clave'); if(sc){ PASS=sc; api('POST','login').then(d=>{ ROLE=d.rol; sessionStorage.setItem('ideamia_role',d.rol); sessionStorage.setItem('ideamia_pass',sc); render(); cargar(); poll(); }).catch(()=>{ PASS=''; }); } }
 render(); if(ROLE){ cargar(); poll(); } pollPizarron();
 </script>
 </body>
