@@ -584,6 +584,41 @@ body.en-cem .wrap{padding-bottom:96px}
 .im-campos{grid-template-columns:1.2fr 1.3fr .9fr 1.1fr}
 .im-otro summary{cursor:pointer;color:var(--tx2);font-size:14px}
 @media (max-width:640px){ .im-campos{grid-template-columns:1fr 1fr} .brain-viejo{padding:16px} .cem-tabs button{padding:10px 10px 11px;font-size:14px} }
+/* brainstormings anteriores como carpetas: una tarjeta por Word; al abrirla, las ideas en lista compacta por sección */
+.carpetas{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));padding-top:14px}
+.carpeta{position:relative;display:flex;flex-direction:column;gap:10px;min-height:200px;padding:22px 20px 18px;cursor:pointer;border:1px solid #2C2C2C;border-radius:0 10px 10px 10px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));transition:transform .4s var(--ease),border-color .3s var(--ease),background .3s var(--ease)}
+.carpeta::before{content:'';position:absolute;left:-1px;top:-13px;width:42%;height:13px;border:1px solid #2C2C2C;border-bottom:0;border-radius:8px 14px 0 0;background:#151515;transition:background .3s var(--ease),border-color .3s var(--ease)}
+.carpeta:hover,.carpeta:focus-visible{transform:translateY(-5px);border-color:var(--ban);background:linear-gradient(180deg,rgba(255,242,0,.07),rgba(255,242,0,.015));outline:none}
+.carpeta:hover::before,.carpeta:focus-visible::before{background:var(--ban);border-color:var(--ban)}
+.carpeta .kicker{margin:0}
+.carpeta h3{font-family:var(--f-display);font-weight:400;font-size:34px;line-height:.95;text-transform:uppercase;margin:0;letter-spacing:.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.carpeta .etqs{justify-content:flex-start;margin:0}
+.carpeta-pie{margin-top:auto;display:flex;align-items:baseline;gap:6px;padding-top:12px;border-top:1px solid #222}
+.carpeta-pie b{font-family:var(--f-display);font-weight:400;font-size:34px;line-height:.9}
+.carpeta-pie span{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3)}
+.carpeta-pie .abrir{margin-left:auto;color:var(--ban);opacity:0;transform:translateX(-6px);transition:all .3s var(--ease)}
+.carpeta:hover .carpeta-pie .abrir,.carpeta:focus-visible .carpeta-pie .abrir{opacity:1;transform:none}
+.carpeta.oculta,.idea-fila.oculta{display:none}
+.carpeta-abierta{padding-top:6px}
+.carpeta-abierta .volver{background:none;border:0;padding:6px 0;margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ban)}
+.carpeta-abierta .volver:hover{color:var(--tx)}
+.carpeta-abierta .brain-h{padding-bottom:16px;border-bottom:1px solid var(--line)}
+.ideas-lista{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r2);overflow:hidden}
+.idea-fila{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid var(--line);padding:14px 18px;color:var(--tx);position:relative;transition:background .25s var(--ease)}
+.idea-fila:first-child{border-top:0}
+.idea-fila::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ban);transform:scaleY(0);transition:transform .3s var(--ease)}
+.idea-fila:hover,.idea-fila:focus-visible{background:rgba(255,242,0,.05);outline:none}
+.idea-fila:hover::before,.idea-fila:focus-visible::before{transform:none}
+.idea-fila .nro{font-family:var(--f-display);font-size:26px;color:var(--tx3);width:34px;flex:none;transition:color .25s}
+.idea-fila:hover .nro{color:var(--ban)}
+.idea-fila .txt{flex:1;min-width:0;display:grid;gap:3px}
+.idea-fila .txt b{font-weight:700;font-size:16px}
+.idea-fila .txt span{font-size:13px;color:var(--tx2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.idea-fila .chip{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px;border:1px solid rgba(169,212,143,.45);color:#A9D48F;white-space:nowrap}
+.idea-fila .flecha{color:var(--ban);opacity:0;transform:translateX(-6px);transition:all .25s var(--ease)}
+.idea-fila:hover .flecha{opacity:1;transform:none}
+@media (max-width:640px){ .carpetas{grid-template-columns:1fr;gap:20px} .carpeta{min-height:0} .idea-fila{padding:12px 14px;gap:12px} .idea-fila .nro{font-size:22px;width:26px} .idea-fila .flecha{display:none} }
 /* detalle de una idea (modal) */
 .modal .box.box-idea{max-width:720px;padding:0;overflow:hidden;display:flex;flex-direction:column}
 .idea-det-h{position:relative;padding:26px 26px 20px;background:radial-gradient(100% 120% at 100% 0%,rgba(255,242,0,.10),transparent 55%),linear-gradient(180deg,#1C1C1C,#141414);border-bottom:1px solid var(--line)}
@@ -1805,7 +1840,10 @@ function reabrirDecision(id){ if(!confirm('¿Deshacer la decisión? Las ideas vu
 
 /* ---------------- cementerio ---------------- */
 let cemFiltro={marca:'',q:'',seccion:'',tematica:''};
-let cemOrden='recientes', cemAgrupar='', cemVista='';   // cemVista: 'votadas' | 'anteriores' (vacío = la que tenga ideas)
+let cemOrden='recientes', cemAgrupar='', cemVista='', cemCarpeta='';   // cemVista: 'votadas' | 'anteriores' (vacío = la que tenga ideas); cemCarpeta: la carpeta abierta
+const cemClaveCarpeta=r=>r.m.id+'|'+(r.i.campanaNombre||'')+'|'+(r.fecha||'');
+function abrirCarpeta(k){ cemCarpeta=k; render(); document.querySelector('.cem-tabs')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+function borrarCarpeta(k){ const ids=cemFilas().filter(r=>r.i.importada&&cemClaveCarpeta(r)===k).map(r=>r.i.id); if(!ids.length||!confirm(`¿Borrar la carpeta con sus ${ids.length} ideas?`)) return; S.ideas=S.ideas.filter(i=>!ids.includes(i.id)); cemCarpeta=''; save(); render(); toast('Carpeta borrada'); }
 // Una idea del cementerio sale de una campaña votada acá, o se cargó a mano de un brainstorming anterior (importada: sin campaña, con marca propia)
 function cemFilas(){ const items=S.ideas.filter(i=>i.estado==='guardada'||i.estado==='acompana');
   return items.map(i=>{ const c=i.campanaId?byId(S.campanas,i.campanaId):null; const m=byId(S.marcas,(c&&c.marcaId)||i.marcaId); if(!m||(i.campanaId&&!c)) return null;
@@ -1840,11 +1878,27 @@ function viewCementerio(){
   let cuerpo;
   if(!filt.length) cuerpo=`<div class="empty">${rows.length?'Nada con ese filtro.':vista==='anteriores'?'Todavía no se cargaron brainstormings anteriores. Subí los Word y las ideas se arman solas.':'Todavía no hay ideas votadas en el cementerio. Aparecen solas cuando se cierra una campaña.'}${puedeBrief()&&vista==='anteriores'&&!rows.length?`<div style="margin-top:14px"><button class="btn pri" onclick="importarCem()">Subir brainstormings anteriores</button></div>`:''}</div>`;
   else if(vista==='anteriores'){
-    // cada brainstorming (un Word) es un bloque, con sus ideas por sección
-    cuerpo=grupos(filt,r=>r.m.id+'|'+(r.i.campanaNombre||'')+'|'+(r.fecha||''),(a,b)=>(b[1][0].fecha||'').localeCompare(a[1][0].fecha||'')).map(([,rs])=>{ const r0=rs[0];
+    // cada brainstorming (un Word) es una carpeta; adentro, sus ideas en lista por sección
+    const carpetas=grupos(filt,cemClaveCarpeta,(a,b)=>(b[1][0].fecha||'').localeCompare(a[1][0].fecha||''));
+    const abierta=cemCarpeta&&carpetas.find(([k])=>k===cemCarpeta);
+    if(cemCarpeta&&!abierta) cemCarpeta='';
+    if(abierta){ const [clave,rs]=abierta, r0=rs[0];
       const secs=grupos(rs,r=>(r.i.seccion||'').trim()||'Otras ideas',(a,b)=>(a[0]==='Otras ideas')-(b[0]==='Otras ideas'));
-      return `<section class="brain-viejo"><header class="brain-h"><div><div class="kicker">— ${esc(r0.m.nombre)}${r0.fecha?` · ${fmtDate(r0.fecha)}`:''}</div><h3>${esc(r0.camp)}</h3></div><span class="brain-n">${rs.length} idea${rs.length===1?'':'s'}</span></header>
-        ${secs.map(([s,lista])=>`<div class="brain-sec"><h4>${esc(s)} <span>${lista.length}</span></h4><div class="tumbas">${lista.map(r=>cemTumba(r,q)).join('')}</div></div>`).join('')}</section>`; }).join(''); }
+      let nro=0;
+      cuerpo=`<section class="carpeta-abierta">
+        <button class="volver" onclick="cemCarpeta='';render()">← Todas las carpetas</button>
+        <header class="brain-h"><div><div class="kicker">— ${esc(r0.m.nombre)}${r0.fecha?` · ${fmtDate(r0.fecha)}`:''}</div><h3>${esc(r0.camp)}</h3></div>
+          <div class="row" style="gap:8px"><span class="brain-n">${rs.length} idea${rs.length===1?'':'s'}</span>${isDC()?`<button class="btn ghost sm danger" onclick="borrarCarpeta(${esc(JSON.stringify(clave))})">Borrar carpeta</button>`:''}</div></header>
+        ${secs.map(([s,lista])=>`<div class="brain-sec"><h4>${esc(s)} <span>${lista.length}</span></h4><div class="ideas-lista">${lista.map(r=>{ nro++; return `<button class="idea-fila ${q&&!cemTexto(r.i).includes(q)?'oculta':''}" data-id="${r.i.id}" onclick="abrirTumba('${r.i.id}')"><span class="nro">${String(nro).padStart(2,'0')}</span><span class="txt"><b>${esc(r.i.nombre)}</b>${r.i.queSeVe?`<span>${esc(r.i.queSeVe.slice(0,180))}${r.i.queSeVe.length>180?'…':''}</span>`:''}</span>${r.i.revivida?`<span class="chip vivo">Revivió ×${r.i.revivida}</span>`:''}<span class="flecha" aria-hidden="true">→</span></button>`; }).join('')}</div></div>`).join('')}
+      </section>`; }
+    else cuerpo=`<div class="carpetas">${carpetas.map(([clave,rs])=>{ const r0=rs[0]; const secs=grupos(rs,r=>(r.i.seccion||'').trim()||'Otras',(a,b)=>b[1].length-a[1].length);
+      const texto=rs.map(r=>cemTexto(r.i)).join(' ')+' '+r0.camp.toLowerCase();
+      return `<article class="carpeta ${q&&!texto.includes(q)?'oculta':''}" data-texto="${esc(texto)}" tabindex="0" role="button" aria-label="Abrir ${esc(r0.camp)}" onclick="abrirCarpeta(${esc(JSON.stringify(clave))})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirCarpeta(${esc(JSON.stringify(clave))})}">
+        <div class="kicker">— ${esc(r0.m.nombre)}${r0.fecha?` · ${fmtDate(r0.fecha)}`:''}</div>
+        <h3>${esc(r0.camp)}</h3>
+        <div class="etqs">${secs.map(([s,l])=>`<span class="etq">${esc(s)} · ${l.length}</span>`).join('')}</div>
+        <div class="carpeta-pie"><b>${rs.length}</b><span>idea${rs.length===1?'':'s'}</span><span class="abrir">Abrir →</span></div>
+      </article>`; }).join('')}</div>`; }
   else if(cemAgrupar){ cuerpo=grupos(filt,r=>cemAgrupar==='marca'?r.m.nombre:(r.i[cemAgrupar]||'').trim()||(cemAgrupar==='seccion'?'Sin sección':'Sin temática'),(a,b)=>a[0].startsWith('Sin ')-b[0].startsWith('Sin ')||a[0].localeCompare(b[0]))
     .map(([k,rs])=>`<section class="cem-grupo"><h3 class="cem-grupo-h">${esc(k)} <span>${rs.length}</span></h3><div class="tumbas">${rs.map(r=>cemTumba(r,q)).join('')}</div></section>`).join(''); }
   else cuerpo=`<div class="tumbas">${filt.map(r=>cemTumba(r,q)).join('')}</div>`;
@@ -1864,8 +1918,8 @@ function viewCementerio(){
     </div>
   </section>
   <div class="cem-tabs" role="tablist">
-    <button role="tab" class="${vista==='votadas'?'on':''}" aria-selected="${vista==='votadas'}" onclick="cemVista='votadas';cemFiltro.seccion='';cemFiltro.tematica='';render()">Ideas votadas <span>${votadas.length}</span></button>
-    <button role="tab" class="${vista==='anteriores'?'on':''}" aria-selected="${vista==='anteriores'}" onclick="cemVista='anteriores';cemFiltro.seccion='';cemFiltro.tematica='';render()">Brainstormings anteriores <span>${anteriores.length}</span></button>
+    <button role="tab" class="${vista==='votadas'?'on':''}" aria-selected="${vista==='votadas'}" onclick="cemVista='votadas';cemCarpeta='';cemFiltro.seccion='';cemFiltro.tematica='';render()">Ideas votadas <span>${votadas.length}</span></button>
+    <button role="tab" class="${vista==='anteriores'?'on':''}" aria-selected="${vista==='anteriores'}" onclick="cemVista='anteriores';cemCarpeta='';cemFiltro.seccion='';cemFiltro.tematica='';render()">Brainstormings anteriores <span>${anteriores.length}</span></button>
   </div>
   ${rows.length?`<div class="cem-bar">
     <label class="buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" placeholder="Buscar una idea…" value="${esc(cemFiltro.q)}" oninput="cemFiltro.q=this.value;cemBuscar()" aria-label="Buscar en el cementerio"></label>
@@ -1909,7 +1963,9 @@ function abrirTumba(id){ const r=cemFilas().find(x=>x.i.id===id); if(!r) return;
 let cemBuscarT=null;
 function cemBuscar(){ clearTimeout(cemBuscarT); cemBuscarT=setTimeout(()=>{ const q=(cemFiltro.q||'').toLowerCase(); let n=0;
   document.querySelectorAll('.tumba[data-id]').forEach(t=>{ const i=byId(S.ideas,t.dataset.id); const ok=!q||(i&&cemTexto(i).includes(q)); t.classList.toggle('oculta',!ok); if(ok) n++; });
-  document.querySelectorAll('.cem-grupo,.brain-sec,.brain-viejo').forEach(g=>{ g.style.display=g.querySelector('.tumba:not(.oculta)')?'':'none'; });
+  document.querySelectorAll('.idea-fila[data-id]').forEach(t=>{ const i=byId(S.ideas,t.dataset.id); t.classList.toggle('oculta',!!q&&!(i&&cemTexto(i).includes(q))); });
+  document.querySelectorAll('.carpeta[data-texto]').forEach(t=>t.classList.toggle('oculta',!!q&&!t.dataset.texto.includes(q)));
+  document.querySelectorAll('.cem-grupo,.brain-sec').forEach(g=>{ g.style.display=g.querySelector('.tumba:not(.oculta),.idea-fila:not(.oculta)')?'':'none'; });
   const c=document.getElementById('cem-cuantas'); if(c) c.textContent=`${n} idea${n===1?'':'s'}`; },120); }
 // el amarillo de la lápida nace (y se va) por donde entra y sale el mouse
 function tumbaDesde(e){ const t=e.target.closest&&e.target.closest('.tumba'); if(!t||t.contains(e.relatedTarget)) return; const r=t.getBoundingClientRect(); t.style.setProperty('--px',(e.clientX-r.left)+'px'); t.style.setProperty('--py',(e.clientY-r.top)+'px'); }
