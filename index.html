@@ -778,7 +778,7 @@ const DEV=localStorage.getItem('ideamia_dev')||(()=>{ const k=Math.random().toSt
 const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
 const byId=(arr,id)=>arr.find(x=>x.id===id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtDate=d=>{ if(!d) return ''; const [y,m,dd]=d.slice(0,10).split('-'); return `${dd}/${m}/${y}`; };
+const fmtDate=d=>{ if(!d) return ''; const [y,m,dd]=anioOk(d).slice(0,10).split('-'); return `${dd}/${m}/${y}`; };
 const fmtReunion=d=>d?fmtDate(d)+(d.length>10?' a las '+d.slice(11,16):''):'';
 const isDC=()=>ROLE==='dc';
 const puedeBrief=()=>ROLE==='dc'||ROLE==='smm';
@@ -988,14 +988,16 @@ function verClave(b){ const i=b.previousElementSibling; const ver=i.type==='pass
 function salir(){ ROLE=null; PASS=''; sessionStorage.removeItem('ideamia_role'); sessionStorage.removeItem('ideamia_pass'); votante=null; render(); }
 
 /* ---------------- home / marca ---------------- */
+// fecha con el año escrito en dos cifras (el selector de fecha guarda "0026-10-26"): se lee como 2026 (22/10/2026)
+const anioOk = s => String(s||'').replace(/^0{1,2}(\d{2})-/, '20$1-');
 function viewHome(){
   const marcas=S.marcas.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
   const cem=S.ideas.filter(i=>i.estado==='guardada').length;
   const hayEjemplo=S.campanas.some(c=>c.nombre==='Día del Estudiante y de la Primavera');
-  const prox=S.campanas.filter(c=>c.estado!=='cerrada').sort((a,b)=>(a.reunion||a.fecha||'9').localeCompare(b.reunion||b.fecha||'9'));
+  const prox=S.campanas.filter(c=>c.estado!=='cerrada').sort((a,b)=>anioOk(a.reunion||a.fecha||'9').localeCompare(anioOk(b.reunion||b.fecha||'9')));
   const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   const elegidas=S.ideas.filter(i=>i.estado==='va').length;
-  const falta=d=>{ if(!d) return ''; const hoy=new Date(); hoy.setHours(0,0,0,0); const x=new Date(d); x.setHours(0,0,0,0); const n=Math.round((x-hoy)/864e5); return n===0?'<span class="cuenta hoy">Hoy</span>':n===1?'<span class="cuenta">Mañana</span>':n>1?`<span class="cuenta">En ${n} días</span>`:`<span class="cuenta dim">Hace ${-n} día${n===-1?'':'s'}</span>`; };
+  const falta=d=>{ if(!d) return ''; const hoy=new Date(); hoy.setHours(0,0,0,0); const x=new Date(anioOk(d)); x.setHours(0,0,0,0); const n=Math.round((x-hoy)/864e5); return n===0?'<span class="cuenta hoy">Hoy</span>':n===1?'<span class="cuenta">Mañana</span>':n>1?`<span class="cuenta">En ${n} días</span>`:`<span class="cuenta dim">Hace ${-n} día${n===-1?'':'s'}</span>`; };
   return `<section class="hero">${postits()}
     <div class="kicker">— Estudio Ideamia · Sala de brainstorming</div>
     <h1 class="wordmark"><span class="l1"><span>Tormenta</span></span><span class="l2"><span>de <b>ideas</b></span></span></h1>
@@ -1011,7 +1013,7 @@ function viewHome(){
   <section class="sec"><div class="sec-h"><span class="sec-n">01</span><div><div class="kicker">— Lo que viene</div><h2>Próximos brainstormings</h2></div></div>
   <p class="muted">Los briefs que hay que leer antes de sentarse a la mesa. Si no leíste el brief, no entrás.</p>
   ${prox.length===0?`<div class="empty" style="margin-top:16px">No hay reuniones cargadas. ${puedeBrief()?'Creá una campaña desde su marca.':'El SMM las carga con el brief.'}</div>`:
-  `<div class="grid prox" style="margin-top:16px">${prox.map(c=>{ const m=byId(S.marcas,c.marcaId); const d=c.reunion?new Date(c.reunion):null; const n=ideasDe(c.id).length;
+  `<div class="grid prox" style="margin-top:16px">${prox.map(c=>{ const m=byId(S.marcas,c.marcaId); const d=c.reunion?new Date(anioOk(c.reunion)):null; const n=ideasDe(c.id).length;
     return `<div class="card ${c.votacionAbierta&&!c.revelado?'vivo':''}">
       <div class="fecha">${d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}${c.reunion.length>10?' · '+c.reunion.slice(11,16):''}</span>`:`<b>?</b><span>sin fecha</span>`}</div>
       <div><div class="small muted">${esc(m?.nombre||'')} ${falta(c.reunion)}</div><h3 style="margin:0 0 4px;font-size:22px">${esc(c.nombre)||'<span class="dim">Sin nombre</span>'}</h3>
@@ -1071,7 +1073,7 @@ let briefT={};
 function setCq(id,k,v){ clearTimeout(briefT[k]); briefT[k]=setTimeout(()=>{ const c=byId(S.campanas,id); if(c&&c[k]!==v){ c[k]=v; save(); } },900); }
 function setC(id,k,v){ clearTimeout(briefT[k]);  const c=byId(S.campanas,id); c[k]=v; if(k==='tipo'&&TIPOS[v].dobles) c.dobles=TIPOS[v].dobles.slice(); save(); if(k==='tipo'||k==='nombre'||k==='fecha') render(); }
 function toggleDoble(id,k){ const c=byId(S.campanas,id); if(c.tipo!=='personalizado') return; if(c.dobles.includes(k)) c.dobles=c.dobles.filter(x=>x!==k); else if(c.dobles.length<2) c.dobles.push(k); else { c.dobles.shift(); c.dobles.push(k); } save(); render(); }
-function setReunion(id,d,t){ const c=byId(S.campanas,id); const dd=d!==null?d:(c.reunion||'').slice(0,10); const tt=t!==null?t:(c.reunion||'').slice(11,16); c.reunion=dd?(dd+(tt?'T'+tt:'')):''; save(); render(); }
+function setReunion(id,d,t){ const c=byId(S.campanas,id); const dd=anioOk(d!==null?d:(c.reunion||'').slice(0,10)); const tt=t!==null?t:(c.reunion||'').slice(11,16); c.reunion=dd?(dd+(tt?'T'+tt:'')):''; save(); render(); }
 function setParticipantes(id,v){ const c=byId(S.campanas,id); c.participantes=v.split(',').map(s=>s.trim()).filter(Boolean); save(); render(); }
 
 function tabBrief(c){
