@@ -210,7 +210,8 @@ html,body{overflow-x:clip}
 input.bbus{width:120px;padding:7px 13px;font-size:13px;border-radius:999px;min-height:34px}
 .bvista{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden}
 .bvista button{background:transparent;border:0;padding:6px 12px;font-size:13px;color:var(--tx2)} .bvista button.on{background:var(--tx);color:var(--bg)}
-.blista{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.blista{display:grid;gap:12px;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);overflow-x:auto;padding-bottom:10px;width:calc(100vw - 48px);margin-left:calc(50% - 50vw + 24px);align-items:start}
+@media (max-width:640px){.blista{width:auto;margin-left:0;grid-auto-columns:78%;scroll-snap-type:x mandatory}.blista .col{scroll-snap-align:start}}
 .blista .col{background:var(--sur);border-radius:var(--r2);padding:14px;border-top:4px solid var(--c,var(--line2))}
 .blista .col h4{margin:0 0 8px;font-size:14px;color:var(--tx2);font-weight:600}
 .blista .it{background:var(--c,#F3E3A2);color:#1E1A12;border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:14px;line-height:1.35;cursor:pointer}
@@ -745,10 +746,12 @@ const TIPOS = {
   gente_nueva:{label:'Llegar a gente nueva', dobles:['comparte','solo'], why:'Importa que la gente lo pase y que llame la atención de quien no nos conoce.'},
   personalizado:{label:'Personalizado', dobles:null, why:'Elegí vos cuáles dos cuentan doble. Igual: se decide antes de tener ideas.'},
 };
-const ROLES_DEFAULT = ['Guionista','Filmmaker','Diseñador','Community'];
-// roles que aportan ideas pero no votan (el SMM, que entra con contraseña, tampoco vota)
-const ROLES_SOLO_IDEAS = ['Social media'];
-const noVota=()=>ROLE==='smm'||(ROLE==='votante'&&ROLES_SOLO_IDEAS.includes(ROL_PREF));
+const ROLES_DEFAULT = ['Guionista','Filmmaker','Diseñador','Community','Social media'];
+// 27/10/2026 (pedido de Joaquín): los social media también votan. Queda la lista vacía por si algún rol vuelve a ser solo de ideas.
+const ROLES_SOLO_IDEAS = [];
+const noVota=()=>false;
+// quiénes votan en una campaña: lo que puso el DC, y social media siempre (las campañas viejas no lo tenían)
+const partic=c=>{ const p=((c&&c.participantes)||ROLES_DEFAULT).slice(); if(!p.includes('Social media')) p.push('Social media'); return p; };
 const FASES = [
   {n:'Fase 1', t:'Cada uno solo', min:15, tab:'pizarron', hint:'En silencio, sin espiar, en papel o en el celular. Cinco ideas mínimo, un renglón cada una. Nadie muestra nada.'},
   {n:'Fase 2 · Ronda 1', t:'Leer', min:10, tab:'pizarron', hint:'Cada uno lee sus cinco de corrido y el DC las carga en el pizarrón. Nadie comenta.'},
@@ -771,7 +774,7 @@ let ROL_PREF=localStorage.getItem('ideamia_rol')||'';
 const quienDe=c=>{ const v=localStorage.getItem('ideamia_quien_'+c); if(v==='-') return ''; if(v) return v;
   // si al entrar eligió rol, se usa directo en cada campaña donde ese rol vota y nadie más lo tomó
   const camp=byId(S.campanas,c); const pv=V.find(x=>x.participante===ROL_PREF);
-  return ROL_PREF&&NOMBRE&&camp&&(camp.participantes||[]).includes(ROL_PREF)&&!(pv&&pv.nombre&&pv.nombre.toLowerCase()!==NOMBRE.toLowerCase())?ROL_PREF:''; };
+  return ROL_PREF&&NOMBRE&&camp&&partic(camp).includes(ROL_PREF)&&!(pv&&pv.nombre&&pv.nombre.toLowerCase()!==NOMBRE.toLowerCase())?ROL_PREF:''; };
 let cargado=false, tab='brief', votante=null, modal=null, pollT=null, ultimoJSON='';
 let T=null, SKEW=0;   // reloj de la campaña abierta y diferencia con el reloj del servidor
 const DEV=localStorage.getItem('ideamia_dev')||(()=>{ const k=Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('ideamia_dev',k); return k; })();
@@ -960,7 +963,7 @@ function viewGate(){
       <p class="small muted">Ver los próximos brainstormings, leer los briefs y votar. Sin contraseña.</p>
       <label class="f"><span>Tu nombre</span><input type="text" id="g-nombre" maxlength="40" value="${esc(NOMBRE)}" placeholder="Zaira" autocomplete="given-name"></label>
       <div class="small muted" style="margin:2px 0 6px">Tu rol</div>
-      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">${[...ROLES_DEFAULT,...ROLES_SOLO_IDEAS].map(r=>`<button type="button" class="btn ${ROL_PREF===r?'pri':''}" data-rol="${esc(r)}" style="padding:11px" onclick="document.querySelectorAll('[data-rol]').forEach(b=>b.classList.toggle('pri',b===this))">${esc(r)}</button>`).join('')}</div>
+      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">${ROLES_DEFAULT.map(r=>`<button type="button" class="btn ${ROL_PREF===r?'pri':''}" data-rol="${esc(r)}" style="padding:11px" onclick="document.querySelectorAll('[data-rol]').forEach(b=>b.classList.toggle('pri',b===this))">${esc(r)}</button>`).join('')}</div>
       <button class="btn pri" onclick="entrar('votante')">Entrar</button>
     </div>
     <div class="card">
@@ -1072,7 +1075,7 @@ async function borrarCampana(id){ if(!confirm('¿Borrar la campaña con sus idea
 let briefT={};
 function setCq(id,k,v){ clearTimeout(briefT[k]); briefT[k]=setTimeout(()=>{ const c=byId(S.campanas,id); if(c&&c[k]!==v){ c[k]=v; save(); } },900); }
 function setC(id,k,v){ clearTimeout(briefT[k]);  const c=byId(S.campanas,id); c[k]=v; if(k==='tipo'&&TIPOS[v].dobles) c.dobles=TIPOS[v].dobles.slice(); save(); if(k==='tipo'||k==='nombre'||k==='fecha') render(); }
-function toggleDoble(id,k){ const c=byId(S.campanas,id); if(c.tipo!=='personalizado') return; if(c.dobles.includes(k)) c.dobles=c.dobles.filter(x=>x!==k); else if(c.dobles.length<2) c.dobles.push(k); else { c.dobles.shift(); c.dobles.push(k); } save(); render(); }
+function toggleDoble(id,k){ const c=byId(S.campanas,id); if(c.tipo!=='personalizado'){ if(ROLE!=='smm') return; c.tipo='personalizado'; c.dobles=(c.dobles||[]).slice(); }   /* el social media elige directo las dos (27/10/2026) */ if(c.dobles.includes(k)) c.dobles=c.dobles.filter(x=>x!==k); else if(c.dobles.length<2) c.dobles.push(k); else { c.dobles.shift(); c.dobles.push(k); } save(); render(); }
 function setReunion(id,d,t){ const c=byId(S.campanas,id); const dd=anioOk(d!==null?d:(c.reunion||'').slice(0,10)); const tt=t!==null?t:(c.reunion||'').slice(11,16); c.reunion=dd?(dd+(tt?'T'+tt:'')):''; save(); render(); }
 function setParticipantes(id,v){ const c=byId(S.campanas,id); c.participantes=v.split(',').map(s=>s.trim()).filter(Boolean); save(); render(); }
 
@@ -1105,8 +1108,8 @@ function tabBrief(c){
     <div class="card">
       <h3 style="margin-top:0">Qué dos preguntas cuentan doble</h3>
       <p class="muted small">Se decide acá, antes de que nadie tenga una idea. Después de ver las notas no se toca.</p>
-      <label class="f"><span>Tipo de campaña</span><select onchange="setC('${c.id}','tipo',this.value)" ${locked?'disabled':''}>${Object.entries(TIPOS).map(([k,t])=>`<option value="${k}" ${c.tipo===k?'selected':''}>${t.label}</option>`).join('')}</select><em>${TIPOS[c.tipo].why}</em></label>
-      <div class="grid" style="gap:6px">${Q.map(q=>{ const on=(c.dobles||[]).includes(q.k); return `<button class="btn ${on?'pri':''}" style="text-align:left;display:flex;justify-content:space-between" ${locked||c.tipo!=='personalizado'?'disabled':''} onclick="toggleDoble('${c.id}','${q.k}')"><span>${q.short}</span><span>${on?'×2':'×1'}</span></button>`; }).join('')}</div>
+      ${ROLE==='smm'?`<p class="small muted" style="margin:0 0 10px">Tocá las dos que cuentan doble.</p>`:`<label class="f"><span>Tipo de campaña</span><select onchange="setC('${c.id}','tipo',this.value)" ${locked?'disabled':''}>${Object.entries(TIPOS).map(([k,t])=>`<option value="${k}" ${c.tipo===k?'selected':''}>${t.label}</option>`).join('')}</select><em>${TIPOS[c.tipo].why}</em></label>`}
+      <div class="grid" style="gap:6px">${Q.map(q=>{ const on=(c.dobles||[]).includes(q.k); return `<button class="btn ${on?'pri':''}" style="text-align:left;display:flex;justify-content:space-between" ${locked||(c.tipo!=='personalizado'&&ROLE!=='smm')?'disabled':''} onclick="toggleDoble('${c.id}','${q.k}')"><span>${q.short}</span><span>${on?'×2':'×1'}</span></button>`; }).join('')}</div>
       ${locked?`<p class="small dim" style="margin-top:12px">Bloqueado: ya se dieron vuelta los papeles.</p>`:''}
     </div>
    </div>
@@ -1255,7 +1258,7 @@ function tabPizarron(c){
     <div id="bmini" class="bmini" hidden></div>
     <div class="bzoom"><button onclick="bZoom(1/1.25)" title="Alejar (−)">−</button><span id="bzpct">${Math.round(BV.s*100)}%</span><button onclick="bZoom(1.25)" title="Acercar (+)">+</button><button onclick="bVerTodo()" title="Ver todo el pizarrón (0)">⤢</button><button onclick="bPantalla()" title="${bFull?'Salir de pantalla completa (Esc)':'Pantalla completa (F)'}">${bFull?'✕':'⛶'}</button></div>
   </div>`}
-  ${isDC()&&finales.length?`<div class="card" style="margin-top:16px"><div class="row"><div class="grow"><b>${finales.length} final${finales.length===1?'':'es'}</b> <span class="muted small">${pend.length?`· ${pend.length} sin pasar a votación`:'· todas pasadas a votación'}</span>${finales.length>3?`<div class="small" style="color:var(--warn)">Quedaron más de tres. Si son más de tres, no se mezcló nada: se eligieron favoritas.</div>`:''}</div>${pend.length?`<button class="btn pri" onclick="bPasarFinales('${c.id}')">Pasar finales a votación</button>`:`<button class="btn" onclick="tab='ideas';render()">Ver finales</button>`}</div></div>`:''}`;
+  ${isDC()&&(finales.length||crucesSinFinal().length)?`<div class="card" style="margin-top:16px"><div class="row"><div class="grow"><b>${finales.length} final${finales.length===1?'':'es'}</b> <span class="muted small">${!finales.length?'':pend.length?`· ${pend.length} sin pasar a votación`:'· todas pasadas a votación'}</span>${crucesSinFinal().length?`<div class="small muted">${crucesSinFinal().length} cruce${crucesSinFinal().length===1?'':'s'} todavía sin aceptar.</div>`:''}</div>${crucesSinFinal().length?`<button class="btn" onclick="bAceptarCruces()">Aceptar todos los cruces</button>`:''}${pend.length?`<button class="btn pri" onclick="bPasarFinales('${c.id}')">Elegir cuáles van a votación</button>`:finales.length?`<button class="btn" onclick="tab='ideas';render()">Ver finales</button>`:''}</div></div>`:''}`;
 }
 function bToolHTML(c){ let h='';
   if(isDC()) h+=B.meta.mostrar?`<button class="btn sm" onclick="bMostrar(false)" title="El equipo deja de ver las ideas">Taparlas</button>`:`<button class="btn pri sm" onclick="bMostrar(true)">Destapar las ideas</button>`;
@@ -1329,10 +1332,11 @@ function propuestaHTML(){
   const mias=B.notes.filter(n=>n.tipo==='idea'&&n.mia).sort((a,b)=>a.creado-b.creado);
   const prog=B.progreso||[], tot=prog.reduce((a,p)=>a+p.n,0);
   const otros=tot?`<p class="small muted" style="margin:10px 0 0">En total van ${tot} idea${tot===1?'':'s'} de ${prog.length} persona${prog.length===1?'':'s'}.</p>`:'';
-  if(B.meta.mostrar) return mias.length?`<p class="small muted" style="margin:0 0 10px">Tus ${mias.length} idea${mias.length===1?'':'s'} ya están en el pizarrón, en tu columna.</p>`:'';
+  // 27/10/2026: se puede seguir cargando aunque el DC ya las haya destapado (llegaste tarde o se te ocurrió otra): van directo a tu columna
+  const destapadas=!!B.meta.mostrar;
   const slots=Math.min(10,Math.max(5,mias.length+(mias.length>=5?1:0)));
   return `<div class="card mis"><h3 style="margin:0">Tus ideas <span class="dim" style="font-weight:500">${Math.min(mias.length,5)} de 5</span></h3>
-    <p class="small muted" style="margin:6px 0 12px">Escribilas solo, sin mirar las de los demás: nadie las ve hasta que el DC las destape. Un renglón cada una; Enter guarda y pasa a la siguiente.${noVota()?' Aportás ideas pero no votás.':''}</p>
+    <p class="small muted" style="margin:6px 0 12px">${destapadas?'Las ideas ya están destapadas: lo que cargues aparece en el pizarrón, en tu columna.':'Escribilas solo, sin mirar las de los demás: nadie las ve hasta que el DC las destape.'} Un renglón cada una; Enter guarda y pasa a la siguiente.</p>
     ${Array.from({length:slots},(_,i)=>{ const n=mias[i]; return `<div class="slot ${n?'ok':''}"><b>${i+1}</b><input type="text" maxlength="300" data-slot="${i}" value="${esc(n?.texto||'')}" placeholder="${i<5?`Idea ${i+1}`:'Otra idea (opcional)'}" onkeydown="if(event.key==='Enter'){event.preventDefault();proponerSlot(${i},this.value,this)}" onblur="proponerSlot(${i},this.value,this)">${n&&!n._tmp?`<button class="btn ghost sm" onclick="quitarPropuesta('${n.id}')" title="Borrar esta idea" aria-label="Borrar idea ${i+1}">✕</button>`:'<span></span>'}</div>`; }).join('')}
     ${otros}</div>`;
 }
@@ -1542,16 +1546,19 @@ function bLinkMove(e){
 async function bUnir(a,b){
   const A=bNota(a), Bn=bNota(b); if(!A||!Bn) return;
   if(Bn.tipo==='final'||A.tipo==='final'){ toast('Las finales no se cruzan: se arman desde un cruce'); bPaint(); return; }
+  bsel.clear(); bSelPaint();
   if(Bn.tipo==='cruce'&&A.tipo==='idea'){ if(!Bn.from.includes(a)) await bPatch(b,{from:[...Bn.from,a]}); toast(`#${A.numero} sumada al cruce #${Bn.numero}`); return; }
   if(A.tipo==='cruce'&&Bn.tipo==='idea'){ if(!A.from.includes(b)) await bPatch(a,{from:[...A.from,b]}); toast(`#${Bn.numero} sumada al cruce #${A.numero}`); return; }
-  const ya=B.notes.find(x=>x.tipo==='cruce'&&x.from.length===2&&x.from.includes(a)&&x.from.includes(b)); if(ya){ toast(`Ese cruce ya existe: #${ya.numero}`); bsel.clear(); bsel.add(ya.id); bSelPaint(); return; }
-  const nn=await bCrear({tipo:'cruce',texto:'',from:[a,b]}); if(nn){ bsel.clear(); bsel.add(nn.id); bSelPaint(); toast(`Cruce #${nn.numero}: doble clic para escribir qué sale`); }
+  const ya=B.notes.find(x=>x.tipo==='cruce'&&x.from.length===2&&x.from.includes(a)&&x.from.includes(b)); if(ya){ toast(`Ese cruce ya existe: #${ya.numero}`); bsel.clear(); bSelPaint(); return; }
+  // el cruce nuevo NO queda elegido: así se puede seguir cruzando otras ideas sin sumarlas a este sin querer (27/10/2026)
+  bsel.clear(); bSelPaint();
+  const nn=await bCrear({tipo:'cruce',texto:'',from:[a,b]}); if(nn){ toast(`Cruce #${nn.numero} creado · doble clic para escribir qué sale`); }
 }
 function bCruzar(){
   const ids=[...bsel]; const ns=ids.map(bNota).filter(Boolean);
   if(ns.some(n=>n.tipo==='final')){ toast('Las finales no se cruzan: se arman desde un cruce'); return; }
   const cr=ns.filter(n=>n.tipo==='cruce');
-  if(cr.length===1){ const c=cr[0]; const add=ids.filter(id=>id!==c.id&&!c.from.includes(id)); if(add.length){ bsel.clear(); bsel.add(c.id); bPatch(c.id,{from:[...c.from,...add]}); toast(`${add.length===1?'Sumada':'Sumadas'} al cruce #${c.numero}`); } return; }
+  if(cr.length===1){ const c=cr[0]; const add=ids.filter(id=>id!==c.id&&!c.from.includes(id)); if(add.length){ bsel.clear(); bSelPaint(); bPatch(c.id,{from:[...c.from,...add]}); toast(`${add.length===1?'Sumada':'Sumadas'} al cruce #${c.numero}`); } return; }
   openModal(`<h2 style="margin-top:0">Cruzar ${ns.map(n=>'#'+n.numero).join(' + ')}</h2>
   <div class="bsale">${ns.map(o=>`<div class="arb"><i style="background:${colorNota(o)}"></i><b>#${o.numero}</b><span>${esc(bTxt(o))}</span></div>`).join('')}</div>
   <p class="muted small">De una podés agarrar la historia, de otra cómo se filma, de otra el objeto. Las originales no se borran.</p>
@@ -1559,7 +1566,7 @@ function bCruzar(){
   <div class="row"><button class="btn pri" onclick="bCruzarOk()">Crear cruce</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`);
   setTimeout(()=>document.getElementById('bx-t')?.focus(),0);
 }
-async function bCruzarOk(){ const t=document.getElementById('bx-t').value.trim(); const from=[...bsel]; modal=null; bsel.clear(); render(); const nn=await bCrear({tipo:'cruce',texto:t,from}); if(nn){ bsel.add(nn.id); bSelPaint(); } }
+async function bCruzarOk(){ const t=document.getElementById('bx-t').value.trim(); const from=[...bsel]; modal=null; bsel.clear(); render(); const nn=await bCrear({tipo:'cruce',texto:t,from}); if(nn) toast(`Cruce #${nn.numero} creado`); }
 function bEditar(id){ const n=bNota(id); if(!n) return; if(n.tipo==='final') return bEditarFinal(id);
   openModal(`<h2 style="margin-top:0">${n.tipo==='cruce'?'Cruce':'Idea'} #${n.numero}</h2>
   ${n.tipo==='cruce'?`<div class="f"><span class="small muted">Lo que se cruza</span><div class="bsale">${(n.from||[]).map(fid=>{ const o=bNota(fid); return o?`<div class="arb"><i style="background:${colorNota(o)}"></i><b>#${o.numero}</b><span class="grow">${esc(bTxt(o))}</span>${n.from.length>2?`<button class="btn ghost sm danger" onclick="bQuitar('${n.id}','${fid}')">Quitar</button>`:''}</div>`:''; }).join('')}</div><em class="small dim" style="display:block;margin-top:-8px">Para sumar otra: arrastrala encima de este cruce, o arrastrá su +.</em></div>`:''}
@@ -1578,11 +1585,13 @@ function bEditarFinal(id){ const n=bNota(id); if(!n) return;
   <label class="f"><span>¿Qué se ve?</span><textarea id="bf-v" maxlength="600">${esc(sugerido)}</textarea></label>
   <label class="f"><span>¿Qué es?</span><input type="text" id="bf-e" maxlength="200" value="${esc(n.queEs||'')}" placeholder="Reel vertical · 15 segundos · una toma fija"></label>
   <label class="f"><span>¿Qué hace la gente cuando la ve?</span><input type="text" id="bf-h" maxlength="300" value="${esc(n.queHace||'')}" placeholder="Guarda, comenta, comparte, escribe preguntando"></label>
+  ${isDC()?`<label class="bsw" style="margin:4px 0 14px"><input type="checkbox" id="bf-vota" ${n.votar===false?'':'checked'}> Pasa a votación</label>`:''}
   <div class="row"><button class="btn pri" onclick="bFinalOk('${id}')">Guardar final</button><button class="btn ghost" onclick="closeModal()">Cancelar</button><span class="grow"></span>${n.tipo==='final'?`<button class="btn ghost sm" onclick="bDesfinal('${id}')">Ya no es final</button>`:''}${n.tipo==='final'&&isDC()?`<button class="btn ghost sm danger" onclick="bBorrar(['${id}'])">Borrar</button>`:''}</div>`);
   setTimeout(()=>document.getElementById('bf-n')?.focus(),0); }
 async function bFinalOk(id){
   const g=k=>document.getElementById(k).value.trim(); const d={nombre:g('bf-n'),queSeVe:g('bf-v'),queEs:g('bf-e'),queHace:g('bf-h')};
-  if(!d.nombre||!d.queSeVe||!d.queEs||!d.queHace){ toast('Faltan respuestas: todavía no es una idea'); return; }
+  const vt=document.getElementById('bf-vota'); if(vt) d.votar=vt.checked;
+  if(!d.nombre){ toast('Ponele un nombre'); return; }
   const n=bNota(id); modal=null; bsel.clear(); render();
   if(n.tipo==='final') return bPatch(id,d);
   const nn=await bCrear({tipo:'final',texto:n.texto,from:[id],...d}); if(nn){ bsel.add(nn.id); bSelPaint(); toast('Final creada'); }
@@ -1611,11 +1620,29 @@ async function pasarFinales(campId,notes,pend){
   nuevas.forEach(([nid,iid])=>{ const n=B.notes.find(x=>x.id===nid); if(n) n.enviada=iid; }); B._j='';
   return nuevas.length;
 }
-async function bPasarFinales(campId){
-  const pend=B.notes.filter(n=>n.tipo==='final'&&!n.enviada);
-  if(!confirm(`¿Pasar ${pend.length} final${pend.length===1?'':'es'} a la pestaña Finales para votar?`)) return;
-  await pasarFinales(campId,B.notes,pend);
-  toast('Finales en votación'); tab='ideas'; render();
+// 27/10/2026: el DC elige cuáles finales van a votación (las que quiera: 2, 3, 7…). Vienen tildadas las que marcó "Pasa a votación".
+function bPasarFinales(campId){
+  const pend=B.notes.filter(n=>n.tipo==='final'&&!n.enviada).sort((a,b)=>a.numero-b.numero);
+  openModal(`<h2 style="margin-top:0">¿Cuáles van a votación?</h2>
+  <p class="muted small">Elegí las que quieras, sin límite. Las que no tildes quedan en el pizarrón como finales.</p>
+  <div class="bsale">${pend.map(n=>`<label class="arb" style="cursor:pointer;align-items:center"><input type="checkbox" data-pv="${n.id}" ${n.votar===false?'':'checked'} style="margin-right:6px"><b>#${n.numero}</b><span>${esc(n.nombre||n.texto||'(sin nombre)')}${n.nombre?'':' <span class="small" style="color:var(--warn)">ponele nombre</span>'}</span></label>`).join('')}</div>
+  <div class="row"><button class="btn pri" onclick="bPasarElegidas('${campId}')">Pasar a votación</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>`); }
+async function bPasarElegidas(campId){
+  const ids=[...document.querySelectorAll('[data-pv]')].filter(x=>x.checked).map(x=>x.dataset.pv);
+  if(!ids.length){ toast('Elegí al menos una'); return; }
+  const pend=B.notes.filter(n=>ids.includes(n.id)); modal=null; render();
+  const k=await pasarFinales(campId,B.notes,pend);
+  toast(k===1?'1 final en votación':`${k} finales en votación`); tab='ideas'; render();
+}
+// "Aceptar todos los cruces": cada cruce que todavía no tiene su final pasa a ser final (después se nombra cada una)
+const crucesSinFinal=()=>B.notes.filter(n=>n.tipo==='cruce'&&!B.notes.some(f=>f.tipo==='final'&&(f.from||[]).includes(n.id)));
+async function bAceptarCruces(){
+  const cs=crucesSinFinal().sort((a,b)=>a.numero-b.numero); if(!cs.length) return;
+  if(!confirm(`¿Aceptar los ${cs.length} cruces? Cada uno pasa a ser una final; después le ponés nombre y elegís si va a votación.`)) return;
+  bsel.clear(); const byN=bById();
+  for(const c of cs){ const raiz=bRaices(c,byN).map(o=>o.texto).filter(Boolean).join(' + ');
+    await bCrear({tipo:'final',texto:c.texto||raiz,from:[c.id],nombre:'',queSeVe:c.texto||raiz,queEs:'',queHace:''}); }
+  toast(`${cs.length} cruces aceptados: tocá cada final para ponerle nombre`);
 }
 
 /* mouse, dedo y teclado */
@@ -1657,7 +1684,7 @@ document.addEventListener('pointermove',e=>{
   if(d.kind==='note'&&d.can){
     for(const o of d.orig){ o.n.x=Math.round(o.x+dx/BV.s); o.n.y=Math.round(o.y+dy/BV.s); const el=bEl(o.n.id); if(el){ el.style.left=o.n.x+'px'; el.style.top=o.n.y+'px'; el.classList.add('drag'); } }
     bLines();
-    if(d.orig.length===1){ const me=bNota(d.id); const t=bNotaEn(e.clientX,e.clientY,d.id); const tn=t&&bNota(t); const ok=tn&&tn.tipo==='cruce'&&me.tipo!=='final'&&!(tn.from||[]).includes(d.id);
+    if(d.orig.length===1){ const me=bNota(d.id); const t=bNotaEn(e.clientX,e.clientY,d.id); const tn=t&&bNota(t); const ok=tn&&me&&tn.tipo!=='final'&&me.tipo!=='final'&&!(tn.from||[]).includes(d.id)&&!(me.from||[]).includes(t);
       if((ok?t:null)!==d.over){ document.querySelectorAll('.pit.linktarget').forEach(x=>x.classList.remove('linktarget')); if(ok) bEl(t)?.classList.add('linktarget'); d.over=ok?t:null; } } }
 });
 document.addEventListener('pointerup',e=>{ dedos.delete(e.pointerId); if(pinch&&dedos.size<2){ pinch=null; return; }
@@ -1698,10 +1725,10 @@ document.addEventListener('wheel',e=>{ const wr=bEnCanvas(e); if(!wr) return; e.
   if(e.ctrlKey||e.metaKey||mouse){ const dy=e.deltaMode===1?e.deltaY*33:e.deltaY; bZoom(Math.exp(-dy*(mouse?0.0015:0.01)),e.clientX-r.left,e.clientY-r.top); }
   else { bAnimT++; BV._manual=true; BV.x-=e.deltaX; BV.y-=e.deltaY; bApplyView(); } },{passive:false});
 window.addEventListener('resize',()=>{ if(document.getElementById('bwrap')) bApplyView(); });
-function bIntro(){ return isDC()?'Cargás las ideas de cada persona (cada una tiene su color y su columna). Después movés, agrandás y cruzás como en Miro: arrastrá el <b style="color:#6E9CC6">+</b> de una nota hasta otra y nace el cruce. Con “El equipo también edita” prendido, todos pueden mover y cruzar desde su celular.'
-  :bPuede()?'El pizarrón está abierto: podés mover notas, agrandarlas, cruzarlas (arrastrá el <b style="color:#6E9CC6">+</b> de una hasta otra) y proponer nombres. Tocá una nota para elegirla.'
+function bIntro(){ return isDC()?'Cargás las ideas de cada persona (cada una tiene su color y su columna). Después movés, agrandás y cruzás como en Miro: <b>soltá una nota encima de otra</b> (o arrastrá su <b style="color:#6E9CC6">+</b> hasta otra) y nace el cruce. Con “El equipo también edita” prendido, todos pueden mover y cruzar desde su celular.'
+  :bPuede()?'El pizarrón está abierto: podés mover notas, agrandarlas, cruzarlas (soltá una encima de otra, o arrastrá su <b style="color:#6E9CC6">+</b>) y proponer nombres. Tocá una nota para elegirla.'
   :'El director creativo arma el pizarrón y lo ves en vivo. Tocá una nota para leerla grande; pellizcá o usá la rueda para acercarte.'; }
-function bAyuda(){ return bPuede()?'Arrastrá el fondo para moverte · rueda o pellizco: zoom · <b>doble clic</b> en el fondo: nota nueva · <b class="mas">+</b> hasta otra nota: cruzar · <b>Shift</b> + arrastrar: elegir varias':'Arrastrá para moverte · rueda o pellizco: zoom · tocá una nota para leerla'; }
+function bAyuda(){ return bPuede()?'Arrastrá el fondo para moverte · rueda o pellizco: zoom · <b>doble clic</b> en el fondo: nota nueva · soltar una nota encima de otra (o su <b class="mas">+</b>): cruzar · <b>Shift</b> + arrastrar: elegir varias':'Arrastrá para moverte · rueda o pellizco: zoom · tocá una nota para leerla'; }
 
 /* ---------------- ideas ---------------- */
 function tabIdeas(c){
@@ -1747,7 +1774,7 @@ function waLink(c){ const m=byId(S.marcas,c.marcaId); return 'https://wa.me/?tex
 async function borrarVotos(id){ if(!confirm('¿Borrar todos los votos de esta campaña? Las ideas quedan; se vuelve a votar desde cero.')) return; try{ await api('DELETE','votos/'+id); const c=byId(S.campanas,id); if(c.revelado){ c.revelado=false; await save(); } V=[]; ultimoJSON=''; render(); await cargar(); toast('Votos borrados'); }catch(e){ toast(e.message); } }
 function toggleVotacion(id){ const c=byId(S.campanas,id); c.votacionAbierta=!c.votacionAbierta; save(); render(); toast(c.votacionAbierta?'Votación activada':'Votación pausada'); }
 function tabVotar(c){
-  const ideas=ideasDe(c.id); const ps=c.participantes||[];
+  const ideas=ideasDe(c.id); const ps=partic(c);
   if(noVota()) return `<div class="empty">${ROLE==='smm'?'El SMM':'Los social media'} aportan ideas pero no votan. Las finales están en la pestaña Finales.</div>`;
   if(ideas.length===0) return `<div class="empty">${isDC()?'Primero cargá las ideas que salieron de mezclar.':'El DC todavía no activó la votación.'}</div>`;
   if(!c.votacionAbierta&&!c.revelado&&!isDC()) return `<div class="empty">${V.length?'La votación está pausada. El DC la vuelve a abrir.':'El DC todavía no activó la votación.'}</div>`;
@@ -1798,7 +1825,7 @@ function elegirRol(campId,p){
   api('POST','voto',{campanaId:campId,participante:p,nombre:n,dev:DEV,notas:v.notas||{}}).catch(e=>toast(e.message));
   render(); }
 function cambiarRol(campId){ localStorage.setItem('ideamia_quien_'+campId,'-'); QUIEN=''; render(); }
-function revelarSeguro(id){ const c=byId(S.campanas,id); const ps=c.participantes||[]; const f=ps.filter(p=>!completo(p)); if(f.length&&!confirm(`Faltan ${f.join(', ')}. ¿Dar vuelta igual? Cuentan solo los papeles completos.`)) return; revelar(id); }
+function revelarSeguro(id){ const c=byId(S.campanas,id); const ps=partic(c); const f=ps.filter(p=>!completo(p)); if(f.length&&!confirm(`Faltan ${f.join(', ')}. ¿Dar vuelta igual? Cuentan solo los papeles completos.`)) return; revelar(id); }
 async function revelar(id){ const c=byId(S.campanas,id); confeti(); c.revelado=true; c.reveladoEn=new Date().toISOString(); tab='resultados'; render(); await save(); ultimoJSON=''; await cargar(); }
 function reabrir(id){ const c=byId(S.campanas,id); c.revelado=false; save(); render(); }
 
@@ -1821,8 +1848,8 @@ function tabResultados(c){
   <h2>Qué nos dicen esos números</h2>
   ${obs.length?`<ul class="obs">${obs.map(o=>`<li class="${o.c}">${o.t}</li>`).join('')}</ul>`:'<p class="muted">Sin observaciones.</p>'}
   <details style="margin-top:22px"><summary class="muted" style="cursor:pointer">Ver nota por nota (quién puso qué)</summary>
-    <div style="overflow-x:auto;margin-top:10px"><table class="tbl small"><thead><tr><th>Idea</th><th style="text-align:left">Pregunta</th>${(c.participantes||[]).map(p=>`<th>${esc(etq(p))}</th>`).join('')}</tr></thead>
-    <tbody>${ideas.map(i=>Q.map((q,qi)=>`<tr>${qi===0?`<td class="qn" rowspan="5" style="vertical-align:top"><b>${esc(i.nombre)}</b></td>`:''}<td class="dim" style="text-align:left">${q.short}</td>${(c.participantes||[]).map(p=>`<td>${nota(i.id,p)[q.k]??'–'}</td>`).join('')}</tr>`).join('')).join('')}</tbody></table></div>
+    <div style="overflow-x:auto;margin-top:10px"><table class="tbl small"><thead><tr><th>Idea</th><th style="text-align:left">Pregunta</th>${partic(c).map(p=>`<th>${esc(etq(p))}</th>`).join('')}</tr></thead>
+    <tbody>${ideas.map(i=>Q.map((q,qi)=>`<tr>${qi===0?`<td class="qn" rowspan="5" style="vertical-align:top"><b>${esc(i.nombre)}</b></td>`:''}<td class="dim" style="text-align:left">${q.short}</td>${partic(c).map(p=>`<td>${nota(i.id,p)[q.k]??'–'}</td>`).join('')}</tr>`).join('')).join('')}</tbody></table></div>
   </details>
   ${isDC()&&c.estado!=='cerrada'?`<div class="row" style="margin-top:26px"><button class="btn pri" onclick="tab='decision';render()">Pasar a elegir</button></div>`:''}`;
 }
