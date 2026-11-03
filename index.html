@@ -793,7 +793,12 @@ function sync(t,err){ const el=document.getElementById('sync'); el.textContent=t
 /* ---------------- API ---------------- */
 // Con IDEAMIA_API (config.js) habla con el Apps Script de Google; sin eso, con la función de Netlify (/api/).
 const API_URL=String(window.IDEAMIA_API||'').trim();
+// 3/11/2026: si el servidor está ocupado (503, no hizo nada) se reintenta solo, hasta 4 veces, antes de mostrar el error
 async function api(method,route,body){
+  for(let i=0;;i++){ try{ return await api1(method,route,body); }
+    catch(e){ if(e.status!==503||i>=4) throw e; await new Promise(r=>setTimeout(r,1500*(i+1)+Math.random()*1000)); } }
+}
+async function api1(method,route,body){
   let status, d={};
   if(API_URL){
     // todo va por POST text/plain: así Google no pide permiso previo (CORS) y la contraseña no viaja en la URL
@@ -1613,9 +1618,10 @@ async function bMostrar(v){ try{ await api('POST',`board/${B.camp}/mostrar`,{mos
 function bOrigen(n,byN,seen=new Set()){ if(seen.has(n.id)) return []; seen.add(n.id); if(n.tipo==='idea'||!n.from?.length) return n.tipo==='idea'?[`#${n.numero} ${n.texto}`]:[]; return n.from.flatMap(id=>byN[id]?bOrigen(byN[id],byN,seen):[]); }
 async function pasarFinales(campId,notes,pend){
   const byN=Object.fromEntries(notes.map(n=>[n.id,n])); const nuevas=[];
-  for(const n of pend){ if(S.ideas.some(i=>i.notaPizarron===n.id)) continue; const id=uid(); const orig=[...new Set(bOrigen(n,byN))]; S.ideas.push({id,campanaId:campId,estado:'votacion',nombre:n.nombre||(n.texto||'').slice(0,40),origen:orig.length?orig.join(' + '):(n.texto||''),queSeVe:n.queSeVe,queEs:n.queEs,queHace:n.queHace,notaPizarron:n.id}); nuevas.push([n.id,id]); }
-  if(!nuevas.length) return 0;
-  await save();
+  const yaHechas=[]; for(const n of pend){ const ex=S.ideas.find(i=>i.notaPizarron===n.id); if(ex){ yaHechas.push([n.id,ex.id]); continue; } const id=uid(); const orig=[...new Set(bOrigen(n,byN))]; S.ideas.push({id,campanaId:campId,estado:'votacion',nombre:n.nombre||(n.texto||'').slice(0,40),origen:orig.length?orig.join(' + '):(n.texto||''),queSeVe:n.queSeVe,queEs:n.queEs,queHace:n.queHace,notaPizarron:n.id}); nuevas.push([n.id,id]); }
+  if(!nuevas.length&&!yaHechas.length) return 0;
+  if(nuevas.length) await save();
+  nuevas.push(...yaHechas);
   await Promise.all(nuevas.map(([nid,iid])=>api('PATCH',`board/${campId}/${nid}`,{enviada:iid}).catch(()=>{})));
   nuevas.forEach(([nid,iid])=>{ const n=B.notes.find(x=>x.id===nid); if(n) n.enviada=iid; }); B._j='';
   return nuevas.length;
